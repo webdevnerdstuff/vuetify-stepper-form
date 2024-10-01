@@ -55,6 +55,7 @@
 		"wdns"
 	],
 	"dependencies": {
+		"jira-prepare-commit-msg": "^1.7.2",
 		"vue": "^3.4.15",
 		"vuetify": "^3.4.11"
 	},
