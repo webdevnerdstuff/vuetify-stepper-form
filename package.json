@@ -1,13 +1,13 @@
 {
-	"name": "vuetify-plugin-template",
+	"name": "vuetify-stepper-form",
 	"version": "1.1.0",
-	"description": "Vuetify Plugin Template is a template to help you get starting building your own plugin/component for Vuetify.",
+	"description": "Vuetify Plugin Stepper Form",
 	"private": false,
 	"publishConfig": {
 		"access": "public"
 	},
-	"main": "dist/vuetify-plugin-template.cjs.js",
-	"module": "dist/vuetify-plugin-template.es.js",
+	"main": "dist/vuetify-stepper-form.cjs.js",
+	"module": "dist/vuetify-stepper-form.es.js",
 	"types": "dist/plugin/types/index.d.ts",
 	"scripts": {
 		"dev": "vite",
@@ -19,7 +19,7 @@
 		"deploy": "gh-pages -d docs",
 		"prepublishOnly": "npm run build",
 		"lint": "eslint src/**/*.{ts,vue} --max-warnings 20",
-		"prepare": "husky install",
+		"prepare": "husky",
 		"test:dev": "vitest",
 		"test:all": "vitest --run",
 		"test:build": "vitest --run --bail 1"
@@ -37,13 +37,8 @@
 		"LICENSE.md",
 		"README.md"
 	],
-	"repository": "https://github.com/webdevnerdstuff/vuetify-plugin-template",
-	"bugs": {
-		"url": "https://github.com/webdevnerdstuff/vuetify-plugin-template/issues"
-	},
-	"homepage": "https://webdevnerdstuff.github.io/vuetify-plugin-template/",
 	"keywords": [
-		"vuetify-plugin-template",
+		"vuetify-stepper-form",
 		"vuetify",
 		"vue",
 		"vue3",
@@ -55,7 +50,6 @@
 		"wdns"
 	],
 	"dependencies": {
-		"jira-prepare-commit-msg": "^1.7.2",
 		"vue": "^3.4.15",
 		"vuetify": "^3.4.11"
 	},
@@ -87,6 +81,7 @@
 		"eslint-plugin-vue": "^9.20.1",
 		"gh-pages": "^6.1.1",
 		"husky": "^8.0.3",
+		"jira-prepare-commit-msg": "^1.7.2",
 		"jsdom": "^23.2.0",
 		"lint-staged": "^15.2.0",
 		"pinia": "^2.1.7",
