@@ -1,16 +1,21 @@
 import type { App } from 'vue';
 import type { GlobalOptions } from './types';
 import './styles/main.scss';
-import VPluginTemplate from './VPluginTemplate.vue';
+import VStepperForm from './VStepperForm.vue';
 
 
 export const globalOptions = Symbol();
 
-export function createVPluginTemplate(options: GlobalOptions = {}) {
+export function createVStepperForm(options: GlobalOptions = {
+	settings: {
+		color: 'primary',
+		density: 'default' as const,
+	},
+}) {
 	const install = (app: App) => {
 		app.provide(globalOptions, options);
 
-		app.component('VPluginTemplate', VPluginTemplate);
+		app.component('VStepperForm', VStepperForm);
 	};
 
 	return {
@@ -18,8 +23,8 @@ export function createVPluginTemplate(options: GlobalOptions = {}) {
 	};
 }
 
-export default VPluginTemplate;
+export default VStepperForm;
 
 export {
-	VPluginTemplate,
+	VStepperForm,
 };
