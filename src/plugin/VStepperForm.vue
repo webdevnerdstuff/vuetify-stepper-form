@@ -24,12 +24,20 @@
 			/>
 
 			<v-container v-else>
-				<!-- <Fields.VSFTextarea
-					v-if="field.type === 'textarea'"
+
+				<Fields.VSFCheckbox
+					v-if="field.type === 'checkbox'"
 					v-model="modelValue[field.name]"
 					:field="field"
-				/> -->
+					:settings="settings"
+				/>
 
+				<Fields.VSFRadio
+					v-if="field.type === 'radio'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
 
 				<Fields.VSFTextField
 					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number'"
@@ -45,26 +53,6 @@
 					:settings="settings"
 				/>
 
-
-
-
-				<!-- <v-textarea
-					v-if="field.type === 'textarea'"
-					v-model="modelValue[field.name]"
-					:density="field.density || settings.density"
-					:hint="field.hint"
-					:label="field.label"
-					:placeholder="field.placeholder || undefined"
-					:required="field.required"
-				>
-					<template #label>
-						<FieldLabel
-							:label="field.label"
-							:required="field.required"
-						/>
-					</template>
-</v-textarea> -->
-
 				<!-- <v-radio-group
 					v-if="field.type === 'radio'"
 					v-model="modelValue[field.name]"
@@ -76,52 +64,24 @@
 							class="text-error ms-1"
 						>*</span>
 					</template>
-					<v-radio
-						v-for="option in field.options"
-						:key="option.value"
-						:density="field.density || stepperSettings.density"
-						:label="option.label"
-						:value="option.value"
-					></v-radio>
-				</v-radio-group> -->
+<v-radio
+	v-for="option in field.options"
+	:key="option.value"
+	:density="field.density || stepperSettings.density"
+	:label="option.label"
+	:value="option.value"></v-radio>
+</v-radio-group> -->
 
-				<!-- <template v-if="field.type === 'checkbox'">
-					<div class="v-input v-input--horizontal v-input--center-affix v-radio-group">
-						<div class="v-input__control">
 
-							<v-label>
-								<FieldLabel
-									:label="field.label"
-									:required="field.required"
-								/>
-							</v-label>
 
-							<div
-								class="v-selection-control-group"
-								style="padding-inline-start: 4px;"
-							>
-								<v-checkbox
-									v-for="option in field.options"
-									:key="option.value"
-									v-model="modelValue[field.name]"
-									:density="field.density || stepperSettings.density"
-									hide-details
-									:label="option.label"
-									:value="option.value"
-								>
-								</v-checkbox>
-							</div>
-						</div>
-					</div>
 
-				</template> -->
 
-				<!-- <Fields.VSFSwitch
+				<Fields.VSFSwitch
 					v-if="field.type === 'switch'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-				/> -->
+				/>
 
 			</v-container>
 		</template>

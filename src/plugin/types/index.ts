@@ -33,9 +33,14 @@ export interface Field {
 	hidden?: boolean;
 	label?: string;
 	name: string;
+	options?: KeyStringAny;
 	required?: boolean;
-	type?: 'checkbox' | 'hidden' | 'number' | 'select' | 'switch' | 'textarea' | 'text' | 'textField';
+	type?: 'checkbox' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField';
 	when?: () => boolean;
+
+	inline?: boolean; 							// ? Checkboxes
+	inlineSpacing?: string;					// ? Checkboxes
+	labelPositionLeft?: boolean;		// ? Checkboxes
 }
 
 export interface FormSettings {

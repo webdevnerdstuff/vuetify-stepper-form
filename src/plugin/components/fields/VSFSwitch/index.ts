@@ -6,12 +6,14 @@ import type {
 import type VSFSwitch from './VSFSwitch.vue';
 
 
-interface InternalField extends Field {
+interface InternalField extends Omit<Field,
+	'inline' | 'inlineSpacing' | 'labelPositionLeft'
+> {
 	density?: VSwitch['density'];
 	falseIcon?: VSwitch['falseIcon'];
 }
 
-export interface VSFTextareaProps extends SharedProps {
+export interface VSFSwitchProps extends SharedProps {
 	field: InternalField;
 }
 

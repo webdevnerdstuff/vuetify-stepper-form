@@ -21,6 +21,8 @@ import type {
 import FieldLabel from '@/plugin/components/shared/FieldLabel.vue';
 import { useBindingSettings } from '@/plugin/composables/bindings';
 
+
+const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFTextareaProps>();
 
 // console.group('VSFTextarea');
@@ -28,15 +30,15 @@ const { field, settings } = defineProps<VSFTextareaProps>();
 // console.log('settings', settings);
 // console.groupEnd();
 
+
+// Bound Settings //
 const bindSettings = reactive({
 	...field,
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
 });
 
-const modelValue = defineModel<any>();
 const boundSettings = computed(() => useBindingSettings(bindSettings));
-
 </script>
 
 <style lang="scss" scoped></style>

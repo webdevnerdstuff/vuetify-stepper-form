@@ -6,7 +6,9 @@ import type {
 import type VSFTextField from './VSFTextField.vue';
 
 
-interface InternalField extends Field {
+interface InternalField extends Omit<Field,
+	'inline' | 'inlineSpacing' | 'labelPositionLeft'
+> {
 	density?: VTextField['density'];
 	variant?: VTextField['variant'];
 }

@@ -1,8 +1,10 @@
 <template>
-	{{ label }} <span
-		v-if="required"
-		class="text-error ms-1"
-	>*</span>
+	<div>
+		{{ label }} <span
+			v-if="required"
+			class="text-error ms-1"
+		>*</span>
+	</div>
 </template>
 
 
