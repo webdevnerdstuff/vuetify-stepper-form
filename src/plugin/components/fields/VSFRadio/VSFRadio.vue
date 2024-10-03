@@ -1,41 +1,4 @@
 <template>
-	<v-radio-group
-		v-model="modelValue"
-		:append-icon="field?.appendIcon"
-		:error="hasErrors"
-		:error-messages="field?.errorMessages"
-		:inline="field?.inline"
-		:max-errors="field?.maxErrors"
-		:max-width="field?.maxWidth"
-		:messages="field?.messages"
-		:min-width="field?.minWidth"
-		:prepend-icon="field?.prependIcon"
-		:theme="field?.theme"
-		:width="field?.width"
-	>
-		<v-label
-			v-if="field.label"
-			:class="{
-				'me-2': field.labelPositionLeft,
-			}"
-		>
-			<FieldLabel
-				:label="field.label"
-				:required="field.required"
-			/>
-		</v-label>
-
-		<v-radio
-			v-for="option in field?.options"
-			v-bind="boundSettings"
-			:key="option.value"
-			:label="option.label"
-			:style="radioStyle"
-			:value="option.value"
-		>
-		</v-radio>
-	</v-radio-group>
-
 	<div :style="fieldContainerStyle">
 		<div
 			class="v-input__control"

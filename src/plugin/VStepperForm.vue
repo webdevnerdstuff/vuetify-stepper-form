@@ -46,6 +46,13 @@
 					:settings="settings"
 				/>
 
+				<Fields.VSFFileInput
+					v-if="field.type === 'file'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
 				<Fields.VSFTextarea
 					v-if="field.type === 'textarea'"
 					v-model="modelValue[field.name]"

@@ -35,7 +35,7 @@ export interface Field {
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean;
-	type?: 'checkbox' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField';
+	type?: 'checkbox' | 'file' | 'email' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField';
 	when?: () => boolean;
 
 	inline?: boolean; 							// ? Checkboxes
