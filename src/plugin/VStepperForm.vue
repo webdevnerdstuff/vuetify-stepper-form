@@ -25,6 +25,13 @@
 
 			<v-container v-else>
 
+				<Fields.VSFBoolean
+					v-if="field.type === 'boolean'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
 				<Fields.VSFCheckbox
 					v-if="field.type === 'checkbox'"
 					v-model="modelValue[field.name]"
