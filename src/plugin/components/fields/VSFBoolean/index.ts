@@ -8,7 +8,10 @@ import type VSFBoolean from './VSFBoolean.vue';
 interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
-	density?: 'compact' | 'comfortable' | 'default';
+	density?: 'compact' | 'comfortable' | 'default' | 'expanded' | 'oversized';
+	height?: string;
+	width?: string;
+	variant?: 'underlined' | 'outlined' | 'filled' | 'solo' | 'solo-inverted' | 'solo-filled' | 'plain';
 }
 
 export interface VSFBooleanProps extends SharedProps {
