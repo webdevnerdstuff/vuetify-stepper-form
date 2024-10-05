@@ -18,8 +18,9 @@
 			:key="field.name"
 		>
 			<input
-				v-if="field.type === 'hidden'"
+				v-if="field.type === 'hidden' || !field.type"
 				v-model="modelValue[field.name]"
+				:name="field.name"
 				type="hidden"
 			/>
 
@@ -30,6 +31,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@update:modelValue="callback()"
 				/>
 
 				<Fields.VSFCheckbox
@@ -51,6 +53,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@update:modelValue="callback()"
 				/>
 
 				<Fields.VSFFileInput
@@ -67,28 +70,12 @@
 					:settings="settings"
 				/>
 
-				<!-- <v-radio-group
-					v-if="field.type === 'radio'"
-					v-model="modelValue[field.name]"
-					:inline="field.inline"
-				>
-					<template #label>
-						{{ field.label }} <span
-							v-if="field.required"
-							class="text-error ms-1"
-						>*</span>
-					</template>
-<v-radio
-	v-for="option in field.options"
-	:key="option.value"
-	:density="field.density || stepperSettings.density"
-	:label="option.label"
-	:value="option.value"></v-radio>
-</v-radio-group> -->
-
-
-
-
+				<!-- TODO: Select Field -->
+				<!-- TODO: Color Picker Field -->
+				<!-- TODO: User Select Field -->
+				<!-- TODO: Autocomplete Field -->
+				<!-- TODO: Date Field -->
+				<!-- TODO: Combobox Field (tbd) -->
 
 				<Fields.VSFSwitch
 					v-if="field.type === 'switch'"
@@ -114,6 +101,7 @@ import {
 import componentEmits from './utils/emits';
 import * as Fields from './components/index';
 import { globalOptions } from '@/plugin/';
+// import { watchDeep } from '@vueuse/core';
 
 
 
@@ -126,6 +114,8 @@ const injectedOptions = inject(globalOptions, {});
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), { ...AllProps });
+
+const { fields } = toRefs(props);
 // console.log('AllProps', props);
 // console.log('props', AllProps);
 const stepperSettings = reactive({ ...attrs, ...props, ...injectedOptions });
@@ -144,7 +134,35 @@ const settings = ref({
 const modelValue = defineModel<any>();
 
 
+onMounted(() => {
+	callback();
+});
 
+
+
+// watch(() => fields.value, () => {
+// 	console.log('xxxxxxxxxxxxx fields update', fields.value);
+// }), {
+// 	deep: true,
+// };
+
+// watchDeep(fields.value, () => {
+// 	console.log('xxxxxxxxxxxxx fields update', fields.value);
+// });
+
+
+function callback() {
+	Object.values(fields.value).forEach((field) => {
+		if (field.when) {
+			const response = field.when(modelValue.value);
+			const fieldIdx = fields.value.findIndex((f) => f.name === field.name);
+
+			if (fields.value[fieldIdx]) {
+				fields.value[fieldIdx].disabled = response;
+			}
+		}
+	});
+}
 
 console.log({
 	emit,

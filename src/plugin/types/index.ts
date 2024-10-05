@@ -6,6 +6,7 @@ import type {
 	// VCard,
 	VCheckbox,
 	// VIcon,
+	VRadio,
 	VSelect,
 	VSwitch,
 	VTextField,
@@ -18,7 +19,7 @@ export * from '../index';
 
 
 // -------------------------------------------------- Types //
-export type GlobalDensity = VCheckbox['density'] | VSelect['density'] | VSwitch['density'] | VTextField['density'] | VTextarea['density'];
+export type GlobalDensity = VCheckbox['density'] | VSelect['density'] | VSwitch['density'] | VTextField['density'] | VTextarea['density'] | VRadio['density'];
 
 // -------------------------------------------------- Misc //
 export interface KeyStringAny<T = any> {
@@ -29,14 +30,18 @@ export interface Field {
 	color?: string;
 	dateFormat?: string;
 	dateSeparator?: string;
+	density?: GlobalDensity;
+	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
 	hidden?: boolean;
 	label?: string;
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean;
-	type?: 'boolean' | 'checkbox' | 'file' | 'email' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField';
-	when?: () => boolean;
+	type?: 'boolean' | 'checkbox' | 'file' | 'email' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField' | undefined;
+	when?: (value: any) => boolean;
+	validate?: (field: Field, value: any) => boolean;
+	validateOn?: string;
 
 	inline?: boolean; 							// ? Checkboxes
 	inlineSpacing?: string;					// ? Checkboxes
@@ -46,6 +51,7 @@ export interface Field {
 export interface FormSettings {
 	color?: string;
 	density?: GlobalDensity;
+	validateOn?: Field['validateOn'];
 }
 
 export interface WelcomeScreen {
