@@ -27,7 +27,7 @@
 			<v-container v-else>
 
 				<Fields.VSFBoolean
-					v-if="field.type === 'boolean'"
+					v-if="field.type === 'fancyRadio'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"

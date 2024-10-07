@@ -38,7 +38,7 @@ export interface Field {
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean;
-	type?: 'boolean' | 'checkbox' | 'file' | 'email' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField' | undefined;
+	type?: 'checkbox' | 'fancyRadio' | 'file' | 'email' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField' | undefined;
 	when?: (value: any) => boolean;
 	validate?: (field: Field, value: any) => boolean;
 	validateOn?: string;
