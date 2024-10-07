@@ -13,7 +13,7 @@ export default mergeConfig(
 			root: fileURLToPath(new URL('./', import.meta.url)),
 			server: {
 				deps: {
-					inline: ['element-plus', 'vuetify-plugin-template', 'vuetify']
+					inline: ['element-plus', 'vuetify-stepper-form', 'vuetify']
 				}
 			},
 		}

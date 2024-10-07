@@ -40,7 +40,7 @@
 			<v-row>
 				<v-col cols="12">
 					<VCodeBlock
-						code="pnpm add vuetify-plugin-template"
+						code="pnpm add vuetify-stepper-form"
 						:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
 						lang="plain"
 						:prismjs="codeBlockSettings.plugin === 'prismjs'"
@@ -56,7 +56,7 @@
 				</v-col>
 				<v-col cols="12">
 					<VCodeBlock
-						code="npm i vuetify-plugin-template"
+						code="npm i vuetify-stepper-form"
 						highlightjs
 						lang="plain"
 					>
