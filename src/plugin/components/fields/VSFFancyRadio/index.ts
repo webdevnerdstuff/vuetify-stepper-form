@@ -2,7 +2,7 @@ import type {
 	Field,
 	SharedProps,
 } from '@/plugin/types';
-import type VSFBoolean from './VSFBoolean.vue';
+import type VSFFancyRadio from './VSFFancyRadio.vue';
 
 
 interface InternalField extends Omit<Field,
@@ -14,11 +14,11 @@ interface InternalField extends Omit<Field,
 	variant?: 'underlined' | 'outlined' | 'filled' | 'solo' | 'solo-inverted' | 'solo-filled' | 'plain';
 }
 
-export interface VSFBooleanProps extends SharedProps {
+export interface VSFFancyRadioProps extends SharedProps {
 	density?: Field['density'] | 'expanded' | 'oversized';
 	field: InternalField;
 }
 
-export type VSFBoolean = InstanceType<typeof VSFBoolean>;
+export type VSFFancyRadio = InstanceType<typeof VSFFancyRadio>;
 
-export default VSFBoolean;
+export default VSFFancyRadio;

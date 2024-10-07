@@ -26,7 +26,7 @@
 
 			<v-container v-else>
 
-				<Fields.VSFBoolean
+				<Fields.VSFFancyRadio
 					v-if="field.type === 'fancyRadio'"
 					v-model="modelValue[field.name]"
 					:field="field"

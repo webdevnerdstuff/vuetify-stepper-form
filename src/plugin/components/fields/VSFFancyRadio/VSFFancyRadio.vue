@@ -5,26 +5,26 @@
 			:required="field.required"
 		/>
 
-		<div class="vsf-boolean__container">
-			<div class="v-input__control vsf-boolean__control">
+		<div class="vsf-fancy-radio__container">
+			<div class="v-input__control vsf-fancy-radio__control">
 				<template
 					v-for="option in field?.options"
 					:key="option.value"
 				>
 					<div
-						class="vsf-boolean__field v-field"
+						class="vsf-fancy-radio__field v-field"
 						:class="{
 							...fieldClasses,
-							[`vsf-boolean__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
+							[`vsf-fancy-radio__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
 						}"
 						:style="fieldStyle"
 					>
 						<input
 							:id="`vsf-radio-${field.name}-${option.value}`"
 							v-model="modelValue"
-							class="vsf-boolean__input"
+							class="vsf-fancy-radio__input"
 							:class="{
-								'vsf-boolean__input_checked': modelValue === option.value,
+								'vsf-fancy-radio__input_checked': modelValue === option.value,
 							}"
 							:name="field.name"
 							type="radio"
@@ -34,7 +34,7 @@
 						<label
 							:class="{
 								...labelClasses,
-								[`vsf-boolean__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
+								[`vsf-fancy-radio__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
 							}"
 							:for="`vsf-radio-${field.name}-${option.value}`"
 							:style="labelStyle"
@@ -47,7 +47,7 @@
 							<div
 								:class="{
 									...fieldTextClasses,
-									'vsf-boolean__input_selected': modelValue === option.value,
+									'vsf-fancy-radio__input_selected': modelValue === option.value,
 									'text-surface': modelValue === option.value && fieldColor === 'on-surface',
 								}"
 								v-html="option.label"
@@ -63,18 +63,18 @@
 
 <script lang="ts" setup>
 import type {
-	VSFBooleanProps,
+	VSFFancyRadioProps,
 } from './index';
 import FieldLabel from '@/plugin/components/shared/FieldLabel.vue';
 
 
 const modelValue = defineModel<any>();
-const props = defineProps<VSFBooleanProps>();
+const props = defineProps<VSFFancyRadioProps>();
 
 const { field, settings } = toRefs(props);
 
 
-console.group('VSFBoolean');
+console.group('VSFFancyRadio');
 console.log('field', field);
 console.log('settings', settings);
 console.groupEnd();
@@ -129,7 +129,7 @@ const labelStyle = computed<CSSProperties>(() => {
 const fieldOverlayClasses = computed(() => {
 	return {
 		'v-field__overlay': true,
-		'vsf-boolean__overlay': true,
+		'vsf-fancy-radio__overlay': true,
 		[`text-${fieldColor.value}`]: fieldColor.value,
 	};
 });
@@ -137,7 +137,7 @@ const fieldOverlayClasses = computed(() => {
 const fieldOutlineClasses = computed(() => {
 	return {
 		'v-field__outline': true,
-		'vsf-boolean__outline': true,
+		'vsf-fancy-radio__outline': true,
 		[`text-${fieldColor.value}`]: fieldColor.value,
 	};
 });
@@ -146,7 +146,7 @@ const fieldTextClasses = computed(() => {
 	const oppositeColorVariation = fieldColor.value === 'on-surface' ? 'surface' : fieldColor.value;
 
 	return {
-		'vsf-boolean__text': true,
+		'vsf-fancy-radio__text': true,
 		[`text-${oppositeColorVariation}`]: fieldColor.value === 'on-surface',
 	};
 });
@@ -154,7 +154,7 @@ const fieldTextClasses = computed(() => {
 const fieldClasses = computed(() => {
 	return {
 		[`v-field--variant-${fieldVariant.value}`]: true,
-		[`vsf-boolean__field--variant-${fieldVariant.value}`]: true,
+		[`vsf-fancy-radio__field--variant-${fieldVariant.value}`]: true,
 	};
 });
 
@@ -162,9 +162,9 @@ const labelClasses = computed(() => {
 	return {
 		'pa-1': field.value?.density === 'compact',
 		'pa-4': field.value?.density !== 'compact',
-		'vsf-boolean__label': true,
-		[`vsf-boolean__label--variant-${fieldVariant.value}`]: true,
-		// [`vsf-boolean__label-variant-${variant}_${isFocused.value}`]: true,
+		'vsf-fancy-radio__label': true,
+		[`vsf-fancy-radio__label--variant-${fieldVariant.value}`]: true,
+		// [`vsf-fancy-radio__label-variant-${variant}_${isFocused.value}`]: true,
 	};
 });
 
@@ -185,7 +185,7 @@ function onFocus(value: any) {
 </style>
 
 <style lang="scss" scoped>
-.vsf-boolean {
+.vsf-fancy-radio {
 	&__container {
 		align-items: center;
 		display: flex;
@@ -219,7 +219,7 @@ function onFocus(value: any) {
 					--vsf-field-border-opacity: calc((0.04 + var(--v-focus-opacity)) * var(--v-theme-overlay-multiplier)) !important;
 				}
 
-				.vsf-boolean__overlay {
+				.vsf-fancy-radio__overlay {
 					opacity: var(--vsf-field-border-opacity);
 					transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
 				}
@@ -244,7 +244,7 @@ function onFocus(value: any) {
 		width: 100%;
 	}
 
-	.vsf-boolean__overlay {
+	.vsf-fancy-radio__overlay {
 		background-color: rgb(var(--v-theme-surface));
 	}
 
@@ -254,7 +254,7 @@ function onFocus(value: any) {
 
 		&_checked {
 			+ label {
-				.vsf-boolean__overlay {
+				.vsf-fancy-radio__overlay {
 					background-color: currentcolor;
 					opacity: 1;
 				}
@@ -275,7 +275,7 @@ function onFocus(value: any) {
 
 		// ? ------------------------- Underline scaling for variants //
 		@mixin underline-scale() {
-			.vsf-boolean__outline {
+			.vsf-fancy-radio__outline {
 				&::before {
 					border-width: 0 0 var(--v-field-border-width);
 				}
@@ -287,7 +287,7 @@ function onFocus(value: any) {
 			}
 
 			&-focused {
-				.vsf-boolean__outline {
+				.vsf-fancy-radio__outline {
 					&::after {
 						transform: scaleX(1);
 					}
@@ -311,12 +311,12 @@ function onFocus(value: any) {
 				&:hover {
 					--v-field-border-width: 2px;
 
-					.vsf-boolean__overlay {
+					.vsf-fancy-radio__overlay {
 						opacity: 1 !important;
 					}
 				}
 
-				.vsf-boolean__overlay {
+				.vsf-fancy-radio__overlay {
 					border-radius: var(--vsf-field-border-radius) !important;
 					border-style: solid;
 					border-width: var(--v-field-border-width);
