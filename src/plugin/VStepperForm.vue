@@ -26,6 +26,22 @@
 
 			<v-container v-else>
 
+				<!-- ================================================== Checkbox -->
+				<Fields.VSFCheckbox
+					v-if="field.type === 'checkbox'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
+				<!-- ================================================== Radio & Fancy Radio -->
+				<Fields.VSFRadio
+					v-if="field.type === 'radio'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
 				<Fields.VSFFancyRadio
 					v-if="field.type === 'fancyRadio'"
 					v-model="modelValue[field.name]"
@@ -34,20 +50,37 @@
 					@update:modelValue="callback()"
 				/>
 
-				<Fields.VSFCheckbox
-					v-if="field.type === 'checkbox'"
+				<!-- ================================================== Select -->
+				<Fields.VSFSelect
+					v-if="field.type === 'select'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 				/>
 
-				<Fields.VSFRadio
-					v-if="field.type === 'radio'"
+				<Fields.VSFAutocomplete
+					v-if="field.type === 'autocomplete'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 				/>
 
+				<Fields.VSFCombobox
+					v-if="field.type === 'combobox'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
+				<!-- ================================================== Switch -->
+				<Fields.VSFSwitch
+					v-if="field.type === 'switch'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
+				<!-- ================================================== Text Field -->
 				<Fields.VSFTextField
 					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number'"
 					v-model="modelValue[field.name]"
@@ -56,6 +89,15 @@
 					@update:modelValue="callback()"
 				/>
 
+				<!-- ========================= Color Field -->
+				<Fields.VSFColorField
+					v-if="field.type === 'color'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+				/>
+
+				<!-- ========================= File Input -->
 				<Fields.VSFFileInput
 					v-if="field.type === 'file'"
 					v-model="modelValue[field.name]"
@@ -63,6 +105,7 @@
 					:settings="settings"
 				/>
 
+				<!-- ================================================== Textarea -->
 				<Fields.VSFTextarea
 					v-if="field.type === 'textarea'"
 					v-model="modelValue[field.name]"
@@ -70,20 +113,8 @@
 					:settings="settings"
 				/>
 
-				<!-- TODO: Select Field -->
-				<!-- TODO: Color Picker Field -->
 				<!-- TODO: User Select Field -->
-				<!-- TODO: Autocomplete Field -->
 				<!-- TODO: Date Field -->
-				<!-- TODO: Combobox Field (tbd) -->
-
-				<Fields.VSFSwitch
-					v-if="field.type === 'switch'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
 			</v-container>
 		</template>
 	</div>

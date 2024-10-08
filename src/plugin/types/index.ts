@@ -26,6 +26,8 @@ export interface KeyStringAny<T = any> {
 	[key: string]: T;
 };
 
+
+// TODO: Need to remove the "type" for some fields as they are not valid field types //
 export interface Field {
 	color?: string;
 	dateFormat?: string;
@@ -38,7 +40,22 @@ export interface Field {
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean;
-	type?: 'checkbox' | 'fancyRadio' | 'file' | 'email' | 'hidden' | 'number' | 'radio' | 'select' | 'switch' | 'textarea' | 'text' | 'textField' | undefined;
+	type?: 'autocomplete' |
+	'checkbox' |
+	'color' |
+	'combobox' |
+	'fancyRadio' |
+	'file' |
+	'email' |
+	'hidden' |
+	'number' |
+	'radio' |
+	'select' |
+	'switch' |
+	'textarea' |
+	'text' |
+	'textField' |
+	undefined;
 	when?: (value: any) => boolean;
 	validate?: (field: Field, value: any) => boolean;
 	validateOn?: string;
