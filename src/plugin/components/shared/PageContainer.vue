@@ -160,14 +160,14 @@
 <script setup lang="ts">
 import * as Fields from '../fields/index';
 import type {
-	FormSettings,
 	Page,
+	Settings,
 } from '../../types/index';
 
 export interface FieldLabelProps {
 	index: number;
 	page: Page;
-	settings: FormSettings;
+	settings: Settings;
 }
 
 const { index, page } = defineProps<FieldLabelProps>();

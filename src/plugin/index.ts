@@ -8,10 +8,8 @@ import FieldLabel from './components/shared/FieldLabel.vue';
 export const globalOptions = Symbol();
 
 export function createVStepperForm(options: GlobalOptions = {
-	settings: {
-		color: 'primary',
-		density: 'default' as const,
-	},
+	// color: 'primary',
+	// density: 'default' as const,
 }) {
 	const install = (app: App) => {
 		app.provide(globalOptions, options);

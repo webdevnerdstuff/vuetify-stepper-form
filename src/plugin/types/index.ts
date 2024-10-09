@@ -8,6 +8,10 @@ import type {
 	// VIcon,
 	VRadio,
 	VSelect,
+	VStepper,
+	VStepperItem,
+	// VStepperActions,
+	VStepperWindowItem,
 	VSwitch,
 	VTextField,
 	VTextarea,
@@ -74,57 +78,84 @@ export interface Field {
 	labelPositionLeft?: boolean;		// ? Checkboxes
 }
 
-export interface FormSettings {
-	color?: string;
-	density?: GlobalDensity;
-	hideDetails?: boolean;
-	validateOn?: Field['validateOn'];
-	variant?: string;
+
+// ! TS Issue with this, possible bug makes it not work ! //
+// export interface VStepperProps extends Pick<VStepper,
+// 	'altLabels' |
+// 	'bgColor' |
+// 	'border' |
+// 	'disabled' |
+// 	'editable' |
+// 	'editIcon' |
+// 	'nextText' |
+// 	'prevText' |
+// 	'rounded' |
+// 	'width'
+// > { }
+
+export interface VStepperProps {
+	altLabels?: VStepper['altLabels'];
+	bgColor?: VStepper['bgColor'];
+	border?: VStepper['border'];
+	disabled?: VStepper['disabled'];
+	editIcon?: VStepper['editIcon'];
+	editable?: VStepper['editable'];
+	elevation?: VStepper['elevation'];
+	flat?: VStepper['flat'];
+	height?: VStepper['height'];
+	hideActions?: VStepper['hideActions'];
+	maxHeight?: VStepper['maxHeight'];
+	maxWidth?: VStepper['maxWidth'];
+	minHeight?: VStepper['minHeight'];
+	minWidth?: VStepper['minWidth'];
+	nextText?: VStepper['nextText'];
+	prevText?: VStepper['prevText'];
+	rounded?: VStepper['rounded'];
+	selectedClass?: VStepper['selectedClass'];
+	theme?: VStepper['theme'];
+	tile?: VStepper['tile'];
+	width?: VStepper['width'];
 }
 
-export interface WelcomeScreen {
-	attachment?: object;
-	ref?: string;
-	title: string;
-	properties?: {
-		buttonText?: string;
-		description?: string;
-		showButton?: boolean;
-	};
+interface VStepperWindowItemProps {
+	transition?: VStepperWindowItem['transition'];
 }
 
-export interface Page {
-	fields: Field[];
-	title?: string;
-	text?: string;
-}
 
 // -------------------------------------------------- Props //
-export interface Props {
-	fields?: Field[];
-	hidden?: Field[];
-	settings?: FormSettings;
-	title?: string;
-	welcomeScreens?: WelcomeScreen[];
+export interface Props extends VStepperProps, VStepperWindowItemProps {
+	// Required //
 	pages: Page[];
+
+	// Optional //
+	// TODO: Determine a better prop name for canReview //
+	canReview?: boolean;
+	color?: string;
+	density?: GlobalDensity;
+	direction?: string;
+	hideDetails?: boolean;
+	title?: string;
+	validateOn?: Field['validateOn'];
+	variant?: string;
+	width?: string;
 }
 
 export interface GlobalOptions extends Partial<Props> { }
+export interface Settings extends Partial<Omit<Props, 'pages'>> { }
 
 
 // -------------------------------------------------- Components //
 export interface SharedProps {
 	field: Field;
-	settings?: Props['settings'];
+	settings?: Settings;
 }
 
-// -------------------------------------------------- Composables //
-export interface UseComposableName {
-	(
-		options: {
-			foo?: string;
-		}
-	): Props;
+export interface Page {
+	fields: Field[];
+	isReview?: boolean;
+	editable?: VStepperItem['editable'];
+	title?: string;
+	text?: string;
 }
 
 // ------------------------- Helpers //

@@ -74,10 +74,10 @@ const props = defineProps<VSFFancyRadioProps>();
 const { field, settings } = toRefs(props);
 
 
-console.group('VSFFancyRadio');
-console.log('field', field);
-console.log('settings', settings);
-console.groupEnd();
+// console.group('VSFFancyRadio');
+// console.log('field', field);
+// console.log('settings', settings);
+// console.groupEnd();
 
 
 const densityHeight = {
@@ -91,7 +91,7 @@ const densityHeight = {
 const fieldVariant = ref(field.value?.variant ?? 'filled');
 
 const fieldColor = computed(() => {
-	let colorAdjustment = field.value?.color ?? settings.value?.color ?? 'primary';
+	let colorAdjustment = field.value?.color ?? settings.value?.color;
 	colorAdjustment = colorAdjustment === 'default' || colorAdjustment === 'surface' ? 'on-surface' : colorAdjustment;
 
 	return colorAdjustment;
