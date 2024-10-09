@@ -3,7 +3,7 @@
 		:class="containerClasses"
 		:style="containerStyle"
 	>
-		<v-container>
+		<v-container fluid>
 			<v-row v-if="title">
 				<v-col>
 					<h2>
@@ -13,110 +13,62 @@
 			</v-row>
 		</v-container>
 
-		<template
-			v-for="field in fields"
-			:key="field.name"
+		<v-container
+			class="d-flex flex-column justify-center align-center"
+			fluid
 		>
-			<input
-				v-if="field.type === 'hidden' || !field.type"
-				v-model="modelValue[field.name]"
-				:name="field.name"
-				type="hidden"
-			/>
+			<v-stepper
+				v-model="stepperModel"
+				:color="settings.color || 'primary'"
+				editable
+				width="100%"
+			>
+				<template #default="{ prev, next }">
+					<v-stepper-header>
+						<template
+							v-for="(page, i) in pages"
+							:key="`${i}-step`"
+						>
+							<v-stepper-item
+								:color="settings.color || 'primary'"
+								:title="page.title"
+								:value="getIndex(i)"
+							></v-stepper-item>
 
-			<v-container v-else>
+							<v-divider
+								v-if="getIndex(i) !== Object.keys(pages).length"
+								:key="getIndex(i)"
+							></v-divider>
+						</template>
+					</v-stepper-header>
 
-				<!-- ================================================== Checkbox -->
-				<Fields.VSFCheckbox
-					v-if="field.type === 'checkbox'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
+					<v-stepper-window>
+						<v-stepper-window-item
+							v-for="page, i in pages"
+							:key="`${page}-content`"
+							reverse
+							transition="fade-transition"
+							:value="getIndex(i)"
+						>
+							<v-container>
+								<PageContainer
+									v-model="modelValue"
+									:index="getIndex(i)"
+									:page="page"
+									:settings="settings"
+								/>
+							</v-container>
+						</v-stepper-window-item>
+					</v-stepper-window>
 
-				<!-- ================================================== Radio & Fancy Radio -->
-				<Fields.VSFRadio
-					v-if="field.type === 'radio'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<Fields.VSFFancyRadio
-					v-if="field.type === 'fancyRadio'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@update:modelValue="callback()"
-				/>
-
-				<!-- ================================================== Select -->
-				<Fields.VSFSelect
-					v-if="field.type === 'select'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<Fields.VSFAutocomplete
-					v-if="field.type === 'autocomplete'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<Fields.VSFCombobox
-					v-if="field.type === 'combobox'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<!-- ================================================== Switch -->
-				<Fields.VSFSwitch
-					v-if="field.type === 'switch'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<!-- ================================================== Text Field -->
-				<Fields.VSFTextField
-					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@update:modelValue="callback()"
-				/>
-
-				<!-- ========================= Color Field -->
-				<Fields.VSFColorField
-					v-if="field.type === 'color'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<!-- ========================= File Input -->
-				<Fields.VSFFileInput
-					v-if="field.type === 'file'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<!-- ================================================== Textarea -->
-				<Fields.VSFTextarea
-					v-if="field.type === 'textarea'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-				/>
-
-				<!-- TODO: User Select Field -->
-				<!-- TODO: Date Field -->
-			</v-container>
-		</template>
+					<v-stepper-actions
+						:disabled="foobar"
+						@click:next="next"
+						@click:prev="prev"
+					></v-stepper-actions>
+				</template>
+			</v-stepper>
+		</v-container>
 	</div>
 </template>
 
@@ -130,9 +82,9 @@ import {
 	useContainerStyle,
 } from './composables/styles';
 import componentEmits from './utils/emits';
-import * as Fields from './components/index';
-import { globalOptions } from '@/plugin/';
+import { globalOptions } from './';
 // import { watchDeep } from '@vueuse/core';
+import PageContainer from './components/shared/PageContainer.vue';
 
 
 
@@ -141,16 +93,15 @@ const attrs = useAttrs();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject(globalOptions, {});
-// console.log('injectedOptions', injectedOptions);
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), { ...AllProps });
 
-const { fields } = toRefs(props);
-// console.log('AllProps', props);
-// console.log('props', AllProps);
+
 const stepperSettings = reactive({ ...attrs, ...props, ...injectedOptions });
-const { title } = toRefs(props);
+const { fields, title } = toRefs(props);
+
+
 
 const settings = ref({
 	...stepperSettings.settings,
@@ -164,11 +115,22 @@ const settings = ref({
 // -------------------------------------------------- Data #
 const modelValue = defineModel<any>();
 
+const stepperModel = ref(1);
+
+const foobar = computed(() => {
+	return stepperModel.value === 1 ? 'prev' : stepperModel.value === Object.keys(props.pages).length ? 'next' : undefined;
+});
+
+
 
 onMounted(() => {
 	callback();
 });
 
+
+function getIndex(i: number): number {
+	return i + 1;
+}
 
 
 // watch(() => fields.value, () => {

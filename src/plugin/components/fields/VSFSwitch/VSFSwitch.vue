@@ -17,8 +17,8 @@
 import type {
 	VSFSwitchProps,
 } from './index';
-import FieldLabel from '@/plugin/components/shared/FieldLabel.vue';
-import { useBindingSettings } from '@/plugin/composables/bindings';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { useBindingSettings } from '../../../composables/bindings';
 
 
 const modelValue = defineModel<any>();

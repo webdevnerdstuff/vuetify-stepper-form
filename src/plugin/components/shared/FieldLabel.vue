@@ -9,8 +9,10 @@
 
 
 <script lang="ts" setup>
-const { label, required = false } = defineProps<{
+export interface FieldLabelProps {
 	label: string | undefined;
-	required?: boolean;
-}>();
+	required: boolean | undefined;
+}
+
+const { label, required = false } = defineProps<FieldLabelProps>();
 </script>

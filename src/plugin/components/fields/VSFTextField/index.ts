@@ -10,6 +10,7 @@ interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
 	density?: VTextField['density'];
+	hideDetails?: VTextField['hideDetails'];
 	variant?: VTextField['variant'];
 }
 

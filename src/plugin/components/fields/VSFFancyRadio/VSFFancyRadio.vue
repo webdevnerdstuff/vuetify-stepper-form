@@ -65,7 +65,7 @@
 import type {
 	VSFFancyRadioProps,
 } from './index';
-import FieldLabel from '@/plugin/components/shared/FieldLabel.vue';
+import FieldLabel from '../../shared/FieldLabel.vue';
 
 
 const modelValue = defineModel<any>();

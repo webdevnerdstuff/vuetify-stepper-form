@@ -20,8 +20,8 @@
 import type {
 	VSFTextFieldProps,
 } from './index';
-import FieldLabel from '@/plugin/components/shared/FieldLabel.vue';
-import { useBindingSettings } from '@/plugin/composables/bindings';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { useBindingSettings } from '../../../composables/bindings';
 
 
 const modelValue = defineModel<any>();
@@ -74,6 +74,8 @@ const bindSettings = computed(() => ({
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
 	error: hasError.value,
+	hideDetails: field.hideDetails || settings?.hideDetails,
+	variant: field.variant || settings?.variant,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value));

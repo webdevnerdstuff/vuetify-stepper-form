@@ -18,8 +18,8 @@
 import type {
 	VSFColorFieldProps,
 } from './index';
-import FieldLabel from '@/plugin/components/shared/FieldLabel.vue';
-import { useBindingSettings } from '@/plugin/composables/bindings';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { useBindingSettings } from '../../../composables/bindings';
 import VColorField from '@wdns/vuetify-color-field';
 
 

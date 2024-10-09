@@ -29,6 +29,10 @@ export interface KeyStringAny<T = any> {
 
 // TODO: Need to remove the "type" for some fields as they are not valid field types //
 export interface Field {
+	// Required //
+	name: string;
+
+	// Optional //
 	color?: string;
 	dateFormat?: string;
 	dateSeparator?: string;
@@ -37,24 +41,29 @@ export interface Field {
 	error?: boolean;
 	hidden?: boolean;
 	label?: string;
-	name: string;
 	options?: KeyStringAny;
-	required?: boolean;
+	required?: boolean | undefined;
+	text?: string;
 	type?: 'autocomplete' |
 	'checkbox' |
 	'color' |
 	'combobox' |
+	'custom' |
+	'email' |
 	'fancyRadio' |
 	'file' |
-	'email' |
 	'hidden' |
 	'number' |
+	'password' |
 	'radio' |
 	'select' |
+	'submit' |
 	'switch' |
-	'textarea' |
+	'tel' |
 	'text' |
 	'textField' |
+	'textarea' |
+	'url' |
 	undefined;
 	when?: (value: any) => boolean;
 	validate?: (field: Field, value: any) => boolean;
@@ -68,7 +77,9 @@ export interface Field {
 export interface FormSettings {
 	color?: string;
 	density?: GlobalDensity;
+	hideDetails?: boolean;
 	validateOn?: Field['validateOn'];
+	variant?: string;
 }
 
 export interface WelcomeScreen {
@@ -82,14 +93,20 @@ export interface WelcomeScreen {
 	};
 }
 
+export interface Page {
+	fields: Field[];
+	title?: string;
+	text?: string;
+}
+
 // -------------------------------------------------- Props //
 export interface Props {
-	fields: Field[];
+	fields?: Field[];
 	hidden?: Field[];
 	settings?: FormSettings;
 	title?: string;
 	welcomeScreens?: WelcomeScreen[];
-	pages: object[];
+	pages: Page[];
 }
 
 export interface GlobalOptions extends Partial<Props> { }
