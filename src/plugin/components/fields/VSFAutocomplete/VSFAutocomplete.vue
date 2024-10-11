@@ -32,13 +32,8 @@ const { field, settings } = defineProps<VSFAutocompleteProps>();
 // Auto Paging //
 useAutoPage({ emit, field, modelValue, settings });
 
-// console.group('VSFAutocomplete');
-// console.log('field', field);
-// console.log('settings', settings);
-// console.groupEnd();
 
-
-// Bound Settings //
+// -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings?.color,

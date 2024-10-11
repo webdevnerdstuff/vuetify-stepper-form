@@ -30,13 +30,8 @@ const { field, settings } = defineProps<VSFSwitchProps>();
 // Auto Paging //
 useAutoPage({ emit, field, modelValue, settings });
 
-// console.group('VSFSwitch');
-// console.log('field', field);
-// console.log('settings', settings);
-// console.groupEnd();
 
-
-// Bound Settings //
+// -------------------------------------------------- Bound Settings //
 const bindSettings = reactive({
 	...field,
 	color: field.color || settings?.color,

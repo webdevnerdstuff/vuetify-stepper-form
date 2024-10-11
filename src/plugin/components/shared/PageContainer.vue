@@ -57,7 +57,6 @@
 					:field="field"
 					:settings="settings"
 					@next="nextPage"
-					@update:modelValue="callback()"
 				/>
 
 				<!-- ================================================== Select -->
@@ -100,7 +99,6 @@
 					:field="field"
 					:settings="settings"
 					@next="nextPage"
-					@update:modelValue="callback()"
 				/>
 
 				<!-- ========================= Color Field -->
@@ -191,10 +189,6 @@ console.groupEnd();
 
 const modelValue = defineModel<any>();
 
-
-function callback() {
-	console.log('callback');
-}
 
 function nextPage(field: Field) {
 	const fieldIndex = page.fields.findIndex((f) => f.name === field.name);

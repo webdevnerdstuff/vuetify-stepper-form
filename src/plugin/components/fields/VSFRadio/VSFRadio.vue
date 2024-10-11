@@ -67,12 +67,6 @@ const { field, settings } = defineProps<VSFRadioProps>();
 // Auto Paging //
 useAutoPage({ emit, field, modelValue, settings });
 
-// console.group('VSFRadio');
-// console.log('field', field);
-// console.log('settings', settings);
-// console.groupEnd();
-
-
 const hasErrors = computed(() => {
 	let err = field?.error;
 
@@ -81,7 +75,7 @@ const hasErrors = computed(() => {
 	return err;
 });
 
-// Bound Settings //
+// -------------------------------------------------- Bound Settings //
 const bindSettings = reactive({
 	...field,
 	color: field.color || settings?.color,

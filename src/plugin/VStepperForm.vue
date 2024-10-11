@@ -62,6 +62,7 @@
 										:index="getIndex(i)"
 										:page="page"
 										:settings="settings"
+										@callback="callbacks"
 										@next="validatePage(next)"
 									/>
 									<PageReviewContainer
@@ -110,6 +111,7 @@
 import { AllProps } from './utils/props';
 import { useDisplay } from 'vuetify';
 import {
+	Field,
 	Page,
 	Props,
 	Settings,
@@ -124,7 +126,7 @@ import { globalOptions } from './';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import { useMergeProps } from './composables/helpers';
-// import { watchDeep } from '@vueuse/core';
+import { watchDeep } from '@vueuse/core';
 
 
 const attrs = useAttrs();
@@ -136,10 +138,9 @@ const injectedOptions = inject(globalOptions, {});
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 
-
 const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
 const { direction, pages, title, width } = toRefs(props);
-
+const originalPages = JSON.parse(JSON.stringify(pages.value));
 
 const settings = ref<Settings>({
 	altLabels: stepperProps.altLabels,
@@ -183,24 +184,30 @@ console.log('settings.value', settings.value);
 
 // -------------------------------------------------- Mounted //
 onMounted(() => {
-	// callback();
+	whenCallback();
+
 	summaryColumnErrorCheck();
 });
 
 
 // -------------------------------------------------- Data //
 const modelValue = defineModel<any>();
-const stepperModel = ref(1);
-const { sm } = useDisplay();
-const transition = computed(() => stepperProps.transition);
-const formCompleted = ref(false);
 
+watchDeep(modelValue, () => {
+	callbacks();
+});
+
+const stepperModel = ref(1);
 
 watch(stepperModel, () => {
 	if (stepperModel.value === pages.value.length) {
 		formCompleted.value = true;
 	}
 });
+
+const { sm } = useDisplay();
+const transition = computed(() => stepperProps.transition);
+const formCompleted = ref(false);
 
 
 // -------------------------------------------------- Stepper Action //
@@ -265,29 +272,33 @@ function validatePage(event: () => void): void {
 	nextPage(event);
 }
 
-// watch(() => fields.value, () => {
-// 	console.log('xxxxxxxxxxxxx fields update', fields.value);
-// }), {
-// 	deep: true,
-// };
-
-// watchDeep(fields.value, () => {
-// 	console.log('xxxxxxxxxxxxx fields update', fields.value);
-// });
 
 
-// function callback() {
-// 	Object.values(fields.value).forEach((field) => {
-// 		if (field.when) {
-// 			const response = field.when(modelValue.value);
-// 			const fieldIdx = fields.value.findIndex((f) => f.name === field.name);
 
-// 			if (fields.value[fieldIdx]) {
-// 				fields.value[fieldIdx].disabled = response;
-// 			}
-// 		}
-// 	});
-// }
+function callbacks() {
+	whenCallback();
+}
+
+
+
+
+
+function whenCallback() {
+	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
+		Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
+			if (field.when) {
+				const enabledField: boolean = field.when(modelValue.value);
+				const indexPage = pages.value[pageIdx];
+
+				if (indexPage?.fields[fieldIdx]) {
+					indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';
+
+					// TODO: Update validation //
+				}
+			}
+		});
+	});
+}
 
 
 // ------------------------------------------------ Submit Form //

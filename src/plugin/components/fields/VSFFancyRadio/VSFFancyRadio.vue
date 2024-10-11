@@ -74,7 +74,7 @@ const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFFancyRadioProps>();
 
-console.log('field', field);
+// console.log('field', field);
 
 
 // Auto Paging //

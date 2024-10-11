@@ -74,15 +74,8 @@ const { field, settings } = defineProps<VSFCheckboxProps>();
 // Auto Paging //
 useAutoPage({ emit, field, modelValue, settings });
 
-// console.group('VSFCheckbox');
-// console.log('field', field);
-// console.log('settings', settings);
-// console.groupEnd();
 
-
-
-
-// Bound Settings //
+// -------------------------------------------------- Bound Settings //
 const bindSettings = reactive({
 	...field,
 	color: field.color || settings?.color,
@@ -93,7 +86,7 @@ const bindSettings = reactive({
 const boundSettings = computed(() => useBindingSettings(bindSettings));
 
 
-// Styles //
+// -------------------------------------------------- Styles //
 const inputControlContainerStyle = computed<CSSProperties>(() => {
 	const useInlineSpacing = field.labelPositionLeft;
 
@@ -105,7 +98,7 @@ const inputControlContainerStyle = computed<CSSProperties>(() => {
 });
 
 
-// Inline Checkboxes //
+// -------------------------------------------------- Inline Checkboxes //
 const checkboxContainerStyle = computed<CSSProperties>(() => ({
 	'display': field.inline ? 'flex' : undefined,
 }));
@@ -120,8 +113,6 @@ const checkboxStyle = computed<CSSProperties>(() => {
 
 	return styles as CSSProperties;
 });
-
-
 </script>
 
 <style lang="scss" scoped></style>
