@@ -39,6 +39,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<!-- ================================================== Radio & Fancy Radio -->
@@ -47,6 +48,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<Fields.VSFFancyRadio
@@ -54,6 +56,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 					@update:modelValue="callback()"
 				/>
 
@@ -63,6 +66,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<Fields.VSFAutocomplete
@@ -70,6 +74,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<Fields.VSFCombobox
@@ -77,6 +82,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<!-- ================================================== Switch -->
@@ -93,6 +99,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 					@update:modelValue="callback()"
 				/>
 
@@ -102,6 +109,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<!-- ========================= File Input -->
@@ -110,6 +118,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					@next="nextPage"
 				/>
 
 				<!-- ================================================== Textarea -->
@@ -160,9 +169,11 @@
 <script setup lang="ts">
 import * as Fields from '../fields/index';
 import type {
+	Field,
 	Page,
 	Settings,
 } from '../../types/index';
+
 
 export interface FieldLabelProps {
 	index: number;
@@ -170,12 +181,12 @@ export interface FieldLabelProps {
 	settings: Settings;
 }
 
+const emit = defineEmits(['next']);
 const { index, page } = defineProps<FieldLabelProps>();
 
 console.group('PageContainer');
 console.log('index', index);
 console.log('page', page);
-
 console.groupEnd();
 
 const modelValue = defineModel<any>();
@@ -183,6 +194,15 @@ const modelValue = defineModel<any>();
 
 function callback() {
 	console.log('callback');
+}
+
+function nextPage(field: Field) {
+	const fieldIndex = page.fields.findIndex((f) => f.name === field.name);
+
+	// ? Before advancing to the next page, check if the current field is the last field on the page //
+	if (fieldIndex === page.fields.length - 1) {
+		emit('next');
+	}
 }
 </script>
 

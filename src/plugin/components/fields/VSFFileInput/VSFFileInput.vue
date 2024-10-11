@@ -20,10 +20,16 @@ import type {
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useAutoPage } from '../../../composables/helpers';
 
 
+const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VFileInputProps>();
+
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
 
 // console.group('VSFFileInput');
 // console.log('field', field);

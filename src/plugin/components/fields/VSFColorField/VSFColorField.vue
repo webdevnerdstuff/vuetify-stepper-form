@@ -21,10 +21,15 @@ import type {
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import VColorField from '@wdns/vuetify-color-field';
+import { useAutoPage } from '../../../composables/helpers';
 
 
+const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFColorFieldProps>();
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
 
 // console.group('VSFTextarea');
 // console.log('field', field);

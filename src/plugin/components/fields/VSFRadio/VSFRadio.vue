@@ -56,15 +56,21 @@ import type {
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useAutoPage } from '../../../composables/helpers';
 
 
+const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFRadioProps>();
 
-console.group('VSFRadio');
-console.log('field', field);
-console.log('settings', settings);
-console.groupEnd();
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
+
+// console.group('VSFRadio');
+// console.log('field', field);
+// console.log('settings', settings);
+// console.groupEnd();
 
 
 const hasErrors = computed(() => {

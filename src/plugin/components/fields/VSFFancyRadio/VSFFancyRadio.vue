@@ -66,13 +66,19 @@ import type {
 	VSFFancyRadioProps,
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
+import { useAutoPage } from '../../../composables/helpers';
 
+
+const emit = defineEmits(['next']);
 
 const modelValue = defineModel<any>();
-const props = defineProps<VSFFancyRadioProps>();
+const { field, settings } = defineProps<VSFFancyRadioProps>();
 
-const { field, settings } = toRefs(props);
+console.log('field', field);
 
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
 
 // console.group('VSFFancyRadio');
 // console.log('field', field);
@@ -88,21 +94,21 @@ const densityHeight = {
 	oversized: '72px',
 };
 
-const fieldVariant = ref(field.value?.variant ?? 'filled');
+const fieldVariant = ref(field?.variant ?? 'filled');
 
 const fieldColor = computed(() => {
-	let colorAdjustment = field.value?.color ?? settings.value?.color;
+	let colorAdjustment = field?.color ?? settings?.color;
 	colorAdjustment = colorAdjustment === 'default' || colorAdjustment === 'surface' ? 'on-surface' : colorAdjustment;
 
 	return colorAdjustment;
 });
 
 const fieldHeight = computed(() => {
-	if (field.value?.height) {
-		return field.value?.height;
+	if (field?.height) {
+		return field?.height;
 	}
 
-	return field.value?.density ? densityHeight[field.value?.density] : densityHeight['default'];
+	return field?.density ? densityHeight[field?.density] : densityHeight['default'];
 });
 
 // -------------------------------------------------- Styles //
@@ -118,7 +124,7 @@ const fieldStyle = computed<CSSProperties>(() => {
 const labelStyle = computed<CSSProperties>(() => {
 	const styles = {
 		'min-width': '100px',
-		'width': field.value?.width ?? '100px',
+		'width': field?.width ?? '100px',
 	};
 
 	return styles;
@@ -160,8 +166,8 @@ const fieldClasses = computed(() => {
 
 const labelClasses = computed(() => {
 	return {
-		'pa-1': field.value?.density === 'compact',
-		'pa-4': field.value?.density !== 'compact',
+		'pa-1': field?.density === 'compact',
+		'pa-4': field?.density !== 'compact',
 		'vsf-fancy-radio__label': true,
 		[`vsf-fancy-radio__label--variant-${fieldVariant.value}`]: true,
 		// [`vsf-fancy-radio__label-variant-${variant}_${isFocused.value}`]: true,

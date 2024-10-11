@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
-import { CSSProperties } from 'vue';
+import { App, CSSProperties } from 'vue';
 import type {
-	// VBtn,
+	VBtn,
 	// VCard,
 	VCheckbox,
 	// VIcon,
@@ -31,52 +31,6 @@ export interface KeyStringAny<T = any> {
 };
 
 
-// TODO: Need to remove the "type" for some fields as they are not valid field types //
-export interface Field {
-	// Required //
-	name: string;
-
-	// Optional //
-	color?: string;
-	dateFormat?: string;
-	dateSeparator?: string;
-	density?: GlobalDensity;
-	disabled?: boolean | ((value: any) => boolean);
-	error?: boolean;
-	hidden?: boolean;
-	label?: string;
-	options?: KeyStringAny;
-	required?: boolean | undefined;
-	text?: string;
-	type?: 'autocomplete' |
-	'checkbox' |
-	'color' |
-	'combobox' |
-	'custom' |
-	'email' |
-	'fancyRadio' |
-	'file' |
-	'hidden' |
-	'number' |
-	'password' |
-	'radio' |
-	'select' |
-	'submit' |
-	'switch' |
-	'tel' |
-	'text' |
-	'textField' |
-	'textarea' |
-	'url' |
-	undefined;
-	when?: (value: any) => boolean;
-	validate?: (field: Field, value: any) => boolean;
-	validateOn?: string;
-
-	inline?: boolean; 							// ? Checkboxes
-	inlineSpacing?: string;					// ? Checkboxes
-	labelPositionLeft?: boolean;		// ? Checkboxes
-}
 
 
 // ! TS Issue with this, possible bug makes it not work ! //
@@ -121,6 +75,13 @@ interface VStepperWindowItemProps {
 	transition?: VStepperWindowItem['transition'];
 }
 
+export interface SummaryColumns {
+	sm?: number | string;
+	md?: number | string;
+	lg?: number | string;
+	xl?: number | string;
+}
+
 
 // -------------------------------------------------- Props //
 export interface Props extends VStepperProps, VStepperWindowItemProps {
@@ -128,34 +89,90 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 	pages: Page[];
 
 	// Optional //
+	autoPage?: boolean;
+	autoPageDelay?: number;
 	// TODO: Determine a better prop name for canReview //
 	canReview?: boolean;
 	color?: string;
 	density?: GlobalDensity;
-	direction?: string;
+	direction?: 'horizontal' | 'vertical';
 	hideDetails?: boolean;
+	navButtonSize?: VBtn['size'];
+	summaryColumns?: SummaryColumns;
 	title?: string;
 	validateOn?: Field['validateOn'];
 	variant?: string;
 	width?: string;
 }
 
-export interface GlobalOptions extends Partial<Props> { }
+export interface PluginOptions extends Partial<Props> { }
 export interface Settings extends Partial<Omit<Props, 'pages'>> { }
 
 
 // -------------------------------------------------- Components //
 export interface SharedProps {
 	field: Field;
-	settings?: Settings;
+	settings: Settings;
 }
 
+// TODO: Need to remove the "type" for some fields as they are not valid field types //
+export interface Field {
+	// Required //
+	name: string;
+
+	// Optional //
+	autoPage?: Props['autoPage'];
+	autoPageDelay?: Props['autoPageDelay'];
+	canReview?: Props['canReview'];
+	color?: Props['color'];
+	// dateFormat?: string;
+	// dateSeparator?: string;
+	density?: Props['density'];
+	disabled?: boolean | ((value: any) => boolean);
+	error?: boolean;
+	hidden?: boolean;
+	label?: string;
+	options?: KeyStringAny;
+	required?: boolean | undefined;
+	text?: string;
+	type?: 'autocomplete' |
+	'checkbox' |
+	'color' |
+	'combobox' |
+	'custom' |
+	'email' |
+	'fancyRadio' |
+	'file' |
+	'hidden' |
+	'number' |
+	'password' |
+	'radio' |
+	'select' |
+	'submit' |
+	'switch' |
+	'tel' |
+	'text' |
+	'textField' |
+	'textarea' |
+	'url' |
+	undefined;
+	when?: (value: any) => boolean;
+	validate?: (field: Field, value: any) => boolean;
+	validateOn?: string;
+
+	inline?: boolean; 							// ? Checkboxes
+	inlineSpacing?: string;					// ? Checkboxes
+	labelPositionLeft?: boolean;		// ? Checkboxes
+}
+
+
 export interface Page {
+	autoPage?: boolean;
+	editable?: VStepperItem['editable'];
 	fields: Field[];
 	isReview?: boolean;
-	editable?: VStepperItem['editable'];
-	title?: string;
 	text?: string;
+	title?: string;
 }
 
 // ------------------------- Helpers //
@@ -168,11 +185,42 @@ export interface UseConvertToUnit {
 	): string | void;
 }
 
+
+export interface UseMergeProps {
+	(
+		A: Record<string, any>,
+		B: Omit<Props, 'pages'>,
+		C: Props
+	): Record<string, any>;
+}
+
+
+export interface UseAutoPage {
+	(
+		options: {
+			emit: {
+				(e: 'next', field: Field): void;
+			},
+			field: Field;
+			modelValue: any;
+			settings: Settings;
+		}
+	): void;
+}
+
 // ------------------------- Classes //
 export interface UseContainerClasses {
 	(
 		options: {
-			isOption?: boolean;
+			direction?: Props['direction'];
+		}
+	): object;
+}
+
+export interface UseStepperContainerClasses {
+	(
+		options: {
+			direction?: Props['direction'];
 		}
 	): object;
 }
@@ -195,3 +243,9 @@ declare module "vue" {
 		VStepperForm: typeof VStepperForm;
 	}
 }
+
+declare function createVStepperForm(vuetify?: PluginOptions): {
+	install: (app: App) => void;
+};
+
+export { createVStepperForm };

@@ -1,22 +1,21 @@
 <template>
 	<div
-		class="d-flex flex-column justify-center align-center"
 		:class="containerClasses"
 		:style="containerStyle"
 	>
-		<div :style="formStyle">
+		<div :style="formContainerStyle">
 			<v-container fluid>
 				<v-row v-if="title">
 					<v-col>
 						<h2>
-							{{ title }}
+							{{ title }} {{ formCompleted }}
 						</h2>
 					</v-col>
 				</v-row>
 			</v-container>
 
 			<v-container
-				class="d-flex flex-column justify-center align-center"
+				:class="stepperContainerClasses"
 				fluid
 			>
 				<v-stepper
@@ -31,9 +30,10 @@
 								v-for="(page, i) in pages"
 								:key="`${i}-step`"
 							>
-								<!-- TODO: Make these disabled if last page and canReview is false -->
 								<v-stepper-item
 									:color="settings.color"
+									:disabled="headerItemDisabled(page)"
+									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
 									:editable="page.editable"
 									elevation="0"
 									:title="page.title"
@@ -62,14 +62,15 @@
 										:index="getIndex(i)"
 										:page="page"
 										:settings="settings"
+										@next="validatePage(next)"
 									/>
 									<PageReviewContainer
 										v-else
 										v-model="modelValue"
-										:canReview="canReview"
 										:page="page"
 										:pages="pages"
 										:settings="settings"
+										:summary-columns="summaryColumns"
 										@goToQuestion="stepperModel = $event"
 										@submit="submitForm"
 									/>
@@ -82,6 +83,7 @@
 								<v-btn
 									:color="settings.color"
 									:disabled="((stepperActionsDisabled === 'next' || settings.disabled) as boolean)"
+									:size="navButtonSize"
 									@click="validatePage(next)"
 								/>
 							</template>
@@ -89,7 +91,8 @@
 							<template #prev>
 								<v-btn
 									:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
-									@click="goToPreviousPage(prev)"
+									:size="navButtonSize"
+									@click="previousPage(prev)"
 								/>
 							</template>
 						</v-stepper-actions>
@@ -102,52 +105,50 @@
 </template>
 
 <script setup lang="ts">
-import {
-	VStepper,
-} from 'vuetify/components';
-import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
+// import {	VStepper } from 'vuetify/components';
+// import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { AllProps } from './utils/props';
 import { useDisplay } from 'vuetify';
 import {
+	Page,
 	Props,
 	Settings,
+	SummaryColumns,
 } from '@/plugin/types';
 import {
 	useContainerClasses,
+	useStepperContainerClasses,
 } from './composables/classes';
 import componentEmits from './utils/emits';
 import { globalOptions } from './';
-// import { watchDeep } from '@vueuse/core';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
-
+import { useMergeProps } from './composables/helpers';
+// import { watchDeep } from '@vueuse/core';
 
 
 const attrs = useAttrs();
-const slots = useSlots();
+// const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject(globalOptions, {});
 
+
 // -------------------------------------------------- Props //
-const props = withDefaults(defineProps<Props>(), { ...AllProps });
-// console.log('props', props);
+const props = withDefaults(defineProps<Props>(), AllProps);
 
 
-const stepperProps = reactive({ ...attrs, ...injectedOptions, ...props });
-const { pages, title, width } = toRefs(props);
-
-
-
-const StepperComponent = markRaw(props.direction === 'vertical' ? VStepperVertical : VStepper);
-
-console.log('StepperComponent', StepperComponent);
+const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
+const { direction, pages, title, width } = toRefs(props);
 
 
 const settings = ref<Settings>({
 	altLabels: stepperProps.altLabels,
+	autoPage: stepperProps.autoPage,
+	autoPageDelay: stepperProps.autoPageDelay,
 	bgColor: stepperProps.bgColor,
 	border: stepperProps.border,
-	color: stepperProps.color,
+	canReview: stepperProps.canReview,
+	color: stepperProps.color || 'primary',
 	density: stepperProps.density,
 	disabled: stepperProps.disabled,
 	editIcon: stepperProps.editIcon,
@@ -175,68 +176,59 @@ const settings = ref<Settings>({
 // console.log('stepperProps', stepperProps);
 console.log('settings.value', settings.value);
 
+
+// const StepperComponent = markRaw(props.direction === 'vertical' ? VStepperVertical : VStepper);
+// console.log('StepperComponent', StepperComponent);
+
+
+// -------------------------------------------------- Mounted //
+onMounted(() => {
+	// callback();
+	summaryColumnErrorCheck();
+});
+
+
+// -------------------------------------------------- Data //
+const modelValue = defineModel<any>();
+const stepperModel = ref(1);
 const { sm } = useDisplay();
 const transition = computed(() => stepperProps.transition);
+const formCompleted = ref(false);
 
 
-
-// const pagesValidation = ref((pages.value)
-// 	.map((_, i) => ({ page: i + 1, valid: false })));
-
-// console.log('pagesValidation', pagesValidation.value);
-
-
-
-function validatePage(event: () => void): void {
-	console.log('validatePage', event);
-
-	console.log('stepperModel', stepperModel.value);
-	nextPage(event);
-}
-
-function nextPage(next: () => void): void {
-	console.log('nextPage', next);
-	next();
-}
+watch(stepperModel, () => {
+	if (stepperModel.value === pages.value.length) {
+		formCompleted.value = true;
+	}
+});
 
 
-// -------------------------------------------------- Data #
-const modelValue = defineModel<any>();
-
-const stepperModel = ref(1);
-
+// -------------------------------------------------- Stepper Action //
 const stepperActionsDisabled = computed(() => {
 	return stepperModel.value === 1 ? 'prev' : stepperModel.value === Object.keys(props.pages).length ? 'next' : undefined;
 });
 
-// TODO: Make this disabled if the page is not editable //
+// TODO: Make this disabled if the previous page is not editable //
 const canReviewPreviousButtonDisabled = computed(() => {
-	console.log('canReviewPreviousButtonDisabled');
+	// console.log('canReviewPreviousButtonDisabled');
 
 	return stepperModel.value === pages.value.length && !props.canReview;
 });
 
-
-const previousButtonDisabled = computed(() => {
-	return stepperModel.value === 1;
-});
-
-console.log('previousButtonDisabled', previousButtonDisabled.value);
-
-
-// watch(() => stepperModel.value, () => {
-// 	console.log('canReviewPreviousButtonDisabled', canReviewPreviousButtonDisabled.value);
-// 	console.group('stepperModel');
-// 	console.log('stepperModel.value', stepperModel.value);
-// 	console.log('pages.value.length ', pages.value.length);
-// 	console.log(stepperModel.value === pages.value.length && !props.canReview);
-// 	console.groupEnd();
-// 	canReviewPreviousButtonDisabled.value = stepperModel.value === pages.value.length && !props.canReview;
+// const previousButtonDisabled = computed(() => {
+// 	return stepperModel.value === 1;
 // });
 
+// console.log('previousButtonDisabled', previousButtonDisabled.value);
 
-function goToPreviousPage(prev: () => void): void {
-	console.log('goToPreviousPage', prev);
+function nextPage(next: () => void): void {
+	console.log('nextPage', next);
+
+	next();
+}
+
+function previousPage(prev: () => void): void {
+	// console.log('previousPage', prev);
 
 	if (canReviewPreviousButtonDisabled.value) {
 		return;
@@ -246,20 +238,32 @@ function goToPreviousPage(prev: () => void): void {
 }
 
 
-// onMounted(() => {
-// 	callback();
-// });
+// TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
+function headerItemDisabled(page: Page): boolean {
+	const totalSteps = Object.keys(pages).length;
+	const lastStep = totalSteps - 1;
 
+	// If you're on the last page
+	if (stepperModel.value === lastStep) {
+		return !page.isReview && (!settings.value.canReview) && (!page.editable && settings.value?.editable !== false);
+	}
 
-function getIndex(i: number): number {
-	return i + 1;
+	return false;
 }
 
-function submitForm() {
-	console.log('VStepperForm submitForm');
-	emit('submit');
-}
 
+// ------------------------------------------------ Callback & Validation //
+// const pagesValidation = ref((pages.value)
+// 	.map((_, i) => ({ page: i + 1, valid: false })));
+
+// console.log('pagesValidation', pagesValidation.value);
+
+function validatePage(event: () => void): void {
+	console.log('validatePage', event);
+
+	console.log('stepperModel', stepperModel.value);
+	nextPage(event);
+}
 
 // watch(() => fields.value, () => {
 // 	console.log('xxxxxxxxxxxxx fields update', fields.value);
@@ -285,20 +289,24 @@ function submitForm() {
 // 	});
 // }
 
-console.log({
-	emit,
-	modelValue,
-	props,
-	slots,
-	stepperProps,
-});
+
+// ------------------------------------------------ Submit Form //
+function submitForm() {
+	console.log('VStepperForm submitForm');
+	emit('submit');
+}
+
 
 // ------------------------------------------------ Class & Styles //
 const containerClasses = computed(() => useContainerClasses({
-	isOption: true,
+	direction: direction.value,
 }));
 
-const containerStyle = computed(() => {
+const stepperContainerClasses = computed(() => useStepperContainerClasses({
+	direction: direction.value,
+}));
+
+const containerStyle = computed<CSSProperties>(() => {
 	const styles = {
 		width: '100%'
 	};
@@ -306,13 +314,41 @@ const containerStyle = computed(() => {
 	return styles;
 });
 
-const formStyle = computed(() => {
+const formContainerStyle = computed<CSSProperties>(() => {
 	const styles = {
 		width: width.value
 	};
 
 	return styles;
 });
+
+
+// -------------------------------------------------- Helpers //
+function getIndex(i: number): number {
+	return i + 1;
+}
+
+
+// ------------------------------------------------ Error Checking //
+function summaryColumnErrorCheck(): void {
+	let err = false;
+
+	if (!props.summaryColumns) {
+		return;
+	}
+
+	Object.values(props.summaryColumns as SummaryColumns).forEach((column) => {
+		if (column < 1 || column > 12) {
+			err = true;
+		}
+	});
+
+	if (!err) {
+		return;
+	}
+
+	throw new Error('Summary column values must be between 1 and 12');
+}
 </script>
 
 <style lang="scss" scoped></style>

@@ -21,12 +21,16 @@ import type {
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useAutoPage } from '../../../composables/helpers';
 
 
+const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFSelectProps>();
 
-// const { field, settings } = toRefs(props);
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
 
 // console.group('VSFTextField');
 // console.log('field', field);

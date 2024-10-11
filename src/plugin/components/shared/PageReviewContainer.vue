@@ -14,40 +14,57 @@
 	</v-row>
 
 	<v-row>
-		<v-col>
+		<v-col
+			v-for="field in allFieldsArray"
+			:key="field.name"
+			:class="columnClasses"
+		>
 			<v-list lines="two">
 				<v-card
-					v-for="field in allFieldsArray"
-					:key="field.name"
 					class="mb-2"
 					color="background"
 				>
 					<v-list-item
-						v-if="canReview"
-						:ripple="canReview"
-						:title="field.label"
-						@click="canReview ? goToQuestion(field) : null"
+						v-if="settings.canReview && checkIfEditable(field)"
+						@click="settings.canReview ? goToQuestion(field) : null"
 					>
-						<v-list-item-subtitle :class="`text-${settings.color}`">
-							{{ modelValue[field.name] }}
+						<v-list-item-title>
+							{{ field.label }}
+						</v-list-item-title>
+
+						<v-list-item-subtitle>
+							<div>
+								{{ field.text }}
+							</div>
+
+							<div :class="`text-${settings.color}`">
+								{{ modelValue[field.name] }}
+							</div>
 						</v-list-item-subtitle>
 					</v-list-item>
 
 					<v-list-item
 						v-else
 						:ripple="false"
-						:title="field.label"
 					>
-						<v-list-item-subtitle :class="`text-${settings.color}`">
-							{{ modelValue[field.name] }}
+						<v-list-item-title>
+							{{ field.label }}
+						</v-list-item-title>
+
+						<v-list-item-subtitle>
+							<div>
+								{{ field.text }}
+							</div>
+
+							<div :class="`text-${settings.color}`">
+								{{ modelValue[field.name] }}
+							</div>
 						</v-list-item-subtitle>
 					</v-list-item>
 				</v-card>
 			</v-list>
-
 		</v-col>
 	</v-row>
-
 
 	<v-row>
 		<v-col>
@@ -64,16 +81,18 @@ import type {
 	Field,
 	Page,
 	Settings,
+	SummaryColumns,
 } from '../../types/index';
 
+
 export interface PageReviewContainerProps {
-	canReview: boolean;
 	page: Page;
 	pages: Page[];
 	settings: Settings;
+	summaryColumns: SummaryColumns | undefined;
 }
 
-const { page, pages } = defineProps<PageReviewContainerProps>();
+const { summaryColumns, page, pages } = defineProps<PageReviewContainerProps>();
 
 const emit = defineEmits([
 	'goToQuestion',
@@ -82,6 +101,8 @@ const emit = defineEmits([
 
 const modelValue = defineModel<any>();
 
+
+// -------------------------------------------------- Flatten page fields //
 const allFieldsArray = ref<Field[]>([]);
 
 Object.values(pages).forEach((p) => {
@@ -90,6 +111,8 @@ Object.values(pages).forEach((p) => {
 	});
 });
 
+
+// -------------------------------------------------- Go to question navigation //
 function goToQuestion(field: Field) {
 	let pageIndex = pages.findIndex(page => page.fields.some(f => f.name === field.name));
 
@@ -99,19 +122,49 @@ function goToQuestion(field: Field) {
 
 	pageIndex = pageIndex + 1;
 
-	emit('goToQuestion', pageIndex);
+	setTimeout(() => {
+		emit('goToQuestion', pageIndex);
+	}, 350);
 }
 
 
-function submitForm() {
-	// console.log('PageViewContainer submitForm');
+function checkIfEditable(field: Field) {
+	const pageIndex = pages.findIndex(page => page.fields.some(f => f.name === field.name));
 
+	return pages[pageIndex]?.editable !== false;
+}
+
+
+// -------------------------------------------------- Answer Columns //
+const columnDefaults = {
+	lg: 12,
+	md: 12,
+	sm: 12,
+	xl: 6,
+};
+
+const columnsMerged = ref<SummaryColumns>({
+	...columnDefaults,
+	...summaryColumns,
+});
+
+const columnClasses = computed(() => {
+	return {
+		'py-0': true,
+		'v-col-12': true,
+		'v-cols': true,
+		[`v-col-sm-${columnsMerged.value.sm}`]: true,
+		[`v-col-md-${columnsMerged.value.md}`]: true,
+		[`v-col-lg-${columnsMerged.value.lg}`]: true,
+		[`v-col-xl-${columnsMerged.value.xl}`]: true,
+	};
+});
+
+
+// -------------------------------------------------- Submit Form //
+function submitForm() {
 	emit('submit');
 }
-
-// function callback() {
-// 	console.log('callback');
-// }
 </script>
 
 <style lang="scss" scoped></style>

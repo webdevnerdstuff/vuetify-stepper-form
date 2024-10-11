@@ -63,15 +63,23 @@ import type {
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useAutoPage } from '../../../composables/helpers';
 
 
+const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFCheckboxProps>();
 
-console.group('VSFCheckbox');
-console.log('field', field);
-console.log('settings', settings);
-console.groupEnd();
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
+
+// console.group('VSFCheckbox');
+// console.log('field', field);
+// console.log('settings', settings);
+// console.groupEnd();
+
+
 
 
 // Bound Settings //

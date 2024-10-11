@@ -22,17 +22,19 @@ import type {
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useAutoPage } from '../../../composables/helpers';
 
 
+const emit = defineEmits(['next']);
 const modelValue = defineModel<any>();
 const { field, settings } = defineProps<VSFTextFieldProps>();
 
-// const { field, settings } = toRefs(props);
+
+// Auto Paging //
+useAutoPage({ emit, field, modelValue, settings });
 
 
 const hasError = ref(false);
-
-
 const validateOn = ref(field.validateOn || settings?.validateOn || 'input');
 
 // console.log(validateOn.value);
