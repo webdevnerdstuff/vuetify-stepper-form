@@ -1,10 +1,10 @@
 <template>
-	<v-text-field
-		v-model="modelValue"
+	<!-- <v-text-field
+		v-model="value"
 		v-bind="boundSettings"
-		:error="hasError"
-		:required="field.required"
-		@blur="checkForErrors('blur')"
+		:error-messages="errorMessage"
+		@blur="onBlur"
+		@change="onChange"
 	>
 		<template #label>
 			<FieldLabel
@@ -12,7 +12,47 @@
 				:required="field.required"
 			/>
 		</template>
-	</v-text-field>
+</v-text-field> -->
+
+	<Form :validation-schema="validateSchema">
+		<Field
+			v-slot="{ errorMessage, validate }"
+			v-model="modelValue"
+			:name="field.name"
+		>
+			<v-text-field
+				v-model="modelValue"
+				v-bind="boundSettings"
+				:error-messages="errorMessage"
+				@blur="onActions('blur', validate)"
+				@change="onActions('change', validate)"
+				@input="onActions('input', validate)"
+			>
+				<template #label>
+					<FieldLabel
+						:label="field.label"
+						:required="field.required"
+					/>
+				</template>
+			</v-text-field>
+		</Field>
+	</Form>
+
+	<!-- <v-text-field
+		v-model="value"
+		v-bind="boundSettings"
+		:error-messages="errorMessage"
+		@blur="onBlur"
+		@change="onChange"
+	>
+		<template #label>
+			<FieldLabel
+				:label="field.label"
+				:required="field.required"
+			/>
+		</template>
+</v-text-field> -->
+
 </template>
 
 
@@ -23,53 +63,53 @@ import type {
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useAutoPage } from '../../../composables/helpers';
+import { Field, Form } from 'vee-validate';
+import type { FieldValidator } from 'vee-validate';
 
 
-const emit = defineEmits(['next']);
+
+const emit = defineEmits(['next', 'validate']);
 const modelValue = defineModel<any>();
-const { field, settings } = defineProps<VSFTextFieldProps>();
+const props = defineProps<VSFTextFieldProps>();
+
+const { field, settings, validateSchema } = props;
 
 
 // Auto Paging //
 useAutoPage({ emit, field, modelValue, settings });
 
 
-const hasError = ref(false);
-const validateOn = ref(field.validateOn || settings?.validateOn || 'input');
 
-// console.log(validateOn.value);
+// const schema = ref({});
+// const validationSchema = ref();
 
-onMounted(() => {
-	checkForErrors(validateOn?.value);
-});
+// useForm({
+// 	validationSchema: schema.value,
+// });
 
-watch(modelValue, () => {
-	if (validateOn?.value === 'input') {
-		checkForErrors('input');
-	}
-});
 
-// TODO: Make this a composable //
-function checkForErrors(param = 'update') {
-	if (validateOn?.value === 'blur' && param !== 'blur') {
-		return;
+async function onActions(action: string, validate: FieldValidator<unknown>) {
+	console.log('onActions', action);
+	if (action === 'blur' && field.validateOn === 'blur') {
+		await validate();
 	}
 
-	if (validateOn?.value === 'input' && param !== 'input') {
-		return;
+	if (action === 'input' && field.validateOn === 'input') {
+		await validate();
 	}
 
-	if (field.validate != null) {
-		hasError.value = !field.validate(field, modelValue.value);
+	if (action === 'change' && field.validateOn === 'change') {
+		await validate();
 	}
 }
+
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
-	error: hasError.value,
+	// error: hasError.value,
 	hideDetails: field.hideDetails || settings?.hideDetails,
 	variant: field.variant || settings?.variant,
 }));

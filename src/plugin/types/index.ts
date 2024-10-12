@@ -134,6 +134,7 @@ export interface Field {
 	label?: string;
 	options?: KeyStringAny;
 	required?: boolean | undefined;
+	rules?: string[];
 	text?: string;
 	type?: 'autocomplete' |
 	'checkbox' |
@@ -158,6 +159,7 @@ export interface Field {
 	undefined;
 	when?: (value: any) => boolean;
 	validate?: (field: Field, value: any) => boolean;
+	validationRules?: string[];
 	validateOn?: string;
 
 	inline?: boolean; 							// ? Checkboxes

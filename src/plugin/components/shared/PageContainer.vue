@@ -98,7 +98,9 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="validateField"
 				/>
 
 				<!-- ========================= Color Field -->
@@ -177,9 +179,10 @@ export interface FieldLabelProps {
 	index: number;
 	page: Page;
 	settings: Settings;
+	validateSchema: any;
 }
 
-const emit = defineEmits(['next']);
+const emit = defineEmits(['next', 'validate']);
 const { index, page } = defineProps<FieldLabelProps>();
 
 console.group('PageContainer');
@@ -188,6 +191,11 @@ console.log('page', page);
 console.groupEnd();
 
 const modelValue = defineModel<any>();
+
+
+function validateField(field: Field) {
+	emit('validate', field);
+}
 
 
 function nextPage(field: Field) {

@@ -47,56 +47,65 @@
 							</template>
 						</v-stepper-header>
 
-						<v-stepper-window>
-							<v-stepper-window-item
-								v-for="page, i in pages"
-								:key="`${i}-content`"
-								:reverse-transition="transition"
-								:transition="transition"
-								:value="getIndex(i)"
-							>
-								<v-container>
-									<PageContainer
-										v-if="!page.isReview"
-										v-model="modelValue"
-										:index="getIndex(i)"
-										:page="page"
-										:settings="settings"
-										@callback="callbacks"
-										@next="validatePage(next)"
-									/>
-									<PageReviewContainer
-										v-else
-										v-model="modelValue"
-										:page="page"
-										:pages="pages"
-										:settings="settings"
-										:summary-columns="summaryColumns"
-										@goToQuestion="stepperModel = $event"
-										@submit="submitForm"
-									/>
-								</v-container>
-							</v-stepper-window-item>
-						</v-stepper-window>
+						<form @submit.prevent="onSubmit">
+							<v-stepper-window>
+								<v-stepper-window-item
+									v-for="page, i in pages"
+									:key="`${i}-content`"
+									:reverse-transition="transition"
+									:transition="transition"
+									:value="getIndex(i)"
+								>
+									<v-container>
+										<PageContainer
+											v-if="!page.isReview"
+											v-model="modelValue"
+											:index="getIndex(i)"
+											:page="page"
+											:settings="settings"
+											:validateSchema="validateSchema"
+											@next="validatePage(next)"
+											@validate="onSubmit"
+										/>
+										<PageReviewContainer
+											v-else
+											v-model="modelValue"
+											:page="page"
+											:pages="pages"
+											:settings="settings"
+											:summary-columns="summaryColumns"
+											@goToQuestion="stepperModel = $event"
+											@submit="submitForm"
+										/>
+									</v-container>
+								</v-stepper-window-item>
+							</v-stepper-window>
 
-						<v-stepper-actions v-if="!settings.hideActions">
-							<template #next>
-								<v-btn
-									:color="settings.color"
-									:disabled="((stepperActionsDisabled === 'next' || settings.disabled) as boolean)"
-									:size="navButtonSize"
-									@click="validatePage(next)"
-								/>
-							</template>
+							<v-stepper-actions v-if="!settings.hideActions">
+								<template #next>
+									<v-btn
+										:color="settings.color"
+										:disabled="((stepperActionsDisabled === 'next' || settings.disabled) as boolean)"
+										:size="navButtonSize"
+										@click="validatePage(next)"
+									/>
+								</template>
 
-							<template #prev>
-								<v-btn
-									:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
-									:size="navButtonSize"
-									@click="previousPage(prev)"
-								/>
-							</template>
-						</v-stepper-actions>
+								<template #prev>
+									<v-btn
+										:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
+										:size="navButtonSize"
+										@click="previousPage(prev)"
+									/>
+								</template>
+							</v-stepper-actions>
+
+							<v-row>
+								<v-col>
+									<v-btn type="submit">Submit</v-btn>
+								</v-col>
+							</v-row>
+						</form>
 					</template>
 				</v-stepper>
 			</v-container>
@@ -127,6 +136,9 @@ import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import { useMergeProps } from './composables/helpers';
 import { watchDeep } from '@vueuse/core';
+import {
+	useGetValidationSchema,
+} from './composables/validation';
 
 
 const attrs = useAttrs();
@@ -178,6 +190,59 @@ const settings = ref<Settings>({
 console.log('settings.value', settings.value);
 
 
+// const { handleSubmit } = useForm({
+// 	validationSchema: toTypedSchema(
+// 		yupObject({
+// 		}),
+// 	),
+// });
+
+// const onSubmit = handleSubmit(item => {
+// 	console.log('onSubmit handleSubmit', item);
+// });
+
+const allFieldsArray = ref<Field[]>([]);
+
+Object.values(pages.value).forEach((p: Page) => {
+	Object.values(p.fields).forEach((field: Field) => {
+		allFieldsArray.value.push(field as Field);
+	});
+});
+
+const validateSchema = useGetValidationSchema(allFieldsArray.value);
+console.log('validateSchema', validateSchema);
+
+// const initialValues = {};
+// allFieldsArray.value.forEach(item => {
+// 	initialValues[item.name] = item.label || "";
+// });
+
+// const yepSchema = allFieldsArray.value.reduce(useCreateYupSchema, { validationType: 'required', validations: allFieldsArray.value });
+// console.log('yepSchema', yepSchema);
+// const validateSchema = yupObject().shape(yepSchema);
+// console.log('validateSchema', validateSchema);
+
+// const foo = useCreateYupSchema(allFieldsArray.value, {});
+
+// console.log(foo);
+
+function onSubmit() {
+	console.log('onSubmit');
+	// useValidation({
+	// 	fields: allFieldsArray.value,
+	// });
+}
+
+
+// function validateField(field: Field) {
+// 	console.log('validateField', field);
+// 	console.log('allFieldsArray', allFieldsArray.value);
+// 	useValidation({
+// 		fields: allFieldsArray.value,
+// 	});
+// }
+
+
 // const StepperComponent = markRaw(props.direction === 'vertical' ? VStepperVertical : VStepper);
 // console.log('StepperComponent', StepperComponent);
 
@@ -186,7 +251,14 @@ console.log('settings.value', settings.value);
 onMounted(() => {
 	whenCallback();
 
+	// useSetupValidation({
+	// 	fields: allFieldsArray.value,
+	// });
+
 	summaryColumnErrorCheck();
+
+
+
 });
 
 
@@ -260,6 +332,8 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // ------------------------------------------------ Callback & Validation //
+
+
 // const pagesValidation = ref((pages.value)
 // 	.map((_, i) => ({ page: i + 1, valid: false })));
 
@@ -280,9 +354,7 @@ function callbacks() {
 }
 
 
-
-
-
+// ------------------------ Conditional "when" callback //
 function whenCallback() {
 	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
 		Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
