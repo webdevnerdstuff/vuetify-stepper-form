@@ -2,6 +2,7 @@
 import * as yup from "yup";
 import {
 	Field,
+	UseOnActions,
 } from '../types/index';
 
 
@@ -59,4 +60,35 @@ export const useGetValidationSchema = (fields: Field[]) => {
 	}, yup.object().shape({}));
 
 	return schema;
+};
+
+
+export const useOnActions: UseOnActions = async (options) => {
+	const { field, action, validateOn, localForm } = options;
+	let results: any = null;
+
+	const isBlur = action === 'blur' && validateOn === 'blur';
+	const isInput = action === 'input' && validateOn === 'input';
+	const isChange = action === 'change' && validateOn === 'change';
+
+	if (action === 'global' || isBlur || isInput || isChange) {
+		results = await localForm?.validate().then((response: any) => {
+			if (response.results[field.name]) {
+				field.error = response.errors[field.name] == null;
+			}
+
+			if (response.results[field.name]) {
+				return response;
+			}
+
+			field.error = false;
+
+			return response;
+		});
+	}
+
+	return {
+		field,
+		results,
+	};
 };

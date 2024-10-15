@@ -65,7 +65,10 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					:triggerValidation="triggerValidationEvents"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<Fields.VSFAutocomplete
@@ -98,9 +101,10 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
+					:triggerValidation="triggerValidationEvents"
 					:validateSchema="validateSchema"
 					@next="nextPage"
-					@validate="validateField"
+					@validate="onValidate"
 				/>
 
 				<!-- ========================= Color Field -->
@@ -179,11 +183,13 @@ export interface FieldLabelProps {
 	index: number;
 	page: Page;
 	settings: Settings;
+	triggerValidation: boolean;
 	validateSchema: any;
 }
 
 const emit = defineEmits(['next', 'validate']);
-const { index, page } = defineProps<FieldLabelProps>();
+const { index, page, triggerValidation } = defineProps<FieldLabelProps>();
+
 
 console.group('PageContainer');
 console.log('index', index);
@@ -192,9 +198,15 @@ console.groupEnd();
 
 const modelValue = defineModel<any>();
 
+const triggerValidationEvents = computed(() => triggerValidation);
 
-function validateField(field: Field) {
-	emit('validate', field);
+// watch(triggerValidationEvents, (val) => {
+// 	console.log('triggerValidation', val);
+// });
+
+
+function onValidate(val) {
+	emit('validate', val);
 }
 
 

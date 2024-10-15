@@ -13,12 +13,15 @@ interface InternalField extends Omit<Field,
 	density?: VSelect['density'];
 	closeText?: VSelect['closeText'];
 	closableChips?: VSelect['closableChips'];
+	hideDetails?: VSelect['hideDetails'];
 	items?: VSelect['items'];
 	variant?: VSelect['variant'];
 }
 
 export interface VSFSelectProps extends SharedProps {
 	field: InternalField;
+	triggerValidation: boolean;
+	validateSchema: any;
 }
 
 export type VSFSelect = InstanceType<typeof VSFSelect>;

@@ -12,6 +12,17 @@
 						</h2>
 					</v-col>
 				</v-row>
+				<!-- <v-row>
+					<v-col>
+						stepperMode: {{ stepperModel }}
+						<br />
+						currentPageHasErrors: {{ currentPageHasErrors }}
+						<br />
+						errorPageIndexes: {{ errorPageIndexes }}
+						<br />
+						triggerValidation: {{ triggerValidation }}
+					</v-col>
+				</v-row> -->
 			</v-container>
 
 			<v-container
@@ -28,7 +39,7 @@
 						<v-stepper-header>
 							<template
 								v-for="(page, i) in pages"
-								:key="`${i}-step`"
+								:key="`${getIndex(i)}-step`"
 							>
 								<v-stepper-item
 									:color="settings.color"
@@ -36,10 +47,10 @@
 									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
 									:editable="page.editable"
 									elevation="0"
+									:error="page.error"
 									:title="page.title"
 									:value="getIndex(i)"
 								></v-stepper-item>
-
 								<v-divider
 									v-if="getIndex(i) !== Object.keys(pages).length"
 									:key="getIndex(i)"
@@ -51,7 +62,7 @@
 							<v-stepper-window>
 								<v-stepper-window-item
 									v-for="page, i in pages"
-									:key="`${i}-content`"
+									:key="`${getIndex(i)}-content`"
 									:reverse-transition="transition"
 									:transition="transition"
 									:value="getIndex(i)"
@@ -59,13 +70,15 @@
 									<v-container>
 										<PageContainer
 											v-if="!page.isReview"
+											:key="`${getIndex(i)}-page`"
 											v-model="modelValue"
 											:index="getIndex(i)"
 											:page="page"
 											:settings="settings"
+											:triggerValidation="triggerValidation"
 											:validateSchema="validateSchema"
 											@next="validatePage(next)"
-											@validate="onSubmit"
+											@validate="onValidate"
 										/>
 										<PageReviewContainer
 											v-else
@@ -84,11 +97,18 @@
 							<v-stepper-actions v-if="!settings.hideActions">
 								<template #next>
 									<v-btn
+										v-if="!lastPage"
 										:color="settings.color"
-										:disabled="((stepperActionsDisabled === 'next' || settings.disabled) as boolean)"
+										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
 										@click="validatePage(next)"
 									/>
+									<v-btn
+										:color="settings.color"
+										:disabled="fieldsHaveErrors && errorPageIndexes.includes(stepperModel - 1)"
+										:size="navButtonSize"
+										type="submit"
+									>Submit</v-btn>
 								</template>
 
 								<template #prev>
@@ -102,7 +122,6 @@
 
 							<v-row>
 								<v-col>
-									<v-btn type="submit">Submit</v-btn>
 								</v-col>
 							</v-row>
 						</form>
@@ -151,8 +170,9 @@ const injectedOptions = inject(globalOptions, {});
 const props = withDefaults(defineProps<Props>(), AllProps);
 
 const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
-const { direction, pages, title, width } = toRefs(props);
-const originalPages = JSON.parse(JSON.stringify(pages.value));
+const { direction, title, width } = toRefs(props);
+const pages = reactive(props.pages);
+const originalPages = JSON.parse(JSON.stringify(pages));
 
 const settings = ref<Settings>({
 	altLabels: stepperProps.altLabels,
@@ -190,57 +210,13 @@ const settings = ref<Settings>({
 console.log('settings.value', settings.value);
 
 
-// const { handleSubmit } = useForm({
-// 	validationSchema: toTypedSchema(
-// 		yupObject({
-// 		}),
-// 	),
-// });
-
-// const onSubmit = handleSubmit(item => {
-// 	console.log('onSubmit handleSubmit', item);
-// });
-
 const allFieldsArray = ref<Field[]>([]);
 
-Object.values(pages.value).forEach((p: Page) => {
+Object.values(pages).forEach((p: Page) => {
 	Object.values(p.fields).forEach((field: Field) => {
 		allFieldsArray.value.push(field as Field);
 	});
 });
-
-const validateSchema = useGetValidationSchema(allFieldsArray.value);
-console.log('validateSchema', validateSchema);
-
-// const initialValues = {};
-// allFieldsArray.value.forEach(item => {
-// 	initialValues[item.name] = item.label || "";
-// });
-
-// const yepSchema = allFieldsArray.value.reduce(useCreateYupSchema, { validationType: 'required', validations: allFieldsArray.value });
-// console.log('yepSchema', yepSchema);
-// const validateSchema = yupObject().shape(yepSchema);
-// console.log('validateSchema', validateSchema);
-
-// const foo = useCreateYupSchema(allFieldsArray.value, {});
-
-// console.log(foo);
-
-function onSubmit() {
-	console.log('onSubmit');
-	// useValidation({
-	// 	fields: allFieldsArray.value,
-	// });
-}
-
-
-// function validateField(field: Field) {
-// 	console.log('validateField', field);
-// 	console.log('allFieldsArray', allFieldsArray.value);
-// 	useValidation({
-// 		fields: allFieldsArray.value,
-// 	});
-// }
 
 
 // const StepperComponent = markRaw(props.direction === 'vertical' ? VStepperVertical : VStepper);
@@ -256,9 +232,6 @@ onMounted(() => {
 	// });
 
 	summaryColumnErrorCheck();
-
-
-
 });
 
 
@@ -272,7 +245,7 @@ watchDeep(modelValue, () => {
 const stepperModel = ref(1);
 
 watch(stepperModel, () => {
-	if (stepperModel.value === pages.value.length) {
+	if (stepperModel.value === pages.length) {
 		formCompleted.value = true;
 	}
 });
@@ -287,18 +260,18 @@ const stepperActionsDisabled = computed(() => {
 	return stepperModel.value === 1 ? 'prev' : stepperModel.value === Object.keys(props.pages).length ? 'next' : undefined;
 });
 
-// TODO: Make this disabled if the previous page is not editable //
-const canReviewPreviousButtonDisabled = computed(() => {
-	// console.log('canReviewPreviousButtonDisabled');
+const nextButtonDisabled = computed(() => {
+	const foo = ((stepperActionsDisabled.value === 'next' || settings.value.disabled) as boolean);
 
-	return stepperModel.value === pages.value.length && !props.canReview;
+	const currentPageHasError = errorPageIndexes.value.includes(stepperModel.value - 1);
+
+	return currentPageHasError || foo;
 });
 
-// const previousButtonDisabled = computed(() => {
-// 	return stepperModel.value === 1;
-// });
-
-// console.log('previousButtonDisabled', previousButtonDisabled.value);
+// TODO: Make this disabled if the previous page is not editable //
+const canReviewPreviousButtonDisabled = computed(() => {
+	return stepperModel.value === pages.length && !props.canReview;
+});
 
 function nextPage(next: () => void): void {
 	console.log('nextPage', next);
@@ -316,6 +289,10 @@ function previousPage(prev: () => void): void {
 	prev();
 }
 
+const lastPage = computed(() => {
+	return stepperModel.value === Object.keys(pages).length;
+});
+
 
 // TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
 function headerItemDisabled(page: Page): boolean {
@@ -331,24 +308,147 @@ function headerItemDisabled(page: Page): boolean {
 }
 
 
-// ------------------------------------------------ Callback & Validation //
+// & ------------------------------------------------ Validation //
+const validateSchema = useGetValidationSchema(allFieldsArray.value);
+const triggerValidation = ref(false);
+const fieldsHaveErrors = ref(false);
+
+console.log('validateSchema', validateSchema);
 
 
-// const pagesValidation = ref((pages.value)
-// 	.map((_, i) => ({ page: i + 1, valid: false })));
 
-// console.log('pagesValidation', pagesValidation.value);
+// function validateButtonDisabled() {
+// 	const foo = JSON.parse(JSON.stringify(pages));
+// 	console.log('foo', foo);
+// 	fieldsHaveErrors.value = Object.values(pages).some((page: Page) => Object.values(page.fields).some((field: Field) => field.error));
 
-function validatePage(event: () => void): void {
-	console.log('validatePage', event);
+// 	console.log('fieldsHaveErrors', fieldsHaveErrors.value);
 
-	console.log('stepperModel', stepperModel.value);
-	nextPage(event);
+// }
+
+
+// TODO: This needs to be fixed //
+const currentPageHasErrors = ref(false);
+const errorPageIndexes = ref<number[]>([]);
+
+function checkForPageErrors() {
+	errorPageIndexes.value = [];
+
+	Object.values(pages).forEach((p: Page, i: number) => {
+		const errorField = Object.values(p.fields).find((field: Field) => field.error);
+
+		if (errorField) {
+			// eslint-disable-next-line no-param-reassign
+			p.error = true;
+			errorPageIndexes.value.push(i);
+			return;
+		}
+
+		// eslint-disable-next-line no-param-reassign
+		p.error = false;
+	});
+
+	// Reset the error //
+	const stepperPage = pages[stepperModel.value - 1];
+
+	if (stepperPage) {
+		stepperPage.error = false;
+	}
+
+	currentPageHasErrors.value = errorPageIndexes.value.includes(stepperModel.value - 1);
+}
+
+
+// TODO: Figure out why this triggers twice for each field on the page //
+function onValidate(val) {
+	console.group('onValidate');
+	console.log(val);
+
+	const { errors, fieldName } = val;
+	let fieldHasErrors = false;
+
+	if (errors) {
+		fieldHasErrors = errors[fieldName] || false;
+	}
+
+	const fieldPageIdx = Object.values(pages).findIndex((page: Page) => Object.values(page.fields).find((f: Field) => f.name === fieldName));
+	const page = pages[fieldPageIdx];
+
+	console.log('page', page);
+
+	if (!page) {
+		console.groupEnd();
+
+		return;
+	}
+
+	const field = page.fields.find((f: Field) => f.name === val.fieldName);
+
+	console.log('field', field);
+
+	if (!field) {
+		console.groupEnd();
+		return;
+	}
+
+	console.log('fieldHasErrors', fieldHasErrors);
+
+	field.error = fieldHasErrors ? true : false;
+	page.error = field.error;
+	currentPageHasErrors.value = field.error;
+	fieldsHaveErrors.value = field.error;
+
+	console.log('pages', pages);
+
+	console.log(currentPageHasErrors.value);
+
+	checkForPageErrors();
+
+	// Resets so it can be triggered again //
+	triggerValidation.value = false;
+
+	console.groupEnd();
+
+	// validateButtonDisabled();
+
 }
 
 
 
+function onSubmit(val) {
+	triggerValidation.value = true;
+	checkForPageErrors();
 
+	console.log('onSubmit', val);
+	if (fieldsHaveErrors.value) {
+		return;
+	}
+	// useValidation({
+	// 	fields: allFieldsArray.value,
+	// });
+}
+
+
+function validatePage(event: () => void): void {
+	console.log('validatePage', event);
+	triggerValidation.value = true;
+
+	setTimeout(() => {
+		// Resets so it can be triggered again //
+		triggerValidation.value = false;
+
+		if (currentPageHasErrors.value) {
+			return;
+		}
+
+		nextPage(event);
+	}, 250);
+
+	// nextPage(event);
+}
+
+
+// ------------------------------------------------ Callbacks //
 function callbacks() {
 	whenCallback();
 }
@@ -356,11 +456,11 @@ function callbacks() {
 
 // ------------------------ Conditional "when" callback //
 function whenCallback() {
-	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
+	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
 			if (field.when) {
 				const enabledField: boolean = field.when(modelValue.value);
-				const indexPage = pages.value[pageIdx];
+				const indexPage = pages[pageIdx];
 
 				if (indexPage?.fields[fieldIdx]) {
 					indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';

@@ -17,6 +17,9 @@ import type {
 	VTextarea,
 } from 'vuetify/components';
 import VStepperForm from '../VStepperForm.vue';
+import type {
+	PrivateFormContext,
+} from 'vee-validate';
 
 
 export * from '../index';
@@ -171,6 +174,7 @@ export interface Field {
 export interface Page {
 	autoPage?: boolean;
 	editable?: VStepperItem['editable'];
+	error?: boolean;
 	fields: Field[];
 	isReview?: boolean;
 	text?: string;
@@ -235,6 +239,19 @@ export interface UseContainerStyle {
 			displayType?: string;
 		}
 	): CSSProperties;
+}
+
+
+// ------------------------- Validation //
+export interface UseOnActions {
+	(
+		options: {
+			action: string;
+			field: Field;
+			localForm: PrivateFormContext | null;
+			validateOn: Props['validateOn'];
+		}
+	);
 }
 
 
