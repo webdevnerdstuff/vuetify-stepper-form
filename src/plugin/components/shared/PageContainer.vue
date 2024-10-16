@@ -64,8 +64,8 @@
 					v-if="field.type === 'select'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
-					:triggerValidation="triggerValidationEvents"
 					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
@@ -100,8 +100,8 @@
 					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
-					:triggerValidation="triggerValidationEvents"
 					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
@@ -173,6 +173,7 @@
 <script setup lang="ts">
 import * as Fields from '../fields/index';
 import type {
+	EmitValidateEventPayload,
 	Field,
 	Page,
 	Settings,
@@ -183,12 +184,15 @@ export interface FieldLabelProps {
 	index: number;
 	page: Page;
 	settings: Settings;
-	triggerValidation: boolean;
 	validateSchema: any;
 }
 
-const emit = defineEmits(['next', 'validate']);
-const { index, page, triggerValidation } = defineProps<FieldLabelProps>();
+const emit = defineEmits([
+	'next',
+	'validate',
+	'validate:page',
+]);
+const { index, page } = defineProps<FieldLabelProps>();
 
 
 console.group('PageContainer');
@@ -198,19 +202,13 @@ console.groupEnd();
 
 const modelValue = defineModel<any>();
 
-const triggerValidationEvents = computed(() => triggerValidation);
 
-// watch(triggerValidationEvents, (val) => {
-// 	console.log('triggerValidation', val);
-// });
-
-
-function onValidate(val) {
+function onValidate(val: EmitValidateEventPayload): void {
 	emit('validate', val);
 }
 
 
-function nextPage(field: Field) {
+function nextPage(field: Field): void {
 	const fieldIndex = page.fields.findIndex((f) => f.name === field.name);
 
 	// ? Before advancing to the next page, check if the current field is the last field on the page //

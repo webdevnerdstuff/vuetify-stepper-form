@@ -20,6 +20,8 @@ import VStepperForm from '../VStepperForm.vue';
 import type {
 	PrivateFormContext,
 } from 'vee-validate';
+import type { AnySchema } from 'yup';
+
 
 
 export * from '../index';
@@ -162,7 +164,7 @@ export interface Field {
 	undefined;
 	when?: (value: any) => boolean;
 	validate?: (field: Field, value: any) => boolean;
-	validationRules?: string[];
+	validationRules?: ValidationRule[];
 	validateOn?: string;
 
 	inline?: boolean; 							// ? Checkboxes
@@ -181,6 +183,21 @@ export interface Page {
 	title?: string;
 }
 
+
+// -------------------------------------------------- Validation //
+type ValidationRule = {
+	params?: string[];
+	type?: string;
+};
+
+export type YupObjectShape = { [key: string]: AnySchema; };
+
+// ------------------------- Trigger Validation Event Bus //
+export type TriggerValidation = any;
+export type ParentPageValidation = any;
+
+
+// -------------------------------------------------- Composables //
 // ------------------------- Helpers //
 export interface UseConvertToUnit {
 	(
@@ -243,15 +260,61 @@ export interface UseContainerStyle {
 
 
 // ------------------------- Validation //
+
+export interface SchemaField extends Field {
+	validationType: string,
+	validationTypeError: any,
+}
+
+export interface UseGetValidationSchema {
+	(
+		fields: SchemaField[],
+	): any;
+}
+
+export type ValidateAction = 'page' | 'blur' | 'change' | 'input' | 'submit';
+
+
+export type EmitValidateEventPayload = {
+	action: ValidateAction;
+	error: Field['error'];
+	errors: Record<string, any>;
+	fieldName: Field['name'];
+	nextPage: boolean;
+	pageIndex: number;
+};
+
+// Corrected function type for emitting the 'validate:page' event
+export type EmitValidateEvent = (event: 'validate', payload: EmitValidateEventPayload) => void;
+export interface UseOnActionsResponse {
+	field: Field;
+	results: any;
+	shouldValidate: boolean;
+}
+
 export interface UseOnActions {
 	(
 		options: {
-			action: string;
+			action: ValidateAction;
+			emit: EmitValidateEvent;
 			field: Field;
 			localForm: PrivateFormContext | null;
-			validateOn: Props['validateOn'];
+			pageIndex: number;
+			validateOn?: Props['validateOn'];
 		}
-	);
+	): Promise<UseOnActionsResponse>;
+}
+
+export interface UseCheckIfFieldHasErrors {
+	(
+		options: {
+			action: ValidateAction;
+			emit: EmitValidateEvent;
+			field: Field;
+			pageIndex: number;
+			results: any;
+		}
+	): Field;
 }
 
 

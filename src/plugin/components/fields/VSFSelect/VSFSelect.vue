@@ -22,7 +22,7 @@
 				<template #label>
 					<FieldLabel
 						:label="field.label"
-						:required="field.required"
+						:required="fieldRequired"
 					/>
 				</template>
 			</v-select>
@@ -33,22 +33,38 @@
 
 <script lang="ts" setup>
 import { useTemplateRef } from 'vue';
+import { TriggerValidationBus } from '../../../utils/globals';
+import type {
+	TriggerValidation,
+	UseOnActionsResponse,
+	ValidateAction,
+} from '../../../types';
 import type {
 	VSFSelectProps,
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
+import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useAutoPage } from '../../../composables/helpers';
 import { useOnActions } from '../../../composables/validation';
 import { Field, Form } from 'vee-validate';
 import type { PrivateFormContext } from 'vee-validate';
+import { useEventBus } from '@vueuse/core';
 
 
-const emit = defineEmits(['next', 'validate']);
+const emit = defineEmits([
+	'next',
+	'validate',
+]);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFSelectProps>();
 
-const { field, settings, validateSchema } = props;
+const { field, pageIndex, settings, validateSchema } = props;
+
+const fieldRequired = computed(() => {
+	const hasRequiredRule = field.validationRules?.find((rule) => rule.type === 'required');
+	return field.required || hasRequiredRule as FieldLabelProps['required'];
+});
 
 
 // Auto Paging //
@@ -56,31 +72,62 @@ useAutoPage({ emit, field, modelValue, settings });
 
 
 // -------------------------------------------------- Validation //
-const { triggerValidation } = toRefs(props);
-const triggerValidationEvents = computed(() => triggerValidation.value);
 const formFieldRef = `${Math.ceil(Math.random() * 1000)}-formFieldRef`;
 const localForm = useTemplateRef<PrivateFormContext>(String(formFieldRef));
 
-watch(triggerValidationEvents, () => {
-	onActions('global');
-});
 
-// Validate On Actions //
-async function onActions(action: string) {
-	useOnActions({
+// ------------------------- Validate On Actions //
+async function onActions(action: ValidateAction): Promise<UseOnActionsResponse | void> {
+	let shouldValidate = false;
+
+	const response = await useOnActions({
 		action,
+		emit,
 		field: field,
 		localForm: localForm.value,
-		validateOn: field.validateOn,
+		pageIndex,
+		validateOn: field.validateOn
 	})
 		.then((response) => {
-			emitValidate(response.results, field);
+			shouldValidate = response.shouldValidate;
+			return response;
 		});
+
+	if (!shouldValidate) {
+		return;
+	}
+
+	return response;
 }
 
-function emitValidate(response, field) {
-	emit('validate', { errors: response?.errors, fieldName: field.name });
+
+// ------------------------- Bus Event //
+const triggerValidationBus = useEventBus<TriggerValidation>(TriggerValidationBus);
+
+function validationListener(data: any): void {
+	console.group('--------------------------- CHILD BUS');
+	console.log('data', data);
+	console.log('pageIndex', pageIndex);
+
+	if (data.pageIndex === pageIndex) {
+		console.log('field', field.name);
+
+		onActions('page').then((response) => {
+			console.log('response', response);
+			// checkIfFieldHasErrors(response);
+		});
+	}
 }
+
+// Listen to an event //
+const unsubscribeBus = triggerValidationBus.on(validationListener);
+
+// Unsubscribe on unmount //
+onUnmounted(() => {
+	if (typeof unsubscribeBus !== 'undefined') {
+		triggerValidationBus.off(validationListener);
+	}
+});
 
 
 // -------------------------------------------------- Bound Settings //

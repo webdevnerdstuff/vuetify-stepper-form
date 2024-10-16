@@ -12,17 +12,15 @@
 						</h2>
 					</v-col>
 				</v-row>
-				<!-- <v-row>
+				<v-row>
 					<v-col>
 						stepperMode: {{ stepperModel }}
 						<br />
 						currentPageHasErrors: {{ currentPageHasErrors }}
 						<br />
 						errorPageIndexes: {{ errorPageIndexes }}
-						<br />
-						triggerValidation: {{ triggerValidation }}
 					</v-col>
-				</v-row> -->
+				</v-row>
 			</v-container>
 
 			<v-container
@@ -75,10 +73,9 @@
 											:index="getIndex(i)"
 											:page="page"
 											:settings="settings"
-											:triggerValidation="triggerValidation"
 											:validateSchema="validateSchema"
 											@next="validatePage(next)"
-											@validate="onValidate"
+											@validate="onValidate($event, next)"
 										/>
 										<PageReviewContainer
 											v-else
@@ -138,10 +135,12 @@
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { AllProps } from './utils/props';
 import { useDisplay } from 'vuetify';
-import {
+import type {
+	EmitValidateEventPayload,
 	Field,
 	Page,
 	Props,
+	SchemaField,
 	Settings,
 	SummaryColumns,
 } from '@/plugin/types';
@@ -150,11 +149,15 @@ import {
 	useStepperContainerClasses,
 } from './composables/classes';
 import componentEmits from './utils/emits';
+import { TriggerValidationBus } from './utils/globals';
 import { globalOptions } from './';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import { useMergeProps } from './composables/helpers';
-import { watchDeep } from '@vueuse/core';
+import {
+	useEventBus,
+	watchDeep,
+} from '@vueuse/core';
 import {
 	useGetValidationSchema,
 } from './composables/validation';
@@ -308,145 +311,117 @@ function headerItemDisabled(page: Page): boolean {
 }
 
 
+
+
 // & ------------------------------------------------ Validation //
-const validateSchema = useGetValidationSchema(allFieldsArray.value);
-const triggerValidation = ref(false);
+const validateSchema = useGetValidationSchema(allFieldsArray.value as SchemaField[]);
 const fieldsHaveErrors = ref(false);
+let triggerValidationBus: unknown | any;
 
-console.log('validateSchema', validateSchema);
-
-
-
-// function validateButtonDisabled() {
-// 	const foo = JSON.parse(JSON.stringify(pages));
-// 	console.log('foo', foo);
-// 	fieldsHaveErrors.value = Object.values(pages).some((page: Page) => Object.values(page.fields).some((field: Field) => field.error));
-
-// 	console.log('fieldsHaveErrors', fieldsHaveErrors.value);
-
-// }
+onMounted(() => {
+	triggerValidationBus = useEventBus<string>(TriggerValidationBus);
+});
 
 
-// TODO: This needs to be fixed //
 const currentPageHasErrors = ref(false);
 const errorPageIndexes = ref<number[]>([]);
 
-function checkForPageErrors() {
-	errorPageIndexes.value = [];
 
-	Object.values(pages).forEach((p: Page, i: number) => {
-		const errorField = Object.values(p.fields).find((field: Field) => field.error);
+function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?: Page): void {
+	currentPageHasErrors.value = true;
 
-		if (errorField) {
-			// eslint-disable-next-line no-param-reassign
-			p.error = true;
-			errorPageIndexes.value.push(i);
+	if (page) {
+		// eslint-disable-next-line no-param-reassign
+		page.error = true;
+	}
+
+	if (!errorPageIndexes.value.includes(pageIndex)) {
+		errorPageIndexes.value.push(pageIndex);
+	}
+}
+
+
+function onValidate(payload: EmitValidateEventPayload, event: () => void) {
+	// console.group('onValidate');
+	// console.log('payload', payload);
+
+	const page = pages[payload.pageIndex];
+
+	// console.log('page', page);
+
+	if (!page) {
+		return;
+	}
+
+	const currentFieldIndex = page.fields.findIndex((f) => f.name === payload.fieldName);
+
+	// Do not continue if field is not the last field //
+	if (currentFieldIndex !== page.fields.length - 1) {
+		return;
+	}
+
+	let fieldsError = false;
+
+	Object.values(page.fields).forEach((field: Field) => {
+		if (field.error === true || !Object.prototype.hasOwnProperty.call(field, 'error')) {
+			fieldsError = true;
+		}
+	});
+
+
+	if (fieldsError) {
+		// page.error = payload.error;
+		setPageToError(payload.pageIndex);
+		return;
+	}
+
+	if (payload.action === 'page') {
+		page.error = payload.error === true;
+
+		if (page.error) {
+			setPageToError(payload.pageIndex, page);
+
+			// console.groupEnd();
 			return;
 		}
 
-		// eslint-disable-next-line no-param-reassign
-		p.error = false;
-	});
-
-	// Reset the error //
-	const stepperPage = pages[stepperModel.value - 1];
-
-	if (stepperPage) {
-		stepperPage.error = false;
+		currentPageHasErrors.value = false;
 	}
 
-	currentPageHasErrors.value = errorPageIndexes.value.includes(stepperModel.value - 1);
-}
+	const index = errorPageIndexes.value.indexOf(payload.pageIndex);
 
-
-// TODO: Figure out why this triggers twice for each field on the page //
-function onValidate(val) {
-	console.group('onValidate');
-	console.log(val);
-
-	const { errors, fieldName } = val;
-	let fieldHasErrors = false;
-
-	if (errors) {
-		fieldHasErrors = errors[fieldName] || false;
+	if (index > -1) {
+		errorPageIndexes.value.splice(index, 1);
 	}
 
-	const fieldPageIdx = Object.values(pages).findIndex((page: Page) => Object.values(page.fields).find((f: Field) => f.name === fieldName));
-	const page = pages[fieldPageIdx];
 
-	console.log('page', page);
+	// debugger;
 
-	if (!page) {
-		console.groupEnd();
+	// const field = page.fields.find((f) => f.name === payload.fieldName);
 
+	if (fieldsError) {
+		// console.log('XXXX fieldsError', fieldsError);
+		// console.groupEnd();
 		return;
 	}
 
-	const field = page.fields.find((f: Field) => f.name === val.fieldName);
+	currentPageHasErrors.value = false;
 
-	console.log('field', field);
-
-	if (!field) {
-		console.groupEnd();
-		return;
+	if (payload.nextPage && stepperModel.value === payload.pageIndex + 1) {
+		nextPage(event);
 	}
 
-	console.log('fieldHasErrors', fieldHasErrors);
-
-	field.error = fieldHasErrors ? true : false;
-	page.error = field.error;
-	currentPageHasErrors.value = field.error;
-	fieldsHaveErrors.value = field.error;
-
-	console.log('pages', pages);
-
-	console.log(currentPageHasErrors.value);
-
-	checkForPageErrors();
-
-	// Resets so it can be triggered again //
-	triggerValidation.value = false;
-
-	console.groupEnd();
-
-	// validateButtonDisabled();
-
-}
-
-
-
-function onSubmit(val) {
-	triggerValidation.value = true;
-	checkForPageErrors();
-
-	console.log('onSubmit', val);
-	if (fieldsHaveErrors.value) {
-		return;
-	}
-	// useValidation({
-	// 	fields: allFieldsArray.value,
-	// });
+	// console.groupEnd();
 }
 
 
 function validatePage(event: () => void): void {
 	console.log('validatePage', event);
-	triggerValidation.value = true;
 
-	setTimeout(() => {
-		// Resets so it can be triggered again //
-		triggerValidation.value = false;
-
-		if (currentPageHasErrors.value) {
-			return;
-		}
-
-		nextPage(event);
-	}, 250);
-
-	// nextPage(event);
+	triggerValidationBus.emit({
+		pageIndex: stepperModel.value,
+	});
 }
-
 
 // ------------------------------------------------ Callbacks //
 function callbacks() {
@@ -473,11 +448,24 @@ function whenCallback() {
 }
 
 
-// ------------------------------------------------ Submit Form //
-function submitForm() {
-	console.log('VStepperForm submitForm');
-	emit('submit');
+// -------------------------------------------------- Submit //
+function onSubmit(val) {
+	// checkForPageErrors();
+
+	console.log('onSubmit', val);
+	if (fieldsHaveErrors.value) {
+		return;
+	}
+	// useValidation({
+	// 	fields: allFieldsArray.value,
+	// });
 }
+
+
+function submitForm() {
+	// console.log('VStepperForm submitForm');
+	emit('submit');
+};
 
 
 // ------------------------------------------------ Class & Styles //

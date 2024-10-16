@@ -20,7 +20,7 @@ interface InternalField extends Omit<Field,
 
 export interface VSFSelectProps extends SharedProps {
 	field: InternalField;
-	triggerValidation: boolean;
+	pageIndex: number;
 	validateSchema: any;
 }
 

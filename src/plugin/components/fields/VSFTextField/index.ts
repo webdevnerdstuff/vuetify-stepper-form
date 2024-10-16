@@ -17,7 +17,7 @@ interface InternalField extends Omit<Field,
 
 export interface VSFTextFieldProps extends SharedProps {
 	field: InternalField;
-	triggerValidation: boolean;
+	pageIndex: number;
 	validateSchema: any;
 }
 
