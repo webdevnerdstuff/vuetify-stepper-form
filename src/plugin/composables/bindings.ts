@@ -1,4 +1,6 @@
 const excludedSettings: string[] = [
+	'required',
+	'rules',
 ];
 
 

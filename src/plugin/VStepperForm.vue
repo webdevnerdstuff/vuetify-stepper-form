@@ -8,7 +8,7 @@
 				<v-row v-if="title">
 					<v-col>
 						<h2>
-							{{ title }} {{ formCompleted }}
+							{{ title }}
 						</h2>
 					</v-col>
 				</v-row>
@@ -56,6 +56,11 @@
 							</template>
 						</v-stepper-header>
 
+						<!-- <Form
+							ref="formFieldRef"
+							:validation-schema="validateSchema"
+							@submit.prevent="onSubmit"
+						> -->
 						<form @submit.prevent="onSubmit">
 							<v-stepper-window>
 								<v-stepper-window-item
@@ -74,9 +79,20 @@
 											:page="page"
 											:settings="settings"
 											:validateSchema="validateSchema"
-											@next="validatePage(next)"
+											@next="validatePage('page')"
 											@validate="onValidate($event, next)"
-										/>
+										>
+											<!-- ========================= Pass Slots -->
+											<template
+												v-for="(_, slot) in slots"
+												#[slot]="scope"
+											>
+												<slot
+													:name="slot"
+													v-bind="{ ...scope }"
+												/>
+											</template>
+										</PageContainer>
 										<PageReviewContainer
 											v-else
 											v-model="modelValue"
@@ -85,7 +101,7 @@
 											:settings="settings"
 											:summary-columns="summaryColumns"
 											@goToQuestion="stepperModel = $event"
-											@submit="submitForm"
+											@submit="onSubmit"
 										/>
 									</v-container>
 								</v-stepper-window-item>
@@ -98,7 +114,7 @@
 										:color="settings.color"
 										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
-										@click="validatePage(next)"
+										@click="validatePage('page')"
 									/>
 									<v-btn
 										:color="settings.color"
@@ -122,6 +138,7 @@
 								</v-col>
 							</v-row>
 						</form>
+						<!-- </Form> -->
 					</template>
 				</v-stepper>
 			</v-container>
@@ -135,7 +152,9 @@
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { AllProps } from './utils/props';
 import { useDisplay } from 'vuetify';
+// import { Form } from 'vee-validate';
 import type {
+	ComputedClasses,
 	EmitValidateEventPayload,
 	Field,
 	Page,
@@ -164,7 +183,7 @@ import {
 
 
 const attrs = useAttrs();
-// const slots = useSlots();
+const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject(globalOptions, {});
 
@@ -174,7 +193,7 @@ const props = withDefaults(defineProps<Props>(), AllProps);
 
 const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
 const { direction, title, width } = toRefs(props);
-const pages = reactive(props.pages);
+const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
 const settings = ref<Settings>({
@@ -190,6 +209,7 @@ const settings = ref<Settings>({
 	editIcon: stepperProps.editIcon,
 	editable: stepperProps.editable,
 	elevation: stepperProps.elevation,
+	errorIcon: stepperProps.errorIcon,
 	flat: stepperProps.flat,
 	height: stepperProps.height,
 	hideActions: stepperProps.hideActions,
@@ -208,9 +228,6 @@ const settings = ref<Settings>({
 	validateOn: stepperProps.validateOn,
 	variant: stepperProps.variant,
 });
-
-// console.log('stepperProps', stepperProps);
-console.log('settings.value', settings.value);
 
 
 const allFieldsArray = ref<Field[]>([]);
@@ -247,15 +264,9 @@ watchDeep(modelValue, () => {
 
 const stepperModel = ref(1);
 
-watch(stepperModel, () => {
-	if (stepperModel.value === pages.length) {
-		formCompleted.value = true;
-	}
-});
 
 const { sm } = useDisplay();
-const transition = computed(() => stepperProps.transition);
-const formCompleted = ref(false);
+const transition = computed<Props['transition']>(() => stepperProps.transition);
 
 
 // -------------------------------------------------- Stepper Action //
@@ -264,26 +275,28 @@ const stepperActionsDisabled = computed(() => {
 });
 
 const nextButtonDisabled = computed(() => {
-	const foo = ((stepperActionsDisabled.value === 'next' || settings.value.disabled) as boolean);
+	const isDisabled = ((stepperActionsDisabled.value === 'next' || settings.value.disabled) as boolean);
 
 	const currentPageHasError = errorPageIndexes.value.includes(stepperModel.value - 1);
 
-	return currentPageHasError || foo;
+	return currentPageHasError || isDisabled;
 });
 
 // TODO: Make this disabled if the previous page is not editable //
-const canReviewPreviousButtonDisabled = computed(() => {
+const canReviewPreviousButtonDisabled = computed<boolean>(() => {
 	return stepperModel.value === pages.length && !props.canReview;
 });
 
+// ------------------------- Next Page //
 function nextPage(next: () => void): void {
-	console.log('nextPage', next);
+	// console.log('nextPage');
 
 	next();
 }
 
+// ------------------------- Previous Page //
 function previousPage(prev: () => void): void {
-	// console.log('previousPage', prev);
+	// console.log('previousPage');
 
 	if (canReviewPreviousButtonDisabled.value) {
 		return;
@@ -292,7 +305,7 @@ function previousPage(prev: () => void): void {
 	prev();
 }
 
-const lastPage = computed(() => {
+const lastPage = computed<boolean>(() => {
 	return stepperModel.value === Object.keys(pages).length;
 });
 
@@ -311,11 +324,11 @@ function headerItemDisabled(page: Page): boolean {
 }
 
 
-
-
 // & ------------------------------------------------ Validation //
 const validateSchema = useGetValidationSchema(allFieldsArray.value as SchemaField[]);
 const fieldsHaveErrors = ref(false);
+const currentPageHasErrors = ref(false);
+const errorPageIndexes = ref<number[]>([]);
 let triggerValidationBus: unknown | any;
 
 onMounted(() => {
@@ -323,11 +336,8 @@ onMounted(() => {
 });
 
 
-const currentPageHasErrors = ref(false);
-const errorPageIndexes = ref<number[]>([]);
-
-
-function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?: Page): void {
+// ------------------------ Set Page to Errors //
+function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?: Page, isSubmit = false): void {
 	currentPageHasErrors.value = true;
 
 	if (page) {
@@ -335,16 +345,14 @@ function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?:
 		page.error = true;
 	}
 
-	if (!errorPageIndexes.value.includes(pageIndex)) {
+	if (!errorPageIndexes.value.includes(pageIndex) && !isSubmit) {
 		errorPageIndexes.value.push(pageIndex);
 	}
 }
 
-
+// ------------------------ Validation callback from fields //
 function onValidate(payload: EmitValidateEventPayload, event: () => void) {
-	// console.group('onValidate');
-	// console.log('payload', payload);
-
+	console.log('onValidate', payload);
 	const page = pages[payload.pageIndex];
 
 	// console.log('page', page);
@@ -353,84 +361,147 @@ function onValidate(payload: EmitValidateEventPayload, event: () => void) {
 		return;
 	}
 
-	const currentFieldIndex = page.fields.findIndex((f) => f.name === payload.fieldName);
 
-	// Do not continue if field is not the last field //
-	if (currentFieldIndex !== page.fields.length - 1) {
+	// ! ------------------------------------------------------------ THIS IS STILL WRONG //
+	// const currentFieldIndex = page.fields.findIndex((f) => f.name === payload.fieldName);
+	// const hiddenFieldsLength = page.fields.filter((f) => f.type !== 'hidden').length;
+	// const pageFieldsLengthZeroBased = page.fields.length - 1;
+	// const pageFieldsLengthWithoutHidden = page.fields.length - hiddenFieldsLength;
+
+
+	// // Do not continue if field is not the last field //
+	// // ! THIS NEEDS MORE WORK //
+	// if (currentFieldIndex !== pageFieldsLengthZeroBased && pageFieldsLengthZeroBased !== pageFieldsLengthWithoutHidden) {
+	// 	return;
+	// }
+
+	// Get fields of the current page
+	const currentPageFields = page.fields;
+
+	// Filter out hidden fields (fields without a 'type' or with 'type' set to 'hidden' are considered hidden)
+	const visibleFields = currentPageFields.filter((f) => f.type !== undefined && f.type !== 'hidden');
+
+	// Get the index of the current field in the full list of fields on the current page
+	// const currentFieldIndex = currentPageFields.findIndex((f) => f.name === payload.fieldName);
+
+	// Get the last index of visible fields on the current page
+	const lastVisibleFieldIndex = visibleFields.length - 1;
+
+	// Find the index of the current field in the visible fields array
+	const currentVisibleFieldIndex = visibleFields.findIndex((f) => f.name === payload.fieldName);
+
+	// Only continue if the current field is the last visible field on the page
+	if (currentVisibleFieldIndex !== lastVisibleFieldIndex) {
 		return;
 	}
 
-	let fieldsError = false;
-
-	Object.values(page.fields).forEach((field: Field) => {
-		if (field.error === true || !Object.prototype.hasOwnProperty.call(field, 'error')) {
-			fieldsError = true;
-		}
-	});
-
-
-	if (fieldsError) {
-		// page.error = payload.error;
-		setPageToError(payload.pageIndex);
-		return;
-	}
+	// ! ------------------------------------------------------------ THIS IS STILL WRONG //
 
 	if (payload.action === 'page') {
 		page.error = payload.error === true;
 
 		if (page.error) {
 			setPageToError(payload.pageIndex, page);
-
-			// console.groupEnd();
 			return;
 		}
 
 		currentPageHasErrors.value = false;
 	}
 
-	const index = errorPageIndexes.value.indexOf(payload.pageIndex);
+	let fieldsErrors = false;
 
-	if (index > -1) {
-		errorPageIndexes.value.splice(index, 1);
+	// Check all page fields for Submit //
+	if (payload.action === 'submit') {
+		Object.values(pages).forEach((p: Page) => {
+			const page = p;
+
+			// Reset the page error for clean slate to check for errors //
+			page.error = false;
+
+			Object.values(page.fields).forEach((field: Field) => {
+				if (field.type !== 'hidden' && field.type != null && field.error === true) {
+					fieldsErrors = true;
+					page.error = true;
+				}
+			});
+
+			if (fieldsErrors) {
+				setPageToError(payload.pageIndex, page, true);
+			}
+		});
+
+		if (fieldsErrors) {
+			return;
+		}
+	}
+	else {
+		Object.values(page.fields).forEach((field: Field) => {
+			if (field.type !== 'hidden' && field.type != null && field.error === true) {
+				fieldsErrors = true;
+			}
+			// if (field.type !== 'hidden' && field.type != null && (field.error === true || !Object.prototype.hasOwnProperty.call(field, 'error'))) {
+			// 	fieldsErrors = true;
+			// }
+		});
 	}
 
-
-	// debugger;
-
-	// const field = page.fields.find((f) => f.name === payload.fieldName);
-
-	if (fieldsError) {
-		// console.log('XXXX fieldsError', fieldsError);
-		// console.groupEnd();
+	if (fieldsErrors) {
+		setPageToError(payload.pageIndex);
 		return;
+	}
+
+	// Remove error from Page //
+	const errPageIdx = errorPageIndexes.value.indexOf(payload.pageIndex);
+
+	if (errPageIdx > -1) {
+		errorPageIndexes.value.splice(errPageIdx, 1);
 	}
 
 	currentPageHasErrors.value = false;
 
+	// Form is complete and without errors. Submit form. //
+	if (payload.action === 'submit' && lastPage.value) {
+		submitForm();
+		return;
+	}
+
+	// Continue to the next Page //
 	if (payload.nextPage && stepperModel.value === payload.pageIndex + 1) {
 		nextPage(event);
 	}
-
-	// console.groupEnd();
 }
 
-
-function validatePage(event: () => void): void {
-	console.log('validatePage', event);
+// ------------------------ Page validation triggering //
+function validatePage(action = 'page'): void {
+	// console.log('validatePage');
 
 	triggerValidationBus.emit({
+		action,
 		pageIndex: stepperModel.value,
 	});
 }
+
+
+// -------------------------------------------------- Submit //
+function onSubmit(val): void {
+	console.log('onSubmit', val);
+
+	validatePage('submit');
+}
+
+function submitForm(): void {
+	console.log('%c%s', 'color: #00ff00; font-weight: bold;', '======================== SUBMIT FORM');
+	emit('submit');
+}
+
 
 // ------------------------------------------------ Callbacks //
 function callbacks() {
 	whenCallback();
 }
 
-
 // ------------------------ Conditional "when" callback //
-function whenCallback() {
+function whenCallback(): void {
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
 			if (field.when) {
@@ -440,7 +511,7 @@ function whenCallback() {
 				if (indexPage?.fields[fieldIdx]) {
 					indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';
 
-					// TODO: Update validation //
+					// TODO: Update validation? //
 				}
 			}
 		});
@@ -448,35 +519,17 @@ function whenCallback() {
 }
 
 
-// -------------------------------------------------- Submit //
-function onSubmit(val) {
-	// checkForPageErrors();
-
-	console.log('onSubmit', val);
-	if (fieldsHaveErrors.value) {
-		return;
-	}
-	// useValidation({
-	// 	fields: allFieldsArray.value,
-	// });
-}
-
-
-function submitForm() {
-	// console.log('VStepperForm submitForm');
-	emit('submit');
-};
-
-
 // ------------------------------------------------ Class & Styles //
-const containerClasses = computed(() => useContainerClasses({
+// ------------------------ Classes //
+const containerClasses = computed<ComputedClasses>(() => useContainerClasses({
 	direction: direction.value,
 }));
 
-const stepperContainerClasses = computed(() => useStepperContainerClasses({
+const stepperContainerClasses = computed<ComputedClasses>(() => useStepperContainerClasses({
 	direction: direction.value,
 }));
 
+// ------------------------ Styles //
 const containerStyle = computed<CSSProperties>(() => {
 	const styles = {
 		width: '100%'
@@ -522,4 +575,10 @@ function summaryColumnErrorCheck(): void {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.v-stepper-item--error {
+	:deep(.v-icon) {
+		color: #fff;
+	}
+}
+</style>

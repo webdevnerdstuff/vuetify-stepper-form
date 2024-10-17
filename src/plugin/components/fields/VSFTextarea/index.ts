@@ -9,12 +9,16 @@ import type VSFTextarea from './VSFTextarea.vue';
 interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
+	color?: VTextarea['color'];
 	density?: VTextarea['density'];
+	hideDetails?: VTextarea['hideDetails'];
 	variant?: VTextarea['variant'];
 }
 
 export interface VSFTextareaProps extends SharedProps {
 	field: InternalField;
+	pageIndex: number;
+	validateSchema: any;
 }
 
 export type VSFTextarea = InstanceType<typeof VSFTextarea>;

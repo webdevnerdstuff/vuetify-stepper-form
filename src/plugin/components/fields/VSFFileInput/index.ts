@@ -11,12 +11,15 @@ interface InternalField extends Omit<Field,
 > {
 	chips?: VFileInput['chips'];
 	density?: VFileInput['density'];
+	hideDetails?: VFileInput['hideDetails'];
 	multiple?: VFileInput['multiple'];
 	variant?: VFileInput['variant'];
 }
 
 export interface VFileInputProps extends SharedProps {
 	field: InternalField;
+	pageIndex: number;
+	validateSchema: any;
 }
 
 export type VSFFileInput = InstanceType<typeof VSFFileInput>;

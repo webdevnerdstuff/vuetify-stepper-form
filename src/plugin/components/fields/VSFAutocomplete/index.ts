@@ -10,15 +10,19 @@ import type VSFAutocomplete from './VSFAutocomplete.vue';
 interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
-	density?: VAutocomplete['density'];
-	closeText?: VAutocomplete['closeText'];
 	closableChips?: VAutocomplete['closableChips'];
+	closeText?: VAutocomplete['closeText'];
+	color?: VAutocomplete['color'];
+	density?: VAutocomplete['density'];
+	hideDetails?: VAutocomplete['hideDetails'];
 	items?: VAutocomplete['items'];
 	variant?: VAutocomplete['variant'];
 }
 
 export interface VSFAutocompleteProps extends SharedProps {
 	field: InternalField;
+	pageIndex: number;
+	validateSchema: any;
 }
 
 export type VSFSelect = InstanceType<typeof VSFAutocomplete>;

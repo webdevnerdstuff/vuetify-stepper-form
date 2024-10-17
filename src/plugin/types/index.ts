@@ -101,6 +101,7 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 	color?: string;
 	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';
+	errorIcon?: VStepper['errorIcon'];
 	hideDetails?: boolean;
 	navButtonSize?: VBtn['size'];
 	summaryColumns?: SummaryColumns;
@@ -113,6 +114,32 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 export interface PluginOptions extends Partial<Props> { }
 export interface Settings extends Partial<Omit<Props, 'pages'>> { }
 
+type FieldTypes =
+	'autocomplete' |
+	'checkbox' |
+	'color' |
+	'combobox' |
+	'custom' |
+	'date' |
+	'email' |
+	'fancyRadio' |
+	'file' |
+	'hidden' |
+	'number' |
+	'password' |
+	'radio' |
+	'select' |
+	// 'submit' | // ? Maybe
+	'switch' |
+	'tel' |
+	'text' |
+	'textField' |
+	'textarea' |
+	'url' |
+	undefined;
+
+type ValidationTypes = 'mixed' | 'string' | 'number' | 'boolean' | 'date' | 'array' | 'tuple' | 'object' | undefined;
+
 
 // -------------------------------------------------- Components //
 export interface SharedProps {
@@ -122,54 +149,34 @@ export interface SharedProps {
 
 // TODO: Need to remove the "type" for some fields as they are not valid field types //
 export interface Field {
-	// Required //
-	name: string;
-
-	// Optional //
 	autoPage?: Props['autoPage'];
 	autoPageDelay?: Props['autoPageDelay'];
 	canReview?: Props['canReview'];
 	color?: Props['color'];
-	// dateFormat?: string;
-	// dateSeparator?: string;
 	density?: Props['density'];
 	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
 	hidden?: boolean;
 	label?: string;
+	name: string;
 	options?: KeyStringAny;
 	required?: boolean | undefined;
-	rules?: string[];
+	rules?: ValidationRule[];
 	text?: string;
-	type?: 'autocomplete' |
-	'checkbox' |
-	'color' |
-	'combobox' |
-	'custom' |
-	'email' |
-	'fancyRadio' |
-	'file' |
-	'hidden' |
-	'number' |
-	'password' |
-	'radio' |
-	'select' |
-	'submit' |
-	'switch' |
-	'tel' |
-	'text' |
-	'textField' |
-	'textarea' |
-	'url' |
-	undefined;
-	when?: (value: any) => boolean;
+	type?: FieldTypes;
 	validate?: (field: Field, value: any) => boolean;
-	validationRules?: ValidationRule[];
 	validateOn?: string;
+	validationType?: ValidationTypes;
+	when?: (value: any) => boolean;
 
-	inline?: boolean; 							// ? Checkboxes
-	inlineSpacing?: string;					// ? Checkboxes
-	labelPositionLeft?: boolean;		// ? Checkboxes
+	// ? Date Field //
+	// dateFormat?: string;
+	// dateSeparator?: string;
+
+	// ? Checkboxes //
+	inline?: boolean;
+	inlineSpacing?: string;
+	labelPositionLeft?: boolean;
 }
 
 
@@ -232,12 +239,14 @@ export interface UseAutoPage {
 }
 
 // ------------------------- Classes //
+export type ComputedClasses = Record<string, boolean>;
+
 export interface UseContainerClasses {
 	(
 		options: {
 			direction?: Props['direction'];
 		}
-	): object;
+	): ComputedClasses;
 }
 
 export interface UseStepperContainerClasses {
@@ -245,7 +254,7 @@ export interface UseStepperContainerClasses {
 		options: {
 			direction?: Props['direction'];
 		}
-	): object;
+	): ComputedClasses;
 }
 
 
@@ -260,9 +269,8 @@ export interface UseContainerStyle {
 
 
 // ------------------------- Validation //
-
 export interface SchemaField extends Field {
-	validationType: string,
+	validationType: Field['validationType'],
 	validationTypeError: any,
 }
 
@@ -280,6 +288,7 @@ export type EmitValidateEventPayload = {
 	error: Field['error'];
 	errors: Record<string, any>;
 	fieldName: Field['name'];
+	fieldType: Field['type'];
 	nextPage: boolean;
 	pageIndex: number;
 };
@@ -326,7 +335,7 @@ declare module "vue" {
 	}
 }
 
-declare function createVStepperForm(vuetify?: PluginOptions): {
+declare function createVStepperForm(options?: PluginOptions): {
 	install: (app: App) => void;
 };
 

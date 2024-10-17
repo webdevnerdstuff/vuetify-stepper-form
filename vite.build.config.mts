@@ -18,11 +18,11 @@ const banner = `/**
  * @description ${pkg.description}
  * @author ${pkg.author}
  * @copyright Copyright ${new Date().getFullYear()}, __USERNAME__
- * @homepage ${pkg.homepage}
- * @repository ${pkg.repository}
  * @license ${pkg.license} License
- */
+*/
 `;
+// * @homepage ${pkg.homepage}
+// * @repository ${pkg.repository}
 
 export default defineConfig({
 	publicDir: false,

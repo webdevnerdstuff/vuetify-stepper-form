@@ -10,15 +10,12 @@ import {
 
 export const useGetValidationSchema: UseGetValidationSchema = (fields) => {
 	const schema = fields.reduce((schema, field) => {
-		const { name, validationType = 'string', validationTypeError, validationRules = [] } = field;
+		const { name, validationTypeError, rules = [] } = field;
+		let { validationType = 'string' } = field;
 
-		// console.group('field', field);
-		// console.log('name', name);
-
-		// console.log('validationType', validationType);
-		// console.log('validationTypeError', validationTypeError);
-		// console.log('validationRules', validationRules);
-		// console.groupEnd();
+		if (field.type === 'number') {
+			validationType = 'number';
+		}
 
 		const isObject = name.indexOf('.') >= 0;
 
@@ -26,9 +23,9 @@ export const useGetValidationSchema: UseGetValidationSchema = (fields) => {
 			return schema;
 		}
 
-		let validator = yup[validationType]().typeError(validationTypeError || '');
+		let validator = yup[String(validationType)]().typeError(validationTypeError || '');
 
-		validationRules.forEach(validation => {
+		rules.forEach(validation => {
 			const { params, type } = validation;
 
 			if (!validator[type]) {
@@ -36,6 +33,7 @@ export const useGetValidationSchema: UseGetValidationSchema = (fields) => {
 			}
 
 			validator = validator[type](...params as string[]);
+			console.log('validator', validator);
 		});
 
 		if (!isObject) {
@@ -72,11 +70,10 @@ export const useOnActions: UseOnActions = async (options) => {
 	const isInput = action === 'input' && validateOn === 'input';
 	const isChange = action === 'change' && validateOn === 'change';
 
-	const shouldValidate = isBlur || isInput || isChange || action === 'page';
+	const shouldValidate = isBlur || isInput || isChange || action === 'page' || action === 'submit';
 
 	if (shouldValidate) {
 		results = await localForm?.validate().then((response: any) => {
-			console.log('localform response', response);
 			if (response.results[field.name]) {
 				field.error = response.results[field.name].valid === false;
 			}
@@ -108,19 +105,20 @@ export const useOnActions: UseOnActions = async (options) => {
 };
 
 export const useCheckIfFieldHasErrors: UseCheckIfFieldHasErrors = (options) => {
-	console.log('checkIfFieldHasErrors', options);
+	console.log('options', options);
 	const { action, emit, field, pageIndex, results } = options;
 
 	const data = results;
 
-	field.error = data.errors[field.name] && !data.results[field.name].valid;
+	field.error = (data?.errors[field.name] && !data?.results[field.name].valid) || false;
 
 	emit('validate', {
 		action,
 		error: field.error,
-		errors: data.errors,
+		errors: data?.errors,
 		fieldName: field.name,
-		nextPage: action === 'page',
+		fieldType: field.type,
+		nextPage: action === 'page' || action === 'submit',
 		pageIndex: pageIndex - 1,
 	});
 

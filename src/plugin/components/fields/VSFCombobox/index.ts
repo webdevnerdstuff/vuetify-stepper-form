@@ -10,15 +10,19 @@ import type VSFCombobox from './VSFCombobox.vue';
 interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
-	density?: VCombobox['density'];
-	closeText?: VCombobox['closeText'];
 	closableChips?: VCombobox['closableChips'];
+	closeText?: VCombobox['closeText'];
+	color?: VCombobox['color'];
+	density?: VCombobox['density'];
+	hideDetails?: VCombobox['hideDetails'];
 	items?: VCombobox['items'];
 	variant?: VCombobox['variant'];
 }
 
 export interface VSFComboboxProps extends SharedProps {
 	field: InternalField;
+	pageIndex: number;
+	validateSchema: any;
 }
 
 export type VSFSelect = InstanceType<typeof VSFCombobox>;

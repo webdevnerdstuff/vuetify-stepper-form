@@ -17,6 +17,8 @@ interface InternalField extends Omit<Field,
 export interface VSFFancyRadioProps extends SharedProps {
 	density?: Field['density'] | 'expanded' | 'oversized';
 	field: InternalField;
+	pageIndex: number;
+	validateSchema: any;
 }
 
 export type VSFFancyRadio = InstanceType<typeof VSFFancyRadio>;

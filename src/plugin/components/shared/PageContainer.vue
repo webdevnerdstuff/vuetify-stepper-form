@@ -38,8 +38,11 @@
 					v-if="field.type === 'checkbox'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Radio & Fancy Radio -->
@@ -47,16 +50,22 @@
 					v-if="field.type === 'radio'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<Fields.VSFFancyRadio
 					v-if="field.type === 'fancyRadio'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Select -->
@@ -75,16 +84,22 @@
 					v-if="field.type === 'autocomplete'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<Fields.VSFCombobox
 					v-if="field.type === 'combobox'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Switch -->
@@ -92,7 +107,11 @@
 					v-if="field.type === 'switch'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
+					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Text Field -->
@@ -112,8 +131,11 @@
 					v-if="field.type === 'color'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ========================= File Input -->
@@ -121,8 +143,11 @@
 					v-if="field.type === 'file'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
 					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Textarea -->
@@ -130,7 +155,11 @@
 					v-if="field.type === 'textarea'"
 					v-model="modelValue[field.name]"
 					:field="field"
+					:page-index="index"
 					:settings="settings"
+					:validateSchema="validateSchema"
+					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Custom Field -->
@@ -139,11 +168,15 @@
 						v-if="field.type === 'custom'"
 						v-model="modelValue[field.name]"
 						:field="field"
+						:page-index="index"
 						:settings="settings"
+						:validateSchema="validateSchema"
+						@next="nextPage"
+						@validate="onValidate"
 					>
 						<!-- ========================= Pass Slots -->
 						<template
-							v-for="(_, slot) in $slots"
+							v-for="(_, slot) in slots"
 							#[slot]="scope"
 						>
 							<slot
@@ -157,14 +190,14 @@
 				<!-- TODO: User Select Field -->
 				<!-- TODO: Date Field -->
 
-				<template v-if="field.type === 'submit'">
+				<!-- <template v-if="field.type === 'submit'">
 					<v-btn
 						:color="field.color || settings.color"
 						:type="field.type"
 					>
 						{{ field.label }}
 					</v-btn>
-				</template>
+				</template> -->
 			</v-col>
 		</v-row>
 	</template>
@@ -192,13 +225,14 @@ const emit = defineEmits([
 	'validate',
 	'validate:page',
 ]);
+const slots = defineSlots();
 const { index, page } = defineProps<FieldLabelProps>();
 
 
-console.group('PageContainer');
-console.log('index', index);
-console.log('page', page);
-console.groupEnd();
+// console.group('PageContainer');
+// console.log('index', index);
+// console.log('page', page);
+// console.groupEnd();
 
 const modelValue = defineModel<any>();
 

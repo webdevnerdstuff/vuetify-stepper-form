@@ -31,7 +31,6 @@
 
 
 <script lang="ts" setup>
-import { useTemplateRef } from 'vue';
 import { TriggerValidationBus } from '../../../utils/globals';
 import type {
 	TriggerValidation,
@@ -61,7 +60,7 @@ const props = defineProps<VSFTextFieldProps>();
 const { field, pageIndex, settings, validateSchema } = props;
 
 const fieldRequired = computed(() => {
-	const hasRequiredRule = field.validationRules?.find((rule) => rule.type === 'required');
+	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
 
@@ -85,7 +84,7 @@ async function onActions(action: ValidateAction): Promise<UseOnActionsResponse |
 		field: field,
 		localForm: localForm.value,
 		pageIndex,
-		validateOn: field.validateOn
+		validateOn: field.validateOn || settings?.validateOn,
 	})
 		.then((response) => {
 			shouldValidate = response.shouldValidate;
@@ -104,11 +103,8 @@ async function onActions(action: ValidateAction): Promise<UseOnActionsResponse |
 const triggerValidationBus = useEventBus<TriggerValidation>(TriggerValidationBus);
 
 function validationListener(data: any): void {
-	if (data.pageIndex === pageIndex) {
-		onActions('page').then((response) => {
-			console.dir('response', response);
-			// checkIfFieldHasErrors(response);
-		});
+	if (data.pageIndex === pageIndex && field.type !== 'hidden' && field.type != null) {
+		onActions(data.action);
 	}
 }
 

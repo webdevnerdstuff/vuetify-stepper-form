@@ -21,6 +21,7 @@ export interface RadioGroupProps {
 }
 
 interface InternalField extends Field, RadioGroupProps {
+	color?: VRadio['color'];
 	density?: VRadio['density'];
 	falseIcon?: VRadio['falseIcon'];
 	falseValue?: VRadio['falseValue'];
@@ -33,6 +34,8 @@ interface InternalField extends Field, RadioGroupProps {
 
 export interface VSFRadioProps extends SharedProps {
 	field: InternalField;
+	pageIndex: number;
+	validateSchema: any;
 }
 
 export type VSFRadio = InstanceType<typeof VSFRadio>;

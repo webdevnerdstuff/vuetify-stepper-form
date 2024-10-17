@@ -1,91 +1,174 @@
 <template>
-	<div>
-		<FieldLabel
-			:label="field.label"
-			:required="field.required"
-		/>
+	<Form
+		:ref="formFieldRef"
+		:validation-schema="validateSchema"
+	>
+		<div>
+			<FieldLabel
+				:label="field.label"
+				:required="fieldRequired"
+			/>
 
-		<div class="vsf-fancy-radio__container">
-			<div class="v-input__control vsf-fancy-radio__control">
-				<template
-					v-for="option in field?.options"
-					:key="option.value"
-				>
-					<div
-						class="vsf-fancy-radio__field v-field"
-						:class="{
-							...fieldClasses,
-							[`vsf-fancy-radio__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
-						}"
-						:style="fieldStyle"
+			<div class="vsf-fancy-radio__container">
+				<div class="v-input__control vsf-fancy-radio__control">
+					<template
+						v-for="option in field?.options"
+						:key="option.value"
 					>
-						<input
-							:id="`vsf-radio-${field.name}-${option.value}`"
-							v-model="modelValue"
-							class="vsf-fancy-radio__input"
+						<div
+							class="vsf-fancy-radio__field v-field"
 							:class="{
-								'vsf-fancy-radio__input_checked': modelValue === option.value,
+								...fieldClasses,
+								[`vsf-fancy-radio__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
 							}"
-							:name="field.name"
-							type="radio"
-							:value="option.value"
-						/>
-
-						<label
-							:class="{
-								...labelClasses,
-								[`vsf-fancy-radio__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
-							}"
-							:for="`vsf-radio-${field.name}-${option.value}`"
-							:style="labelStyle"
-							@mousedown="onFocus(option.value)"
-							@mouseleave="onFocus(null)"
-							@mouseup="onFocus(null)"
+							:style="fieldStyle"
 						>
-							<div :class="fieldOverlayClasses"></div>
-							<div :class="fieldOutlineClasses"></div>
-							<div
+							<Field
+								v-slot="{ errors, errorMessage }"
+								v-model="modelValue"
+								:name="field.name"
+								type="radio"
+								:validate-on-model-update="true"
+							>
+								<input
+									:id="`vsf-radio-${field.name}-${option.value}`"
+									v-model="modelValue"
+									class="vsf-fancy-radio__input"
+									:class="{
+										'vsf-fancy-radio__input_checked': modelValue === option.value,
+										'vsf-fancy-radio__input_error': errors.length > 0,
+									}"
+									:error="errorMessage ? errorMessage?.length > 0 : false"
+									:error-messages="errorMessage"
+									:name="field.name"
+									type="radio"
+									:value="option.value"
+									@blur="onActions('blur')"
+									@change="onActions('change')"
+									@input="onActions('input')"
+								/>
+							</Field>
+
+							<label
 								:class="{
-									...fieldTextClasses,
-									'vsf-fancy-radio__input_selected': modelValue === option.value,
-									'text-surface': modelValue === option.value && fieldColor === 'on-surface',
+									...labelClasses,
+									[`vsf-fancy-radio__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
 								}"
-								v-html="option.label"
-							></div>
-						</label>
-					</div>
-				</template>
+								:for="`vsf-radio-${field.name}-${option.value}`"
+								:style="labelStyle"
+								@mousedown="onFocus(option.value)"
+								@mouseleave="onFocus(null)"
+								@mouseup="onFocus(null)"
+							>
+								<div :class="fieldOverlayClasses"></div>
+								<div :class="fieldOutlineClasses"></div>
+								<div
+									:class="{
+										...fieldTextClasses,
+										'vsf-fancy-radio__input_selected': modelValue === option.value,
+										'text-surface': modelValue === option.value && fieldColor === 'on-surface',
+									}"
+									v-html="option.label"
+								></div>
+							</label>
+						</div>
+					</template>
+				</div>
 			</div>
 		</div>
-	</div>
+	</Form>
 </template>
 
 
 <script lang="ts" setup>
+import { TriggerValidationBus } from '../../../utils/globals';
+import type {
+	TriggerValidation,
+	UseOnActionsResponse,
+	ValidateAction,
+} from '../../../types';
 import type {
 	VSFFancyRadioProps,
 } from './index';
 import FieldLabel from '../../shared/FieldLabel.vue';
+import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useAutoPage } from '../../../composables/helpers';
+import { useOnActions } from '../../../composables/validation';
+import { Field, Form } from 'vee-validate';
+import type { PrivateFormContext } from 'vee-validate';
+import { useEventBus } from '@vueuse/core';
 
 
-const emit = defineEmits(['next']);
-
+const emit = defineEmits([
+	'next',
+	'validate',
+]);
 const modelValue = defineModel<any>();
-const { field, settings } = defineProps<VSFFancyRadioProps>();
+const props = defineProps<VSFFancyRadioProps>();
 
-// console.log('field', field);
+const { field, pageIndex, settings, validateSchema } = props;
+
+const fieldRequired = computed(() => {
+	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
+	return field.required || hasRequiredRule as FieldLabelProps['required'];
+});
 
 
 // Auto Paging //
 useAutoPage({ emit, field, modelValue, settings });
 
-// console.group('VSFFancyRadio');
-// console.log('field', field);
-// console.log('settings', settings);
-// console.groupEnd();
+
+// -------------------------------------------------- Validation //
+const formFieldRef = `${Math.ceil(Math.random() * 1000)}-formFieldRef`;
+const localForm = useTemplateRef<PrivateFormContext>(String(formFieldRef));
 
 
+// ------------------------- Validate On Actions //
+async function onActions(action: ValidateAction): Promise<UseOnActionsResponse | void> {
+	let shouldValidate = false;
+
+	const response = await useOnActions({
+		action,
+		emit,
+		field: field,
+		localForm: localForm.value,
+		pageIndex,
+		validateOn: field.validateOn || settings?.validateOn,
+	})
+		.then((response) => {
+			shouldValidate = response.shouldValidate;
+			return response;
+		});
+
+	if (!shouldValidate) {
+		return;
+	}
+
+	return response;
+}
+
+
+// ------------------------- Bus Event //
+const triggerValidationBus = useEventBus<TriggerValidation>(TriggerValidationBus);
+
+function validationListener(data: any): void {
+	if (data.pageIndex === pageIndex && field.type !== 'hidden' && field.type != null) {
+		onActions(data.action);
+	}
+}
+
+// Listen to an event //
+const unsubscribeBus = triggerValidationBus.on(validationListener);
+
+// Unsubscribe on unmount //
+onUnmounted(() => {
+	if (typeof unsubscribeBus !== 'undefined') {
+		triggerValidationBus.off(validationListener);
+	}
+});
+
+
+// -------------------------------------------------- Properties //
 const densityHeight = {
 	comfortable: '48px',
 	compact: '40px',
@@ -262,6 +345,15 @@ function onFocus(value: any) {
 			+ label {
 				.vsf-fancy-radio__overlay {
 					background-color: currentcolor;
+					opacity: 1;
+				}
+			}
+		}
+
+		&_error {
+			+ label {
+				.vsf-fancy-radio__overlay {
+					border-color: rgb(var(--v-theme-error));
 					opacity: 1;
 				}
 			}
