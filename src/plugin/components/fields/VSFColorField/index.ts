@@ -19,7 +19,6 @@ interface InternalField extends Omit<Field,
 export interface VSFColorFieldProps extends SharedProps {
 	field: InternalField;
 	pageIndex: number;
-	validateSchema: any;
 }
 
 export type VSFColorField = InstanceType<typeof VSFColorField>;

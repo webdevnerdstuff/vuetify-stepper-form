@@ -19,7 +19,6 @@ interface InternalField extends Field {
 export interface VSFCheckboxProps extends SharedProps {
 	field: InternalField;
 	pageIndex: number;
-	validateSchema: any;
 }
 
 export type VSFCheckbox = InstanceType<typeof VSFCheckbox>;

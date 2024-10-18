@@ -18,7 +18,6 @@ interface InternalField extends Omit<Field,
 export interface VSFTextFieldProps extends SharedProps {
 	field: InternalField;
 	pageIndex: number;
-	validateSchema: any;
 }
 
 export type VSFTextField = InstanceType<typeof VSFTextField>;

@@ -19,7 +19,6 @@ interface InternalField extends Omit<Field,
 export interface VFileInputProps extends SharedProps {
 	field: InternalField;
 	pageIndex: number;
-	validateSchema: any;
 }
 
 export type VSFFileInput = InstanceType<typeof VSFFileInput>;

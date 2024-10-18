@@ -15,7 +15,7 @@
 
 	<template
 		v-for="field in page.fields"
-		:key="field.name"
+		:key="`${field.name}-${field.type}`"
 	>
 		<input
 			v-if="field.type === 'hidden' || !field.type"
@@ -40,7 +40,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -52,7 +51,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -63,7 +61,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -75,7 +72,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -86,7 +82,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -97,7 +92,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -109,7 +103,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -121,7 +114,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -133,7 +125,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -145,7 +136,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -157,7 +147,6 @@
 					:field="field"
 					:page-index="index"
 					:settings="settings"
-					:validateSchema="validateSchema"
 					@next="nextPage"
 					@validate="onValidate"
 				/>
@@ -170,7 +159,6 @@
 						:field="field"
 						:page-index="index"
 						:settings="settings"
-						:validateSchema="validateSchema"
 						@next="nextPage"
 						@validate="onValidate"
 					>
@@ -217,7 +205,6 @@ export interface FieldLabelProps {
 	index: number;
 	page: Page;
 	settings: Settings;
-	validateSchema: any;
 }
 
 const emit = defineEmits([

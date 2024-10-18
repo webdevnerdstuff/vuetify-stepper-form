@@ -56,12 +56,12 @@
 							</template>
 						</v-stepper-header>
 
-						<!-- <Form
-							ref="formFieldRef"
+						<Form
+							ref="stepperFormRef"
+							v-slot="{ validate }"
 							:validation-schema="validateSchema"
-							@submit.prevent="onSubmit"
-						> -->
-						<form @submit.prevent="onSubmit">
+							@submit="onSubmit"
+						>
 							<v-stepper-window>
 								<v-stepper-window-item
 									v-for="page, i in pages"
@@ -78,9 +78,7 @@
 											:index="getIndex(i)"
 											:page="page"
 											:settings="settings"
-											:validateSchema="validateSchema"
-											@next="validatePage('page')"
-											@validate="onValidate($event, next)"
+											@validate="onFieldValidate($event, next)"
 										>
 											<!-- ========================= Pass Slots -->
 											<template
@@ -101,7 +99,7 @@
 											:settings="settings"
 											:summary-columns="summaryColumns"
 											@goToQuestion="stepperModel = $event"
-											@submit="onSubmit"
+											@submit="onSubmit(modelValue)"
 										/>
 									</v-container>
 								</v-stepper-window-item>
@@ -114,8 +112,9 @@
 										:color="settings.color"
 										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
-										@click="validatePage('page')"
+										@click="runValidation(validate, 'next', next)"
 									/>
+									<!-- TODO: This will change to use v-else when done -->
 									<v-btn
 										:color="settings.color"
 										:disabled="fieldsHaveErrors && errorPageIndexes.includes(stepperModel - 1)"
@@ -137,8 +136,7 @@
 								<v-col>
 								</v-col>
 							</v-row>
-						</form>
-						<!-- </Form> -->
+						</Form>
 					</template>
 				</v-stepper>
 			</v-container>
@@ -148,11 +146,13 @@
 </template>
 
 <script setup lang="ts">
+// TODO: Conditionals needs to update the validation //
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { AllProps } from './utils/props';
 import { useDisplay } from 'vuetify';
-// import { Form } from 'vee-validate';
+import { Form } from 'vee-validate';
+import type { PrivateFormContext } from 'vee-validate';
 import type {
 	ComputedClasses,
 	EmitValidateEventPayload,
@@ -168,18 +168,12 @@ import {
 	useStepperContainerClasses,
 } from './composables/classes';
 import componentEmits from './utils/emits';
-import { TriggerValidationBus } from './utils/globals';
 import { globalOptions } from './';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import { useMergeProps } from './composables/helpers';
-import {
-	useEventBus,
-	watchDeep,
-} from '@vueuse/core';
-import {
-	useGetValidationSchema,
-} from './composables/validation';
+import { watchDeep } from '@vueuse/core';
+import { useGetValidationSchema } from './composables/validation';
 
 
 const attrs = useAttrs();
@@ -190,7 +184,6 @@ const injectedOptions = inject(globalOptions, {});
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
-
 const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
 const { direction, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
@@ -246,11 +239,6 @@ Object.values(pages).forEach((p: Page) => {
 // -------------------------------------------------- Mounted //
 onMounted(() => {
 	whenCallback();
-
-	// useSetupValidation({
-	// 	fields: allFieldsArray.value,
-	// });
-
 	summaryColumnErrorCheck();
 });
 
@@ -267,6 +255,10 @@ const stepperModel = ref(1);
 
 const { sm } = useDisplay();
 const transition = computed<Props['transition']>(() => stepperProps.transition);
+const parentForm = useTemplateRef<PrivateFormContext>('stepperFormRef');
+
+provide('parentForm', parentForm);
+
 
 
 // -------------------------------------------------- Stepper Action //
@@ -287,17 +279,9 @@ const canReviewPreviousButtonDisabled = computed<boolean>(() => {
 	return stepperModel.value === pages.length && !props.canReview;
 });
 
-// ------------------------- Next Page //
-function nextPage(next: () => void): void {
-	// console.log('nextPage');
-
-	next();
-}
 
 // ------------------------- Previous Page //
 function previousPage(prev: () => void): void {
-	// console.log('previousPage');
-
 	if (canReviewPreviousButtonDisabled.value) {
 		return;
 	}
@@ -325,173 +309,92 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // & ------------------------------------------------ Validation //
-const validateSchema = useGetValidationSchema(allFieldsArray.value as SchemaField[]);
+const validateSchema = props.schema ?? useGetValidationSchema(allFieldsArray.value as SchemaField[]);
 const fieldsHaveErrors = ref(false);
 const currentPageHasErrors = ref(false);
 const errorPageIndexes = ref<number[]>([]);
-let triggerValidationBus: unknown | any;
 
-onMounted(() => {
-	triggerValidationBus = useEventBus<string>(TriggerValidationBus);
-});
-
-
-// ------------------------ Set Page to Errors //
-function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?: Page, isSubmit = false): void {
-	currentPageHasErrors.value = true;
-
-	if (page) {
-		// eslint-disable-next-line no-param-reassign
-		page.error = true;
-	}
-
-	if (!errorPageIndexes.value.includes(pageIndex) && !isSubmit) {
-		errorPageIndexes.value.push(pageIndex);
-	}
+// ------------------------ Run Validation //
+function runValidation(
+	validate: () => Promise<ValidateResult>,
+	source = 'submit',
+	next: () => void = () => { },
+): void {
+	validate()
+		.then((response: ValidateResult) => {
+			checkForPageErrors(response.errors, source, next);
+		});
 }
 
-// ------------------------ Validation callback from fields //
-function onValidate(payload: EmitValidateEventPayload, event: () => void) {
-	console.log('onValidate', payload);
-	const page = pages[payload.pageIndex];
+// ------------------------ Remove error from Page //
+function removePageError(pageIndex: number): void {
+	if (errorPageIndexes.value.includes(pageIndex)) {
+		const errPageIdx = errorPageIndexes.value.indexOf(pageIndex);
 
-	// console.log('page', page);
+		if (errPageIdx > -1) {
+			errorPageIndexes.value.splice(errPageIdx, 1);
+		}
+	}
+
+	currentPageHasErrors.value = false;
+}
+
+// ------------------------ Check the if the page has errors //
+function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
+	const currentPage = stepperModel.value - 1;
+
+	const page = pages[currentPage];
 
 	if (!page) {
 		return;
 	}
 
+	const pageIndex = pages.findIndex((p) => p === page);
+	const pageFields = page.fields;
+	const hasErrorInField = Object.keys(errors).some(errorKey => pageFields.some(field => field.name === errorKey));
 
-	// ! ------------------------------------------------------------ THIS IS STILL WRONG //
-	// const currentFieldIndex = page.fields.findIndex((f) => f.name === payload.fieldName);
-	// const hiddenFieldsLength = page.fields.filter((f) => f.type !== 'hidden').length;
-	// const pageFieldsLengthZeroBased = page.fields.length - 1;
-	// const pageFieldsLengthWithoutHidden = page.fields.length - hiddenFieldsLength;
+	if (hasErrorInField) {
+		currentPageHasErrors.value = true;
 
-
-	// // Do not continue if field is not the last field //
-	// // ! THIS NEEDS MORE WORK //
-	// if (currentFieldIndex !== pageFieldsLengthZeroBased && pageFieldsLengthZeroBased !== pageFieldsLengthWithoutHidden) {
-	// 	return;
-	// }
-
-	// Get fields of the current page
-	const currentPageFields = page.fields;
-
-	// Filter out hidden fields (fields without a 'type' or with 'type' set to 'hidden' are considered hidden)
-	const visibleFields = currentPageFields.filter((f) => f.type !== undefined && f.type !== 'hidden');
-
-	// Get the index of the current field in the full list of fields on the current page
-	// const currentFieldIndex = currentPageFields.findIndex((f) => f.name === payload.fieldName);
-
-	// Get the last index of visible fields on the current page
-	const lastVisibleFieldIndex = visibleFields.length - 1;
-
-	// Find the index of the current field in the visible fields array
-	const currentVisibleFieldIndex = visibleFields.findIndex((f) => f.name === payload.fieldName);
-
-	// Only continue if the current field is the last visible field on the page
-	if (currentVisibleFieldIndex !== lastVisibleFieldIndex) {
+		setPageToError(pageIndex, page, source);
 		return;
 	}
 
-	// ! ------------------------------------------------------------ THIS IS STILL WRONG //
+	removePageError(pageIndex);
 
-	if (payload.action === 'page') {
-		page.error = payload.error === true;
-
-		if (page.error) {
-			setPageToError(payload.pageIndex, page);
-			return;
-		}
-
-		currentPageHasErrors.value = false;
-	}
-
-	let fieldsErrors = false;
-
-	// Check all page fields for Submit //
-	if (payload.action === 'submit') {
-		Object.values(pages).forEach((p: Page) => {
-			const page = p;
-
-			// Reset the page error for clean slate to check for errors //
-			page.error = false;
-
-			Object.values(page.fields).forEach((field: Field) => {
-				if (field.type !== 'hidden' && field.type != null && field.error === true) {
-					fieldsErrors = true;
-					page.error = true;
-				}
-			});
-
-			if (fieldsErrors) {
-				setPageToError(payload.pageIndex, page, true);
-			}
-		});
-
-		if (fieldsErrors) {
-			return;
-		}
-	}
-	else {
-		Object.values(page.fields).forEach((field: Field) => {
-			if (field.type !== 'hidden' && field.type != null && field.error === true) {
-				fieldsErrors = true;
-			}
-			// if (field.type !== 'hidden' && field.type != null && (field.error === true || !Object.prototype.hasOwnProperty.call(field, 'error'))) {
-			// 	fieldsErrors = true;
-			// }
-		});
-	}
-
-	if (fieldsErrors) {
-		setPageToError(payload.pageIndex);
-		return;
-	}
-
-	// Remove error from Page //
-	const errPageIdx = errorPageIndexes.value.indexOf(payload.pageIndex);
-
-	if (errPageIdx > -1) {
-		errorPageIndexes.value.splice(errPageIdx, 1);
-	}
-
-	currentPageHasErrors.value = false;
-
-	// Form is complete and without errors. Submit form. //
-	if (payload.action === 'submit' && lastPage.value) {
-		submitForm();
-		return;
-	}
-
-	// Continue to the next Page //
-	if (payload.nextPage && stepperModel.value === payload.pageIndex + 1) {
-		nextPage(event);
+	if (next && !lastPage.value && source !== 'submit') {
+		next();
 	}
 }
 
-// ------------------------ Page validation triggering //
-function validatePage(action = 'page'): void {
-	// console.log('validatePage');
 
-	triggerValidationBus.emit({
-		action,
-		pageIndex: stepperModel.value,
-	});
+// ------------------------ Set Page to Errors //
+function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?: Page, source = 'submit'): void {
+	currentPageHasErrors.value = true;
+
+	if (page && source === 'submit') {
+		// eslint-disable-next-line no-param-reassign
+		page.error = true;
+	}
+
+	if (!errorPageIndexes.value.includes(pageIndex)) {
+		errorPageIndexes.value.push(pageIndex);
+	}
+}
+
+// ------------------------ Validation callback from fields //
+function onFieldValidate(field: Field, next: () => void): void {
+	const errors = parentForm.value?.errors as unknown as ValidateResult['errors'];
+	const shouldAutoPage = (field.autoPage ? next : null) as () => void;
+
+	checkForPageErrors(errors, 'field', shouldAutoPage);
 }
 
 
 // -------------------------------------------------- Submit //
-function onSubmit(val): void {
-	console.log('onSubmit', val);
-
-	validatePage('submit');
-}
-
-function submitForm(): void {
-	console.log('%c%s', 'color: #00ff00; font-weight: bold;', '======================== SUBMIT FORM');
-	emit('submit');
+function onSubmit(values: any): void {
+	console.log('%c%s', 'color: #00ff00; font-weight: bold;', '======================== onSubmit SUBMIT FORM \n', values);
+	emit('submit', values);
 }
 
 
@@ -510,8 +413,6 @@ function whenCallback(): void {
 
 				if (indexPage?.fields[fieldIdx]) {
 					indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';
-
-					// TODO: Update validation? //
 				}
 			}
 		});

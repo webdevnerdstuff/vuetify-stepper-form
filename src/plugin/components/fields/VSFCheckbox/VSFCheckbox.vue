@@ -1,103 +1,93 @@
 <template>
-	<Form
-		:ref="formFieldRef"
-		:validation-schema="validateSchema"
+	<Field
+		v-if="!field?.multiple"
+		v-slot="{ errorMessage, validate }"
+		v-model="modelValue"
+		:name="field.name"
+		:validate-on-model-update="false"
 	>
-		<Field
-			v-if="!field?.multiple"
-			v-slot="{ errorMessage }"
+		<v-checkbox
 			v-model="modelValue"
-			:name="field.name"
-			:validate-on-model-update="false"
+			v-bind="boundSettings"
+			:error="errorMessage ? errorMessage?.length > 0 : false"
+			:error-messages="errorMessage"
+			@blur="onActions(validate, 'blur')"
+			@change="onActions(validate, 'change')"
+			@input="onActions(validate, 'input')"
 		>
-			<v-checkbox
-				v-model="modelValue"
-				v-bind="boundSettings"
-				:error="errorMessage ? errorMessage?.length > 0 : false"
-				:error-messages="errorMessage"
-			>
-				<template #label>
-					<FieldLabel
-						:label="field.label"
-						:required="fieldRequired"
-					/>
-				</template>
-			</v-checkbox>
-		</Field>
+			<template #label>
+				<FieldLabel
+					:label="field.label"
+					:required="fieldRequired"
+				/>
+			</template>
+		</v-checkbox>
+	</Field>
 
+	<div
+		v-else
+		class="v-input v-input--horizontal v-input--center-affix"
+	>
 		<div
-			v-else
-			class="v-input v-input--horizontal v-input--center-affix"
+			class="v-input__control"
+			:style="inputControlContainerStyle"
 		>
-			<div
-				class="v-input__control"
-				:style="inputControlContainerStyle"
+			<v-label
+				v-if="field.label"
+				:class="{
+					'me-2': field.labelPositionLeft,
+				}"
 			>
-				<v-label
-					v-if="field.label"
+				<FieldLabel
 					:class="{
-						'me-2': field.labelPositionLeft,
+						'pb-5': !field?.hideDetails,
 					}"
-				>
-					<FieldLabel
-						:class="{
-							'pb-5': !field?.hideDetails,
-						}"
-						:label="field.label"
-						:required="fieldRequired"
-					/>
-				</v-label>
+					:label="field.label"
+					:required="fieldRequired"
+				/>
+			</v-label>
 
-				<div
-					:class="{
-						'v-selection-control-group': !field.inline,
-					}"
-					:style="checkboxContainerStyle"
+			<div
+				:class="{
+					'v-selection-control-group': !field.inline,
+				}"
+				:style="checkboxContainerStyle"
+			>
+				<Field
+					v-for="option in field?.options"
+					:key="option.value"
+					v-slot="{ errorMessage, validate }"
+					v-model="modelValue"
+					:name="field.name"
+					:validate-on-model-update="false"
 				>
-					<Field
-						v-for="option in field?.options"
-						:key="option.value"
-						v-slot="{ errorMessage }"
+					<v-checkbox
 						v-model="modelValue"
-						:name="field.name"
-						:validate-on-model-update="false"
+						v-bind="boundSettings"
+						:error="errorMessage ? errorMessage?.length > 0 : false"
+						:error-messages="errorMessage"
+						:label="option.label"
+						:style="checkboxStyle"
+						:true-value="option.value"
+						@blur="onActions(validate, 'blur')"
+						@change="onActions(validate, 'change')"
+						@input="onActions(validate, 'input')"
 					>
-						<v-checkbox
-							v-model="modelValue"
-							v-bind="boundSettings"
-							:error="errorMessage ? errorMessage?.length > 0 : false"
-							:error-messages="errorMessage"
-							:label="option.label"
-							:style="checkboxStyle"
-							:true-value="option.value"
-						>
-						</v-checkbox>
-					</Field>
-				</div>
+					</v-checkbox>
+				</Field>
 			</div>
 		</div>
-	</Form>
+	</div>
 </template>
 
 
 <script lang="ts" setup>
-import { TriggerValidationBus } from '../../../utils/globals';
-import type {
-	TriggerValidation,
-	UseOnActionsResponse,
-	ValidateAction,
-} from '../../../types';
-import type {
-	VSFCheckboxProps,
-} from './index';
-import FieldLabel from '../../shared/FieldLabel.vue';
+import type { VSFCheckboxProps } from './index';
+import type { FieldValidator } from 'vee-validate';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
-import { useAutoPage } from '../../../composables/helpers';
-import { useOnActions } from '../../../composables/validation';
-import { Field, Form } from 'vee-validate';
-import type { PrivateFormContext } from 'vee-validate';
-import { useEventBus } from '@vueuse/core';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { Field } from 'vee-validate';
 
 
 const emit = defineEmits([
@@ -107,7 +97,7 @@ const emit = defineEmits([
 const modelValue = defineModel<any>();
 const props = defineProps<VSFCheckboxProps>();
 
-const { field, pageIndex, settings, validateSchema } = props;
+const { field, settings } = props;
 
 const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
@@ -115,59 +105,20 @@ const fieldRequired = computed(() => {
 });
 
 
-// Auto Paging //
-useAutoPage({ emit, field, modelValue, settings });
-
-
-// -------------------------------------------------- Validation //
-const formFieldRef = `${Math.ceil(Math.random() * 1000)}-formFieldRef`;
-const localForm = useTemplateRef<PrivateFormContext>(String(formFieldRef));
-
-
 // ------------------------- Validate On Actions //
-async function onActions(action: ValidateAction): Promise<UseOnActionsResponse | void> {
-	let shouldValidate = false;
-	console.log('onActions', action);
+async function onActions(validate: FieldValidator<unknown>, action: string): Promise<void> {
+	const validateOn = field.validateOn || settings.validateOn;
+	const isBlur = action === 'blur' && validateOn === 'blur';
+	const isInput = action === 'input' && validateOn === 'input';
+	const isChange = action === 'change' && validateOn === 'change';
 
-	const response = await useOnActions({
-		action,
-		emit,
-		field: field,
-		localForm: localForm.value,
-		pageIndex,
-		validateOn: field.validateOn || settings?.validateOn,
-	})
-		.then((response) => {
-			shouldValidate = response.shouldValidate;
-			return response;
-		});
-
-	if (!shouldValidate) {
-		return;
-	}
-
-	return response;
-}
-
-
-// ------------------------- Bus Event //
-const triggerValidationBus = useEventBus<TriggerValidation>(TriggerValidationBus);
-
-function validationListener(data: any): void {
-	if (data.pageIndex === pageIndex && field.type !== 'hidden' && field.type != null) {
-		onActions(data.action);
+	if (isBlur || isInput || isChange) {
+		validate()
+			.then(() => {
+				emit('validate', field);
+			});
 	}
 }
-
-// Listen to an event //
-const unsubscribeBus = triggerValidationBus.on(validationListener);
-
-// Unsubscribe on unmount //
-onUnmounted(() => {
-	if (typeof unsubscribeBus !== 'undefined') {
-		triggerValidationBus.off(validationListener);
-	}
-});
 
 
 // -------------------------------------------------- Bound Settings //

@@ -17,14 +17,21 @@ import type {
 	VTextarea,
 } from 'vuetify/components';
 import VStepperForm from '../VStepperForm.vue';
+import type { AnySchema } from 'yup';
 import type {
+	GenericObject,
+	FieldValidator,
+	FormValidationResult,
 	PrivateFormContext,
 } from 'vee-validate';
-import type { AnySchema } from 'yup';
-
 
 
 export * from '../index';
+
+declare global {
+	type ValidateResult = FormValidationResult<GenericObject, GenericObject>;
+	type ValidateFieldResult = FieldValidator<GenericObject>;
+}
 
 
 // -------------------------------------------------- Types //
@@ -34,8 +41,6 @@ export type GlobalDensity = VCheckbox['density'] | VSelect['density'] | VSwitch[
 export interface KeyStringAny<T = any> {
 	[key: string]: T;
 };
-
-
 
 
 // ! TS Issue with this, possible bug makes it not work ! //
@@ -104,6 +109,7 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 	errorIcon?: VStepper['errorIcon'];
 	hideDetails?: boolean;
 	navButtonSize?: VBtn['size'];
+	schema?: AnySchema; // ? Not sure if is the correct type //
 	summaryColumns?: SummaryColumns;
 	title?: string;
 	validateOn?: Field['validateOn'];
@@ -112,7 +118,7 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 }
 
 export interface PluginOptions extends Partial<Props> { }
-export interface Settings extends Partial<Omit<Props, 'pages'>> { }
+export interface Settings extends Partial<Omit<Props, 'pages' | 'schema'>> { }
 
 type FieldTypes =
 	'autocomplete' |
@@ -164,7 +170,7 @@ export interface Field {
 	rules?: ValidationRule[];
 	text?: string;
 	type?: FieldTypes;
-	validate?: (field: Field, value: any) => boolean;
+	// validate?: (field: Field, value: any) => boolean;
 	validateOn?: string;
 	validationType?: ValidationTypes;
 	when?: (value: any) => boolean;
@@ -198,6 +204,11 @@ type ValidationRule = {
 };
 
 export type YupObjectShape = { [key: string]: AnySchema; };
+
+export interface Payload {
+	field: Field;
+	response: ValidateFieldResult;
+}
 
 // ------------------------- Trigger Validation Event Bus //
 export type TriggerValidation = any;
@@ -307,7 +318,7 @@ export interface UseOnActions {
 			action: ValidateAction;
 			emit: EmitValidateEvent;
 			field: Field;
-			localForm: PrivateFormContext | null;
+			localForm: PrivateFormContext;
 			pageIndex: number;
 			validateOn?: Props['validateOn'];
 		}
@@ -325,6 +336,7 @@ export interface UseCheckIfFieldHasErrors {
 		}
 	): Field;
 }
+
 
 
 declare module "vue" {

@@ -1,102 +1,87 @@
 <template>
-	<Form
-		:ref="formFieldRef"
-		:validation-schema="validateSchema"
-	>
-		<div>
-			<FieldLabel
-				:label="field.label"
-				:required="fieldRequired"
-			/>
+	<div>
+		<FieldLabel
+			:label="field.label"
+			:required="fieldRequired"
+		/>
 
-			<div class="vsf-fancy-radio__container">
-				<div class="v-input__control vsf-fancy-radio__control">
-					<template
-						v-for="option in field?.options"
-						:key="option.value"
+		<div class="vsf-fancy-radio__container">
+			<div class="v-input__control vsf-fancy-radio__control">
+				<template
+					v-for="option in field?.options"
+					:key="option.value"
+				>
+					<div
+						class="vsf-fancy-radio__field v-field"
+						:class="{
+							...fieldClasses,
+							[`vsf-fancy-radio__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
+						}"
+						:style="fieldStyle"
 					>
-						<div
-							class="vsf-fancy-radio__field v-field"
-							:class="{
-								...fieldClasses,
-								[`vsf-fancy-radio__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
-							}"
-							:style="fieldStyle"
+						<Field
+							v-slot="{ errors, errorMessage, validate }"
+							v-model="modelValue"
+							:name="field.name"
+							type="radio"
+							:validate-on-model-update="true"
 						>
-							<Field
-								v-slot="{ errors, errorMessage }"
+							<input
+								:id="`vsf-radio-${field.name}-${option.value}`"
 								v-model="modelValue"
+								class="vsf-fancy-radio__input"
+								:class="{
+									'vsf-fancy-radio__input_checked': modelValue === option.value,
+									'vsf-fancy-radio__input_error': errors.length > 0,
+								}"
+								:error="errorMessage ? errorMessage?.length > 0 : false"
+								:error-messages="errorMessage"
 								:name="field.name"
 								type="radio"
-								:validate-on-model-update="true"
-							>
-								<input
-									:id="`vsf-radio-${field.name}-${option.value}`"
-									v-model="modelValue"
-									class="vsf-fancy-radio__input"
-									:class="{
-										'vsf-fancy-radio__input_checked': modelValue === option.value,
-										'vsf-fancy-radio__input_error': errors.length > 0,
-									}"
-									:error="errorMessage ? errorMessage?.length > 0 : false"
-									:error-messages="errorMessage"
-									:name="field.name"
-									type="radio"
-									:value="option.value"
-									@blur="onActions('blur')"
-									@change="onActions('change')"
-									@input="onActions('input')"
-								/>
-							</Field>
+								:value="option.value"
+								@blur="onActions(validate, 'blur')"
+								@change="onActions(validate, 'change')"
+								@click="onActions(validate, 'click')"
+								@input="onActions(validate, 'input')"
+							/>
+						</Field>
 
-							<label
+						<label
+							:class="{
+								...labelClasses,
+								[`vsf-fancy-radio__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
+							}"
+							:for="`vsf-radio-${field.name}-${option.value}`"
+							:style="labelStyle"
+							@mousedown="onFocus(option.value)"
+							@mouseleave="onFocus(null)"
+							@mouseup="onFocus(null)"
+						>
+							<div :class="fieldOverlayClasses"></div>
+							<div :class="fieldOutlineClasses"></div>
+							<div
 								:class="{
-									...labelClasses,
-									[`vsf-fancy-radio__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
+									...fieldTextClasses,
+									'vsf-fancy-radio__input_selected': modelValue === option.value,
+									'text-surface': modelValue === option.value && fieldColor === 'on-surface',
 								}"
-								:for="`vsf-radio-${field.name}-${option.value}`"
-								:style="labelStyle"
-								@mousedown="onFocus(option.value)"
-								@mouseleave="onFocus(null)"
-								@mouseup="onFocus(null)"
-							>
-								<div :class="fieldOverlayClasses"></div>
-								<div :class="fieldOutlineClasses"></div>
-								<div
-									:class="{
-										...fieldTextClasses,
-										'vsf-fancy-radio__input_selected': modelValue === option.value,
-										'text-surface': modelValue === option.value && fieldColor === 'on-surface',
-									}"
-									v-html="option.label"
-								></div>
-							</label>
-						</div>
-					</template>
-				</div>
+								v-html="option.label"
+							></div>
+						</label>
+					</div>
+				</template>
 			</div>
 		</div>
-	</Form>
+	</div>
 </template>
 
 
 <script lang="ts" setup>
-import { TriggerValidationBus } from '../../../utils/globals';
-import type {
-	TriggerValidation,
-	UseOnActionsResponse,
-	ValidateAction,
-} from '../../../types';
-import type {
-	VSFFancyRadioProps,
-} from './index';
-import FieldLabel from '../../shared/FieldLabel.vue';
+import type { VSFFancyRadioProps } from './index';
+import type { FieldValidator } from 'vee-validate';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
-import { useAutoPage } from '../../../composables/helpers';
-import { useOnActions } from '../../../composables/validation';
-import { Field, Form } from 'vee-validate';
-import type { PrivateFormContext } from 'vee-validate';
-import { useEventBus } from '@vueuse/core';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { Field } from 'vee-validate';
 
 
 const emit = defineEmits([
@@ -106,7 +91,7 @@ const emit = defineEmits([
 const modelValue = defineModel<any>();
 const props = defineProps<VSFFancyRadioProps>();
 
-const { field, pageIndex, settings, validateSchema } = props;
+const { field, settings } = props;
 
 const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
@@ -114,58 +99,20 @@ const fieldRequired = computed(() => {
 });
 
 
-// Auto Paging //
-useAutoPage({ emit, field, modelValue, settings });
-
-
-// -------------------------------------------------- Validation //
-const formFieldRef = `${Math.ceil(Math.random() * 1000)}-formFieldRef`;
-const localForm = useTemplateRef<PrivateFormContext>(String(formFieldRef));
-
-
 // ------------------------- Validate On Actions //
-async function onActions(action: ValidateAction): Promise<UseOnActionsResponse | void> {
-	let shouldValidate = false;
+async function onActions(validate: FieldValidator<unknown>, action: string): Promise<void> {
+	const validateOn = field.validateOn || settings.validateOn;
+	const isBlur = action === 'blur' && validateOn === 'blur';
+	const isInput = action === 'input' && validateOn === 'input';
+	const isChange = action === 'change' && validateOn === 'change';
 
-	const response = await useOnActions({
-		action,
-		emit,
-		field: field,
-		localForm: localForm.value,
-		pageIndex,
-		validateOn: field.validateOn || settings?.validateOn,
-	})
-		.then((response) => {
-			shouldValidate = response.shouldValidate;
-			return response;
-		});
-
-	if (!shouldValidate) {
-		return;
-	}
-
-	return response;
-}
-
-
-// ------------------------- Bus Event //
-const triggerValidationBus = useEventBus<TriggerValidation>(TriggerValidationBus);
-
-function validationListener(data: any): void {
-	if (data.pageIndex === pageIndex && field.type !== 'hidden' && field.type != null) {
-		onActions(data.action);
+	if (isBlur || isInput || isChange || action === 'click') {
+		validate()
+			.then(() => {
+				emit('validate', field);
+			});
 	}
 }
-
-// Listen to an event //
-const unsubscribeBus = triggerValidationBus.on(validationListener);
-
-// Unsubscribe on unmount //
-onUnmounted(() => {
-	if (typeof unsubscribeBus !== 'undefined') {
-		triggerValidationBus.off(validationListener);
-	}
-});
 
 
 // -------------------------------------------------- Properties //

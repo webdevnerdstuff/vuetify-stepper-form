@@ -22,7 +22,6 @@ interface InternalField extends Omit<Field,
 export interface VSFSelectProps extends SharedProps {
 	field: InternalField;
 	pageIndex: number;
-	validateSchema: any;
 }
 
 export type VSFSelect = InstanceType<typeof VSFSelect>;
