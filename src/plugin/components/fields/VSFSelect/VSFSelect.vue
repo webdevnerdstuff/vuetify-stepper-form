@@ -28,17 +28,14 @@
 
 <script lang="ts" setup>
 import type { VSFSelectProps } from './index';
-import type { FieldValidator } from 'vee-validate';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
 import { Field } from 'vee-validate';
 
 
-const emit = defineEmits([
-	'next',
-	'validate',
-]);
+const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFSelectProps>();
 
@@ -51,18 +48,14 @@ const fieldRequired = computed(() => {
 
 
 // ------------------------- Validate On Actions //
-async function onActions(validate: FieldValidator<unknown>, action: string): Promise<void> {
-	const validateOn = field.validateOn || settings.validateOn;
-	const isBlur = action === 'blur' && validateOn === 'blur';
-	const isInput = action === 'input' && validateOn === 'input';
-	const isChange = action === 'change' && validateOn === 'change';
-
-	if (isBlur || isInput || isChange) {
-		validate()
-			.then(() => {
-				emit('validate', field);
-			});
-	}
+async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+	useOnActions({
+		action,
+		emit,
+		field,
+		settingsValidateOn: settings.validateOn,
+		validate,
+	});
 }
 
 

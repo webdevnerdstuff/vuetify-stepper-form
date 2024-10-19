@@ -38,9 +38,7 @@
 					v-if="field.type === 'checkbox'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -49,9 +47,7 @@
 					v-if="field.type === 'radio'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -59,9 +55,7 @@
 					v-if="field.type === 'fancyRadio'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -70,9 +64,7 @@
 					v-if="field.type === 'select'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -80,9 +72,7 @@
 					v-if="field.type === 'autocomplete'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -90,9 +80,7 @@
 					v-if="field.type === 'combobox'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -101,9 +89,7 @@
 					v-if="field.type === 'switch'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -112,9 +98,7 @@
 					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -123,9 +107,7 @@
 					v-if="field.type === 'color'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -134,9 +116,7 @@
 					v-if="field.type === 'file'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -145,9 +125,7 @@
 					v-if="field.type === 'textarea'"
 					v-model="modelValue[field.name]"
 					:field="field"
-					:page-index="index"
 					:settings="settings"
-					@next="nextPage"
 					@validate="onValidate"
 				/>
 
@@ -157,9 +135,7 @@
 						v-if="field.type === 'custom'"
 						v-model="modelValue[field.name]"
 						:field="field"
-						:page-index="index"
 						:settings="settings"
-						@next="nextPage"
 						@validate="onValidate"
 					>
 						<!-- ========================= Pass Slots -->
@@ -194,7 +170,6 @@
 <script setup lang="ts">
 import * as Fields from '../fields/index';
 import type {
-	EmitValidateEventPayload,
 	Field,
 	Page,
 	Settings,
@@ -207,35 +182,15 @@ export interface FieldLabelProps {
 	settings: Settings;
 }
 
-const emit = defineEmits([
-	'next',
-	'validate',
-	'validate:page',
-]);
+const emit = defineEmits(['validate']);
 const slots = defineSlots();
-const { index, page } = defineProps<FieldLabelProps>();
+const { page } = defineProps<FieldLabelProps>();
 
-
-// console.group('PageContainer');
-// console.log('index', index);
-// console.log('page', page);
-// console.groupEnd();
 
 const modelValue = defineModel<any>();
 
-
-function onValidate(val: EmitValidateEventPayload): void {
-	emit('validate', val);
-}
-
-
-function nextPage(field: Field): void {
-	const fieldIndex = page.fields.findIndex((f) => f.name === field.name);
-
-	// ? Before advancing to the next page, check if the current field is the last field on the page //
-	if (fieldIndex === page.fields.length - 1) {
-		emit('next');
-	}
+function onValidate(field: Field): void {
+	emit('validate', field);
 }
 </script>
 

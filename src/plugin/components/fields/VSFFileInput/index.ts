@@ -18,7 +18,6 @@ interface InternalField extends Omit<Field,
 
 export interface VFileInputProps extends SharedProps {
 	field: InternalField;
-	pageIndex: number;
 }
 
 export type VSFFileInput = InstanceType<typeof VSFFileInput>;

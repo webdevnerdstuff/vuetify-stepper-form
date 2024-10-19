@@ -17,7 +17,7 @@ import type {
 	VTextarea,
 } from 'vuetify/components';
 import VStepperForm from '../VStepperForm.vue';
-import type { AnySchema } from 'yup';
+import type { ObjectSchema } from 'yup';
 import type {
 	GenericObject,
 	FieldValidator,
@@ -109,7 +109,7 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 	errorIcon?: VStepper['errorIcon'];
 	hideDetails?: boolean;
 	navButtonSize?: VBtn['size'];
-	schema?: AnySchema; // ? Not sure if is the correct type //
+	schema: ObjectSchema<any>; // ? Not sure if is the correct type //
 	summaryColumns?: SummaryColumns;
 	title?: string;
 	validateOn?: Field['validateOn'];
@@ -174,6 +174,7 @@ export interface Field {
 	validateOn?: string;
 	validationType?: ValidationTypes;
 	when?: (value: any) => boolean;
+	whenParentName?: string;
 
 	// ? Date Field //
 	// dateFormat?: string;
@@ -203,7 +204,7 @@ type ValidationRule = {
 	type?: string;
 };
 
-export type YupObjectShape = { [key: string]: AnySchema; };
+export type YupObjectShape = { [key: string]: Props['schema']; };
 
 export interface Payload {
 	field: Field;
@@ -288,6 +289,7 @@ export interface SchemaField extends Field {
 export interface UseGetValidationSchema {
 	(
 		fields: SchemaField[],
+		answers: KeyStringAny
 	): any;
 }
 

@@ -18,7 +18,6 @@ interface InternalField extends Omit<Field,
 
 export interface VSFColorFieldProps extends SharedProps {
 	field: InternalField;
-	pageIndex: number;
 }
 
 export type VSFColorField = InstanceType<typeof VSFColorField>;

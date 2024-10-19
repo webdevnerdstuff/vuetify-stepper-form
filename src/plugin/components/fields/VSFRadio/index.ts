@@ -34,7 +34,6 @@ interface InternalField extends Field, RadioGroupProps {
 
 export interface VSFRadioProps extends SharedProps {
 	field: InternalField;
-	pageIndex: number;
 }
 
 export type VSFRadio = InstanceType<typeof VSFRadio>;

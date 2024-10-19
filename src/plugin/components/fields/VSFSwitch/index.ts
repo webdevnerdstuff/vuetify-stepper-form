@@ -17,7 +17,6 @@ interface InternalField extends Omit<Field,
 
 export interface VSFSwitchProps extends SharedProps {
 	field: InternalField;
-	pageIndex: number;
 }
 
 export type VSFSwitch = InstanceType<typeof VSFSwitch>;

@@ -12,7 +12,6 @@ interface InternalField extends Omit<Field,
 
 export interface VSFCustomProps extends SharedProps {
 	field: InternalField;
-	pageIndex: number;
 }
 
 export type VSFCustom = InstanceType<typeof VSFCustom>;

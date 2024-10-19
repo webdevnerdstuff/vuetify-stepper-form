@@ -155,11 +155,9 @@ import { Form } from 'vee-validate';
 import type { PrivateFormContext } from 'vee-validate';
 import type {
 	ComputedClasses,
-	EmitValidateEventPayload,
 	Field,
 	Page,
 	Props,
-	SchemaField,
 	Settings,
 	SummaryColumns,
 } from '@/plugin/types';
@@ -169,11 +167,11 @@ import {
 } from './composables/classes';
 import componentEmits from './utils/emits';
 import { globalOptions } from './';
+import { toTypedSchema } from '@vee-validate/yup';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import { useMergeProps } from './composables/helpers';
 import { watchDeep } from '@vueuse/core';
-import { useGetValidationSchema } from './composables/validation';
 
 
 const attrs = useAttrs();
@@ -309,7 +307,7 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // & ------------------------------------------------ Validation //
-const validateSchema = props.schema ?? useGetValidationSchema(allFieldsArray.value as SchemaField[]);
+const validateSchema = computed(() => toTypedSchema(props.schema as Props['schema']));
 const fieldsHaveErrors = ref(false);
 const currentPageHasErrors = ref(false);
 const errorPageIndexes = ref<number[]>([]);
@@ -369,7 +367,7 @@ function checkForPageErrors(errors: ValidateResult['errors'], source: string, ne
 
 
 // ------------------------ Set Page to Errors //
-function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?: Page, source = 'submit'): void {
+function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void {
 	currentPageHasErrors.value = true;
 
 	if (page && source === 'submit') {
@@ -385,7 +383,9 @@ function setPageToError(pageIndex: EmitValidateEventPayload['pageIndex'], page?:
 // ------------------------ Validation callback from fields //
 function onFieldValidate(field: Field, next: () => void): void {
 	const errors = parentForm.value?.errors as unknown as ValidateResult['errors'];
-	const shouldAutoPage = (field.autoPage ? next : null) as () => void;
+	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
+
+	// ! Auto page not working //
 
 	checkForPageErrors(errors, 'field', shouldAutoPage);
 }
