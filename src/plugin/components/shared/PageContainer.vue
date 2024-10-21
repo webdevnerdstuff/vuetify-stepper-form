@@ -68,13 +68,13 @@
 					@validate="onValidate"
 				/>
 
-				<Fields.VSFAutocomplete
+				<!-- <Fields.VSFAutocomplete
 					v-if="field.type === 'autocomplete'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
-				/>
+				/> -->
 
 				<Fields.VSFCombobox
 					v-if="field.type === 'combobox'"
@@ -93,15 +93,6 @@
 					@validate="onValidate"
 				/>
 
-				<!-- ================================================== Text Field -->
-				<Fields.VSFTextField
-					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/>
-
 				<!-- ========================= Color Field -->
 				<Fields.VSFColorField
 					v-if="field.type === 'color'"
@@ -111,23 +102,46 @@
 					@validate="onValidate"
 				/>
 
+
+				<!-- ! ================================================== Vuetify Field -->
+				<Fields.VuetifyField
+					v-if="getComponent(field.type) != null"
+					v-model="modelValue[field.name]"
+					:component="getComponent(field.type)"
+					:field="field"
+					:settings="settings"
+					@validate="onValidate"
+				/>
+				<!-- ! ================================================== Vuetify Field -->
+
+				<!-- ================================================== Text Field -->
+				<!-- <Fields.VSFTextField
+					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+					@validate="onValidate"
+				/> -->
+
+
+
 				<!-- ========================= File Input -->
-				<Fields.VSFFileInput
+				<!-- <Fields.VSFFileInput
 					v-if="field.type === 'file'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
-				/>
+				/> -->
 
 				<!-- ================================================== Textarea -->
-				<Fields.VSFTextarea
+				<!-- <Fields.VSFTextarea
 					v-if="field.type === 'textarea'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
-				/>
+				/> -->
 
 				<!-- ================================================== Custom Field -->
 				<template v-if="field.type === 'custom'">
@@ -174,6 +188,13 @@ import type {
 	Page,
 	Settings,
 } from '../../types/index';
+import {
+	VAutocomplete,
+	VFileInput,
+	VSelect,
+	VTextarea,
+	VTextField,
+} from 'vuetify/components';
 
 
 export interface FieldLabelProps {
@@ -185,6 +206,42 @@ export interface FieldLabelProps {
 const emit = defineEmits(['validate']);
 const slots = defineSlots();
 const { page } = defineProps<FieldLabelProps>();
+
+
+const textFields = [
+	'text',
+	'textField',
+	'number',
+	'email',
+	'password',
+	'tel',
+	'url',
+];
+
+function getComponent(fieldType: string): any {
+	if (fieldType === 'autocomplete') {
+		return markRaw(VAutocomplete);
+	}
+
+	if (fieldType === 'file') {
+		return markRaw(VFileInput);
+	}
+
+	if (fieldType === 'select') {
+		return markRaw(VSelect);
+	}
+
+	if (fieldType === 'textarea') {
+		return markRaw(VTextarea);
+	}
+
+	if (textFields.includes(fieldType)) {
+		return markRaw(VTextField);
+	}
+
+
+	return null;
+}
 
 
 const modelValue = defineModel<any>();

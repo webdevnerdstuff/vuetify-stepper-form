@@ -10,6 +10,7 @@ import VSFSelect from './VSFSelect/VSFSelect.vue';
 import VSFSwitch from './VSFSwitch/VSFSwitch.vue';
 import VSFTextarea from './VSFTextarea/VSFTextarea.vue';
 import VSFTextField from './VSFTextField/VSFTextField.vue';
+import VuetifyField from './VuetifyField/VuetifyField.vue';
 
 export {
 	VSFAutocomplete,
@@ -24,4 +25,5 @@ export {
 	VSFSwitch,
 	VSFTextarea,
 	VSFTextField,
+	VuetifyField,
 };

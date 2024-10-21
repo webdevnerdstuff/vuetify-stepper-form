@@ -5,11 +5,13 @@
 		:name="field.name"
 		:validate-on-model-update="false"
 	>
-		<VColorField
+		<component
+			:is="component"
 			v-model="modelValue"
 			v-bind="boundSettings"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
+			:items="fieldItems"
 			@blur="onActions(validate, 'blur')"
 			@change="onActions(validate, 'change')"
 			@input="onActions(validate, 'input')"
@@ -20,24 +22,25 @@
 					:required="fieldRequired"
 				/>
 			</template>
-		</VColorField>
+		</component>
 	</Field>
+
+	<!-- Vuetify Field {{ field }} -->
 </template>
 
 
 <script lang="ts" setup>
-import type { VSFColorFieldProps } from './index';
+import type { VuetifyFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
-import VColorField from '@wdns/vuetify-color-field';
-import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
-import { Field } from 'vee-validate';;
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { Field } from 'vee-validate';
 
 
 const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
-const props = defineProps<VSFColorFieldProps>();
+const props = defineProps<VuetifyFieldProps>();
 
 const { field, settings } = props;
 
@@ -58,6 +61,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 	});
 }
 
+const fieldItems = computed(() => field?.items ? field.items as any : undefined);
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
@@ -65,7 +69,6 @@ const bindSettings = computed(() => ({
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
 	hideDetails: field.hideDetails || settings?.hideDetails,
-	type: undefined,
 	variant: field.variant || settings?.variant,
 }));
 
