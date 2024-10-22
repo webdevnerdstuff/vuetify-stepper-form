@@ -124,8 +124,10 @@ export interface Field {
 	density?: Props['density'];
 	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
+	errorMessages?: string | string[];
 	hideDetails?: GlobalHideDetails;
 	hidden?: boolean;
+	id?: string;
 	items?: readonly any[] | undefined;
 	label?: string;
 	name: string;

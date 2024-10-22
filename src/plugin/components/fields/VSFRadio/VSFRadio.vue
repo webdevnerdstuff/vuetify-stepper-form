@@ -19,7 +19,10 @@
 				/>
 			</v-label>
 
-			<div :style="checkboxContainerStyle">
+			<div
+				:id="field?.groupId"
+				:style="checkboxContainerStyle"
+			>
 				<v-radio-group
 					v-model="modelValue"
 					:append-icon="field?.appendIcon"
@@ -45,7 +48,8 @@
 					>
 						<v-radio
 							v-bind="boundSettings"
-							:error="errorMessage ? errorMessage?.length > 0 : false"
+							:id="undefined"
+							:error="hasErrors"
 							:error-messages="errorMessage"
 							:label="option.label"
 							:style="radioStyle"

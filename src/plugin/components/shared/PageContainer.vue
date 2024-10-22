@@ -60,13 +60,13 @@
 				/>
 
 				<!-- ================================================== Select -->
-				<Fields.VSFSelect
+				<!-- <Fields.VSFSelect
 					v-if="field.type === 'select'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
-				/>
+				/> -->
 
 				<!-- <Fields.VSFAutocomplete
 					v-if="field.type === 'autocomplete'"
@@ -76,13 +76,13 @@
 					@validate="onValidate"
 				/> -->
 
-				<Fields.VSFCombobox
+				<!-- <Fields.VSFCombobox
 					v-if="field.type === 'combobox'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
-				/>
+				/> -->
 
 				<!-- ================================================== Switch -->
 				<Fields.VSFSwitch
@@ -94,13 +94,13 @@
 				/>
 
 				<!-- ========================= Color Field -->
-				<Fields.VSFColorField
+				<!-- <Fields.VSFColorField
 					v-if="field.type === 'color'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
-				/>
+				/> -->
 
 
 				<!-- ! ================================================== Vuetify Field -->
@@ -190,11 +190,13 @@ import type {
 } from '../../types/index';
 import {
 	VAutocomplete,
+	VCombobox,
 	VFileInput,
 	VSelect,
 	VTextarea,
 	VTextField,
 } from 'vuetify/components';
+import { VColorField } from '@wdns/vuetify-color-field';
 
 
 export interface FieldLabelProps {
@@ -221,6 +223,14 @@ const textFields = [
 function getComponent(fieldType: string): any {
 	if (fieldType === 'autocomplete') {
 		return markRaw(VAutocomplete);
+	}
+
+	if (fieldType === 'color') {
+		return markRaw(VColorField);
+	}
+
+	if (fieldType === 'combobox') {
+		return markRaw(VCombobox);
 	}
 
 	if (fieldType === 'file') {

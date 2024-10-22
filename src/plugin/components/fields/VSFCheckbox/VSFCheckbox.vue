@@ -48,6 +48,7 @@
 			</v-label>
 
 			<div
+				:id="field?.id"
 				:class="{
 					'v-selection-control-group': !field.inline,
 				}"
@@ -62,8 +63,9 @@
 					:validate-on-model-update="false"
 				>
 					<v-checkbox
-						v-model="modelValue"
 						v-bind="boundSettings"
+						:id="option.id"
+						v-model="modelValue"
 						:error="errorMessage ? errorMessage?.length > 0 : false"
 						:error-messages="errorMessage"
 						:label="option.label"

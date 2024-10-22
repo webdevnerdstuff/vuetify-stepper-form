@@ -11,6 +11,7 @@ export interface RadioGroupProps {
 	error?: VRadioGroup['error'];
 	errorMessages?: VRadioGroup['errorMessages'];
 	hideDetails?: VRadioGroup['hideDetails'];
+	groupId?: VRadioGroup['id'];
 	maxErrors?: VRadioGroup['maxErrors'];
 	maxWidth?: VRadioGroup['maxWidth'];
 	minWidth?: VRadioGroup['minWidth'];
