@@ -1,44 +1,72 @@
 <template>
-	<v-switch
-		v-bind="boundSettings"
+	<Field
+		v-slot="{ errorMessage, validate }"
 		v-model="modelValue"
+		:name="field.name"
+		:validate-on-model-update="false"
 	>
-		<template #label>
-			<FieldLabel
-				:label="field.label"
-				:required="field.required"
-			/>
-		</template>
-	</v-switch>
+		<v-switch
+			v-bind="boundSettings"
+			v-model="modelValue"
+			:error="errorMessage ? errorMessage?.length > 0 : false"
+			:error-messages="errorMessage"
+			@blur="onActions(validate, 'blur')"
+			@change="onActions(validate, 'change')"
+			@input="onActions(validate, 'input')"
+		>
+			<template #label>
+				<FieldLabel
+					:label="field.label"
+					:required="fieldRequired"
+				/>
+			</template>
+		</v-switch>
+	</Field>
 </template>
 
 
 <script lang="ts" setup>
-import type {
-	VSFSwitchProps,
-} from './index';
-import FieldLabel from '../../shared/FieldLabel.vue';
+import type { VSFSwitchProps } from './index';
+import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
-import { useAutoPage } from '../../../composables/helpers';
+import { useOnActions } from '../../../composables/validation';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { Field } from 'vee-validate';
 
 
-const emit = defineEmits(['next']);
+const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
-const { field, settings } = defineProps<VSFSwitchProps>();
+const props = defineProps<VSFSwitchProps>();
+
+const { field, settings } = props;
+
+const fieldRequired = computed(() => {
+	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
+	return field.required || hasRequiredRule as FieldLabelProps['required'];
+});
 
 
-// Auto Paging //
-useAutoPage({ emit, field, modelValue, settings });
+// ------------------------- Validate On Actions //
+async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+	useOnActions({
+		action,
+		emit,
+		field,
+		settingsValidateOn: settings.validateOn,
+		validate,
+	});
+}
 
 
 // -------------------------------------------------- Bound Settings //
-const bindSettings = reactive({
+const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
-});
+	hideDetails: field.hideDetails || settings?.hideDetails,
+}));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings));
+const boundSettings = computed(() => useBindingSettings(bindSettings.value));
 </script>
 
 <style lang="scss" scoped></style>

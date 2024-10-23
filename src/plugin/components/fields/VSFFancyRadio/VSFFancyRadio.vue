@@ -1,43 +1,76 @@
 <template>
 	<div>
-		<FieldLabel
-			:label="field.label"
-			:required="field.required"
-		/>
-
-		<div class="vsf-fancy-radio__container">
-			<div class="v-input__control vsf-fancy-radio__control">
-				<template
-					v-for="option in field?.options"
-					:key="option.value"
+		<div
+			:id="field?.groupId"
+			class="vsf-fancy-radio__container"
+		>
+			<Field
+				v-slot="{ errorMessage, validate }"
+				v-model="modelValue"
+				:name="field.name"
+				type="radio"
+				:validate-on-model-update="true"
+			>
+				<v-radio-group
+					v-model="modelValue"
+					class="vsf-fancy-radio__control"
+					:direction="field?.direction"
+					:error="hasErrors"
+					:error-messages="errorMessage || field?.errorMessages"
+					:hideDetails="field?.hideDetails || settings?.hideDetails"
+					:hint="field?.hint"
+					:inline="field?.inline"
+					:max-errors="field?.maxErrors"
+					:max-width="field?.maxWidth"
+					:messages="field?.messages"
+					:min-width="field?.minWidth"
+					:multiple="field?.multiple"
+					:persistentHint="field?.persistentHint"
+					:theme="field?.theme"
 				>
+					<template #label>
+						<FieldLabel
+							:label="field.label"
+							:required="fieldRequired"
+						/>
+					</template>
+
 					<div
+						v-for="option in field?.options"
+						:key="option.value"
 						class="vsf-fancy-radio__field v-field"
 						:class="{
 							...fieldClasses,
-							[`vsf-fancy-radio__field--variant-${fieldVariant}-focused`]: isFocused === option.value,
+							[`vsf-fancy-radio__field-variant-${fieldVariant}-focused`]: isFocused === option.value,
 						}"
 						:style="fieldStyle"
 					>
 						<input
-							:id="`vsf-radio-${field.name}-${option.value}`"
+							:id="option?.id"
 							v-model="modelValue"
 							class="vsf-fancy-radio__input"
 							:class="{
-								'vsf-fancy-radio__input_checked': modelValue === option.value,
+								'vsf-fancy-radio__input_checked': modelValue === option.value || (Array.isArray(modelValue) ? modelValue.includes(option.value) : false),
+								'vsf-fancy-radio__input_error': hasErrors || errorMessage || field?.errorMessages,
 							}"
+							:disabled="(field.disabled as boolean)"
 							:name="field.name"
 							type="radio"
 							:value="option.value"
+							:width="field?.width"
+							@blur="onActions(validate, 'blur')"
+							@change="onActions(validate, 'change')"
+							@input="onActions(validate, 'input')"
 						/>
 
 						<label
 							:class="{
 								...labelClasses,
-								[`vsf-fancy-radio__label--variant-${fieldVariant}-focused`]: isFocused === option.value,
+								[`vsf-fancy-radio__label-variant-${fieldVariant}-focused`]: isFocused === option.value,
 							}"
 							:for="`vsf-radio-${field.name}-${option.value}`"
 							:style="labelStyle"
+							@click="onActions(validate, 'click', option.value)"
 							@mousedown="onFocus(option.value)"
 							@mouseleave="onFocus(null)"
 							@mouseup="onFocus(null)"
@@ -54,38 +87,77 @@
 							></div>
 						</label>
 					</div>
-				</template>
-			</div>
+				</v-radio-group>
+			</Field>
 		</div>
+
 	</div>
 </template>
 
 
 <script lang="ts" setup>
-import type {
-	VSFFancyRadioProps,
-} from './index';
+import type { VSFFancyRadioProps } from './index';
+import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
+import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
-import { useAutoPage } from '../../../composables/helpers';
+import { Field } from 'vee-validate';
 
 
-const emit = defineEmits(['next']);
-
+const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
-const { field, settings } = defineProps<VSFFancyRadioProps>();
+const props = defineProps<VSFFancyRadioProps>();
 
-// console.log('field', field);
+const { field, settings } = props;
 
-
-// Auto Paging //
-useAutoPage({ emit, field, modelValue, settings });
-
-// console.group('VSFFancyRadio');
-// console.log('field', field);
-// console.log('settings', settings);
-// console.groupEnd();
+const fieldRequired = computed(() => {
+	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
+	return field.required || hasRequiredRule as FieldLabelProps['required'];
+});
 
 
+if (modelValue?.value == null) {
+	modelValue.value = field?.multiple ? [] : null;
+}
+
+// ------------------------- Validate On Actions //
+async function onActions(validate: FieldValidateResult, action: ValidateAction, value?: unknown): Promise<void> {
+	// TODO: Check the other validate on states //
+
+	if (!field?.disabled && value) {
+		if (field?.multiple) {
+			if (modelValue.value.includes(value)) {
+				const index = modelValue.value.indexOf(value);
+				modelValue.value.splice(index, 1);
+			}
+			else {
+				modelValue.value.push(value);
+			}
+		}
+		else {
+			modelValue.value = value;
+		}
+	}
+
+	useOnActions({
+		action,
+		emit,
+		field,
+		settingsValidateOn: settings.validateOn,
+		validate,
+	});
+}
+
+
+const hasErrors = computed(() => {
+	let err = field?.error;
+
+	err = field?.errorMessages ? field.errorMessages.length > 0 : err;
+
+	return err;
+});
+
+
+// -------------------------------------------------- Properties //
 const densityHeight = {
 	comfortable: '48px',
 	compact: '40px',
@@ -115,7 +187,10 @@ const fieldHeight = computed(() => {
 const fieldStyle = computed<CSSProperties>(() => {
 	const styles = {
 		'height': fieldHeight.value,
+		'max-width': field?.maxWidth ?? '100%',
 		'min-height': fieldHeight.value,
+		'min-width': field.minWidth ?? 'fit-content',
+		'width': field?.width ?? '100px',
 	};
 
 	return styles;
@@ -124,11 +199,14 @@ const fieldStyle = computed<CSSProperties>(() => {
 const labelStyle = computed<CSSProperties>(() => {
 	const styles = {
 		'min-width': '100px',
-		'width': field?.width ?? '100px',
+		'width': field?.minWidth ?? field?.maxWidth ?? field?.width ?? '100px',
 	};
 
 	return styles;
 });
+
+
+const gap = ref(field.gap ?? '10px');
 
 
 // -------------------------------------------------- Classes //
@@ -159,8 +237,10 @@ const fieldTextClasses = computed(() => {
 
 const fieldClasses = computed(() => {
 	return {
+		'vsf-fancy-radio__field-disabled': field?.disabled,
+		'vsf-fancy-radio__field-flat': field?.flat,
 		[`v-field--variant-${fieldVariant.value}`]: true,
-		[`vsf-fancy-radio__field--variant-${fieldVariant.value}`]: true,
+		[`vsf-fancy-radio__field-variant-${fieldVariant.value}`]: true,
 	};
 });
 
@@ -169,8 +249,7 @@ const labelClasses = computed(() => {
 		'pa-1': field?.density === 'compact',
 		'pa-4': field?.density !== 'compact',
 		'vsf-fancy-radio__label': true,
-		[`vsf-fancy-radio__label--variant-${fieldVariant.value}`]: true,
-		// [`vsf-fancy-radio__label-variant-${variant}_${isFocused.value}`]: true,
+		[`vsf-fancy-radio__label-variant-${fieldVariant.value}`]: true,
 	};
 });
 
@@ -187,6 +266,7 @@ function onFocus(value: any) {
 :root {
 	--vsf-field-border-radius: 4px;
 	--vsf-field-border-opacity: 0.04;
+	--vsf-field-disabled-opacity: 0.25;
 }
 </style>
 
@@ -195,7 +275,6 @@ function onFocus(value: any) {
 	&__container {
 		align-items: center;
 		display: flex;
-		gap: 10px;
 		height: fit-content;
 		justify-content: center;
 		position: relative;
@@ -204,16 +283,76 @@ function onFocus(value: any) {
 	&__control {
 		gap: 10px;
 		min-height: fit-content !important;
+		min-width: fit-content !important;
+
+		:deep(.v-input__control) {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+
+			.v-selection-control-group {
+				flex-direction: row !important;
+				gap: v-bind(gap) !important;
+				justify-content: center !important;
+				padding-inline-start: 0 !important;
+			}
+
+			.v-label {
+				margin-inline-start: 0 !important;
+			}
+		}
+
+		:deep(.v-input__details) {
+			.v-messages {
+				align-items: center;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+		}
+
+		&.v-input--vertical {
+			display: flex;
+			flex-direction: column;
+
+			:deep(.v-input__control) {
+				.v-selection-control-group {
+					flex-direction: column !important;
+				}
+			}
+		}
 	}
 
 	// -------------------------------------------------- Field //
 	&__field {
 		border-radius: var(--vsf-field-border-radius);
+		display: block !important;
+		flex-grow: unset;
 		grid-area: unset;
 		min-height: fit-content !important;
 
+		&-disabled {
+			.vsf-fancy-radio__overlay {
+				opacity: var(--vsf-field-disabled-opacity) !important;
+			}
+
+			.vsf-fancy-radio__label {
+				cursor: default !important;
+
+				&:hover {
+					.vsf-fancy-radio__overlay {
+						opacity: var(--vsf-field-disabled-opacity) !important;
+					}
+				}
+			}
+		}
+
+		&-flat {
+			--vsf-field-border-radius: 0;
+		}
+
 		// ? -------------------------------------------------- Variants //
-		&--variant {
+		&-variant {
 
 			// ? ------------------------- Filled //
 			&-filled {
@@ -266,6 +405,15 @@ function onFocus(value: any) {
 				}
 			}
 		}
+
+		&_error {
+			+ label {
+				.vsf-fancy-radio__overlay {
+					border-color: rgb(var(--v-theme-error));
+					opacity: 1;
+				}
+			}
+		}
 	}
 
 	// -------------------------------------------------- Label //
@@ -302,7 +450,7 @@ function onFocus(value: any) {
 		}
 
 		// ? -------------------------------------------------- Variants //
-		&--variant {
+		&-variant {
 			// ? ------------------------- Filled //
 			&-filled {
 				border-radius: var(--vsf-field-border-radius) var(--vsf-field-border-radius) 0 0;

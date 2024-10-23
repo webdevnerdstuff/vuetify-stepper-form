@@ -8,8 +8,17 @@
 				<v-row v-if="title">
 					<v-col>
 						<h2>
-							{{ title }} {{ formCompleted }}
+							{{ title }}
 						</h2>
+					</v-col>
+				</v-row>
+				<v-row>
+					<v-col>
+						stepperMode: {{ stepperModel }}
+						<br />
+						currentPageHasErrors: {{ currentPageHasErrors }}
+						<br />
+						errorPageIndexes: {{ errorPageIndexes }}
 					</v-col>
 				</v-row>
 			</v-container>
@@ -28,7 +37,7 @@
 						<v-stepper-header>
 							<template
 								v-for="(page, i) in pages"
-								:key="`${i}-step`"
+								:key="`${getIndex(i)}-step`"
 							>
 								<v-stepper-item
 									:color="settings.color"
@@ -36,10 +45,10 @@
 									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
 									:editable="page.editable"
 									elevation="0"
+									:error="page.error"
 									:title="page.title"
 									:value="getIndex(i)"
 								></v-stepper-item>
-
 								<v-divider
 									v-if="getIndex(i) !== Object.keys(pages).length"
 									:key="getIndex(i)"
@@ -47,56 +56,87 @@
 							</template>
 						</v-stepper-header>
 
-						<v-stepper-window>
-							<v-stepper-window-item
-								v-for="page, i in pages"
-								:key="`${i}-content`"
-								:reverse-transition="transition"
-								:transition="transition"
-								:value="getIndex(i)"
-							>
-								<v-container>
-									<PageContainer
-										v-if="!page.isReview"
-										v-model="modelValue"
-										:index="getIndex(i)"
-										:page="page"
-										:settings="settings"
-										@callback="callbacks"
-										@next="validatePage(next)"
-									/>
-									<PageReviewContainer
-										v-else
-										v-model="modelValue"
-										:page="page"
-										:pages="pages"
-										:settings="settings"
-										:summary-columns="summaryColumns"
-										@goToQuestion="stepperModel = $event"
-										@submit="submitForm"
-									/>
-								</v-container>
-							</v-stepper-window-item>
-						</v-stepper-window>
+						<Form
+							ref="stepperFormRef"
+							v-slot="{ validate }"
+							:validation-schema="validateSchema"
+							@submit="onSubmit"
+						>
+							<v-stepper-window>
+								<v-stepper-window-item
+									v-for="page, i in pages"
+									:key="`${getIndex(i)}-content`"
+									:reverse-transition="transition"
+									:transition="transition"
+									:value="getIndex(i)"
+								>
+									<v-container>
+										<PageContainer
+											v-if="!page.isReview"
+											:key="`${getIndex(i)}-page`"
+											v-model="modelValue"
+											:index="getIndex(i)"
+											:page="page"
+											:settings="settings"
+											@validate="onFieldValidate($event, next)"
+										>
+											<!-- ========================= Pass Slots -->
+											<template
+												v-for="(_, slot) in slots"
+												#[slot]="scope"
+											>
+												<slot
+													:name="slot"
+													v-bind="{ ...scope }"
+												/>
+											</template>
+										</PageContainer>
+										<PageReviewContainer
+											v-else
+											v-model="modelValue"
+											:page="page"
+											:pages="pages"
+											:settings="settings"
+											:summary-columns="summaryColumns"
+											@goToQuestion="stepperModel = $event"
+											@submit="onSubmit(modelValue)"
+										/>
+									</v-container>
+								</v-stepper-window-item>
+							</v-stepper-window>
 
-						<v-stepper-actions v-if="!settings.hideActions">
-							<template #next>
-								<v-btn
-									:color="settings.color"
-									:disabled="((stepperActionsDisabled === 'next' || settings.disabled) as boolean)"
-									:size="navButtonSize"
-									@click="validatePage(next)"
-								/>
-							</template>
+							<v-stepper-actions v-if="!settings.hideActions">
+								<template #next>
+									<v-btn
+										v-if="!lastPage"
+										:color="settings.color"
+										:disabled="nextButtonDisabled"
+										:size="navButtonSize"
+										@click="runValidation(validate, 'next', next)"
+									/>
+									<!-- TODO: This will change to use v-else when done -->
+									<v-btn
+										:color="settings.color"
+										:disabled="fieldsHaveErrors && errorPageIndexes.includes(stepperModel - 1)"
+										:size="navButtonSize"
+										type="submit"
+									>Submit</v-btn>
+								</template>
 
-							<template #prev>
-								<v-btn
-									:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
-									:size="navButtonSize"
-									@click="previousPage(prev)"
-								/>
-							</template>
-						</v-stepper-actions>
+								<template #prev>
+									<v-btn
+										:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
+										:size="navButtonSize"
+										@click="previousPage(prev)"
+									/>
+								</template>
+							</v-stepper-actions>
+
+							<v-row>
+								<v-col>
+								</v-col>
+							</v-row>
+						</Form>
 					</template>
 				</v-stepper>
 			</v-container>
@@ -106,11 +146,15 @@
 </template>
 
 <script setup lang="ts">
+// TODO: Conditionals needs to update the validation //
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { AllProps } from './utils/props';
 import { useDisplay } from 'vuetify';
-import {
+import { Form } from 'vee-validate';
+import type { PrivateFormContext } from 'vee-validate';
+import type {
+	ComputedClasses,
 	Field,
 	Page,
 	Props,
@@ -123,6 +167,7 @@ import {
 } from './composables/classes';
 import componentEmits from './utils/emits';
 import { globalOptions } from './';
+import { toTypedSchema } from '@vee-validate/yup';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import { useMergeProps } from './composables/helpers';
@@ -130,17 +175,17 @@ import { watchDeep } from '@vueuse/core';
 
 
 const attrs = useAttrs();
-// const slots = useSlots();
+const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject(globalOptions, {});
 
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
-
 const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
-const { direction, pages, title, width } = toRefs(props);
-const originalPages = JSON.parse(JSON.stringify(pages.value));
+const { direction, title, width } = toRefs(props);
+const pages = reactive<Page[]>(props.pages);
+const originalPages = JSON.parse(JSON.stringify(pages));
 
 const settings = ref<Settings>({
 	altLabels: stepperProps.altLabels,
@@ -155,6 +200,7 @@ const settings = ref<Settings>({
 	editIcon: stepperProps.editIcon,
 	editable: stepperProps.editable,
 	elevation: stepperProps.elevation,
+	errorIcon: stepperProps.errorIcon,
 	flat: stepperProps.flat,
 	height: stepperProps.height,
 	hideActions: stepperProps.hideActions,
@@ -174,8 +220,14 @@ const settings = ref<Settings>({
 	variant: stepperProps.variant,
 });
 
-// console.log('stepperProps', stepperProps);
-console.log('settings.value', settings.value);
+
+const allFieldsArray = ref<Field[]>([]);
+
+Object.values(pages).forEach((p: Page) => {
+	Object.values(p.fields).forEach((field: Field) => {
+		allFieldsArray.value.push(field as Field);
+	});
+});
 
 
 // const StepperComponent = markRaw(props.direction === 'vertical' ? VStepperVertical : VStepper);
@@ -185,7 +237,6 @@ console.log('settings.value', settings.value);
 // -------------------------------------------------- Mounted //
 onMounted(() => {
 	whenCallback();
-
 	summaryColumnErrorCheck();
 });
 
@@ -199,15 +250,13 @@ watchDeep(modelValue, () => {
 
 const stepperModel = ref(1);
 
-watch(stepperModel, () => {
-	if (stepperModel.value === pages.value.length) {
-		formCompleted.value = true;
-	}
-});
 
 const { sm } = useDisplay();
-const transition = computed(() => stepperProps.transition);
-const formCompleted = ref(false);
+const transition = computed<Props['transition']>(() => stepperProps.transition);
+const parentForm = useTemplateRef<PrivateFormContext>('stepperFormRef');
+
+provide('parentForm', parentForm);
+
 
 
 // -------------------------------------------------- Stepper Action //
@@ -215,34 +264,32 @@ const stepperActionsDisabled = computed(() => {
 	return stepperModel.value === 1 ? 'prev' : stepperModel.value === Object.keys(props.pages).length ? 'next' : undefined;
 });
 
-// TODO: Make this disabled if the previous page is not editable //
-const canReviewPreviousButtonDisabled = computed(() => {
-	// console.log('canReviewPreviousButtonDisabled');
+const nextButtonDisabled = computed(() => {
+	const isDisabled = ((stepperActionsDisabled.value === 'next' || settings.value.disabled) as boolean);
 
-	return stepperModel.value === pages.value.length && !props.canReview;
+	const currentPageHasError = errorPageIndexes.value.includes(stepperModel.value - 1);
+
+	return currentPageHasError || isDisabled;
 });
 
-// const previousButtonDisabled = computed(() => {
-// 	return stepperModel.value === 1;
-// });
+// TODO: Make this disabled if the previous page is not editable //
+const canReviewPreviousButtonDisabled = computed<boolean>(() => {
+	return stepperModel.value === pages.length && !props.canReview;
+});
 
-// console.log('previousButtonDisabled', previousButtonDisabled.value);
 
-function nextPage(next: () => void): void {
-	console.log('nextPage', next);
-
-	next();
-}
-
+// ------------------------- Previous Page //
 function previousPage(prev: () => void): void {
-	// console.log('previousPage', prev);
-
 	if (canReviewPreviousButtonDisabled.value) {
 		return;
 	}
 
 	prev();
 }
+
+const lastPage = computed<boolean>(() => {
+	return stepperModel.value === Object.keys(pages).length;
+});
 
 
 // TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
@@ -259,41 +306,113 @@ function headerItemDisabled(page: Page): boolean {
 }
 
 
-// ------------------------------------------------ Callback & Validation //
-// const pagesValidation = ref((pages.value)
-// 	.map((_, i) => ({ page: i + 1, valid: false })));
+// & ------------------------------------------------ Validation //
+const validateSchema = computed(() => toTypedSchema(props.schema as Props['schema']));
+const fieldsHaveErrors = ref(false);
+const currentPageHasErrors = ref(false);
+const errorPageIndexes = ref<number[]>([]);
 
-// console.log('pagesValidation', pagesValidation.value);
+// ------------------------ Run Validation //
+function runValidation(
+	validate: () => Promise<ValidateResult>,
+	source = 'submit',
+	next: () => void = () => { },
+): void {
+	validate()
+		.then((response: ValidateResult) => {
+			checkForPageErrors(response.errors, source, next);
+		});
+}
 
-function validatePage(event: () => void): void {
-	console.log('validatePage', event);
+// ------------------------ Remove error from Page //
+function removePageError(pageIndex: number): void {
+	if (errorPageIndexes.value.includes(pageIndex)) {
+		const errPageIdx = errorPageIndexes.value.indexOf(pageIndex);
 
-	console.log('stepperModel', stepperModel.value);
-	nextPage(event);
+		if (errPageIdx > -1) {
+			errorPageIndexes.value.splice(errPageIdx, 1);
+		}
+	}
+
+	currentPageHasErrors.value = false;
+}
+
+// ------------------------ Check the if the page has errors //
+function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
+	const currentPage = stepperModel.value - 1;
+
+	const page = pages[currentPage];
+
+	if (!page) {
+		return;
+	}
+
+	const pageIndex = pages.findIndex((p) => p === page);
+	const pageFields = page.fields;
+	const hasErrorInField = Object.keys(errors).some(errorKey => pageFields.some(field => field.name === errorKey));
+
+	if (hasErrorInField) {
+		currentPageHasErrors.value = true;
+
+		setPageToError(pageIndex, page, source);
+		return;
+	}
+
+	removePageError(pageIndex);
+
+	if (next && !lastPage.value && source !== 'submit') {
+		next();
+	}
 }
 
 
+// ------------------------ Set Page to Errors //
+function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void {
+	currentPageHasErrors.value = true;
+
+	if (page && source === 'submit') {
+		// eslint-disable-next-line no-param-reassign
+		page.error = true;
+	}
+
+	if (!errorPageIndexes.value.includes(pageIndex)) {
+		errorPageIndexes.value.push(pageIndex);
+	}
+}
+
+// ------------------------ Validation callback from fields //
+function onFieldValidate(field: Field, next: () => void): void {
+	const errors = parentForm.value?.errors as unknown as ValidateResult['errors'];
+	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
+
+	// ! Auto page not working //
+
+	checkForPageErrors(errors, 'field', shouldAutoPage);
+}
 
 
+// -------------------------------------------------- Submit //
+function onSubmit(values: any): void {
+	console.log('%c%s', 'color: #00ff00; font-weight: bold;', '======================== onSubmit SUBMIT FORM \n', values);
+	emit('submit', values);
+}
+
+
+// ------------------------------------------------ Callbacks //
 function callbacks() {
 	whenCallback();
 }
 
-
-
-
-
-function whenCallback() {
-	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
+// ------------------------ Conditional "when" callback //
+function whenCallback(): void {
+	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
 			if (field.when) {
 				const enabledField: boolean = field.when(modelValue.value);
-				const indexPage = pages.value[pageIdx];
+				const indexPage = pages[pageIdx];
 
 				if (indexPage?.fields[fieldIdx]) {
 					indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';
-
-					// TODO: Update validation //
 				}
 			}
 		});
@@ -301,22 +420,17 @@ function whenCallback() {
 }
 
 
-// ------------------------------------------------ Submit Form //
-function submitForm() {
-	console.log('VStepperForm submitForm');
-	emit('submit');
-}
-
-
 // ------------------------------------------------ Class & Styles //
-const containerClasses = computed(() => useContainerClasses({
+// ------------------------ Classes //
+const containerClasses = computed<ComputedClasses>(() => useContainerClasses({
 	direction: direction.value,
 }));
 
-const stepperContainerClasses = computed(() => useStepperContainerClasses({
+const stepperContainerClasses = computed<ComputedClasses>(() => useStepperContainerClasses({
 	direction: direction.value,
 }));
 
+// ------------------------ Styles //
 const containerStyle = computed<CSSProperties>(() => {
 	const styles = {
 		width: '100%'
@@ -362,4 +476,10 @@ function summaryColumnErrorCheck(): void {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.v-stepper-item--error {
+	:deep(.v-icon) {
+		color: #fff;
+	}
+}
+</style>

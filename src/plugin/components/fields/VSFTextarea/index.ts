@@ -9,7 +9,9 @@ import type VSFTextarea from './VSFTextarea.vue';
 interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
+	color?: VTextarea['color'];
 	density?: VTextarea['density'];
+	hideDetails?: VTextarea['hideDetails'];
 	variant?: VTextarea['variant'];
 }
 

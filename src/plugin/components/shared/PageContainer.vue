@@ -15,7 +15,7 @@
 
 	<template
 		v-for="field in page.fields"
-		:key="field.name"
+		:key="`${field.name}-${field.type}`"
 	>
 		<input
 			v-if="field.type === 'hidden' || !field.type"
@@ -39,7 +39,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Radio & Fancy Radio -->
@@ -48,7 +48,7 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<Fields.VSFFancyRadio
@@ -56,33 +56,33 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ================================================== Select -->
-				<Fields.VSFSelect
+				<!-- <Fields.VSFSelect
 					v-if="field.type === 'select'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
-				/>
+					@validate="onValidate"
+				/> -->
 
-				<Fields.VSFAutocomplete
+				<!-- <Fields.VSFAutocomplete
 					v-if="field.type === 'autocomplete'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
-				/>
+					@validate="onValidate"
+				/> -->
 
-				<Fields.VSFCombobox
+				<!-- <Fields.VSFCombobox
 					v-if="field.type === 'combobox'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
-				/>
+					@validate="onValidate"
+				/> -->
 
 				<!-- ================================================== Switch -->
 				<Fields.VSFSwitch
@@ -90,42 +90,58 @@
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-				/>
-
-				<!-- ================================================== Text Field -->
-				<Fields.VSFTextField
-					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@next="nextPage"
+					@validate="onValidate"
 				/>
 
 				<!-- ========================= Color Field -->
-				<Fields.VSFColorField
+				<!-- <Fields.VSFColorField
 					v-if="field.type === 'color'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
+					@validate="onValidate"
+				/> -->
+
+
+				<!-- ! ================================================== Vuetify Field -->
+				<Fields.VuetifyField
+					v-if="getComponent(field.type) != null"
+					v-model="modelValue[field.name]"
+					:component="getComponent(field.type)"
+					:field="field"
+					:settings="settings"
+					@validate="onValidate"
 				/>
+				<!-- ! ================================================== Vuetify Field -->
+
+				<!-- ================================================== Text Field -->
+				<!-- <Fields.VSFTextField
+					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
+					v-model="modelValue[field.name]"
+					:field="field"
+					:settings="settings"
+					@validate="onValidate"
+				/> -->
+
+
 
 				<!-- ========================= File Input -->
-				<Fields.VSFFileInput
+				<!-- <Fields.VSFFileInput
 					v-if="field.type === 'file'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-					@next="nextPage"
-				/>
+					@validate="onValidate"
+				/> -->
 
 				<!-- ================================================== Textarea -->
-				<Fields.VSFTextarea
+				<!-- <Fields.VSFTextarea
 					v-if="field.type === 'textarea'"
 					v-model="modelValue[field.name]"
 					:field="field"
 					:settings="settings"
-				/>
+					@validate="onValidate"
+				/> -->
 
 				<!-- ================================================== Custom Field -->
 				<template v-if="field.type === 'custom'">
@@ -134,10 +150,11 @@
 						v-model="modelValue[field.name]"
 						:field="field"
 						:settings="settings"
+						@validate="onValidate"
 					>
 						<!-- ========================= Pass Slots -->
 						<template
-							v-for="(_, slot) in $slots"
+							v-for="(_, slot) in slots"
 							#[slot]="scope"
 						>
 							<slot
@@ -151,14 +168,14 @@
 				<!-- TODO: User Select Field -->
 				<!-- TODO: Date Field -->
 
-				<template v-if="field.type === 'submit'">
+				<!-- <template v-if="field.type === 'submit'">
 					<v-btn
 						:color="field.color || settings.color"
 						:type="field.type"
 					>
 						{{ field.label }}
 					</v-btn>
-				</template>
+				</template> -->
 			</v-col>
 		</v-row>
 	</template>
@@ -171,6 +188,15 @@ import type {
 	Page,
 	Settings,
 } from '../../types/index';
+import {
+	VAutocomplete,
+	VCombobox,
+	VFileInput,
+	VSelect,
+	VTextarea,
+	VTextField,
+} from 'vuetify/components';
+import { VColorField } from '@wdns/vuetify-color-field';
 
 
 export interface FieldLabelProps {
@@ -179,24 +205,59 @@ export interface FieldLabelProps {
 	settings: Settings;
 }
 
-const emit = defineEmits(['next']);
-const { index, page } = defineProps<FieldLabelProps>();
+const emit = defineEmits(['validate']);
+const slots = defineSlots();
+const { page } = defineProps<FieldLabelProps>();
 
-console.group('PageContainer');
-console.log('index', index);
-console.log('page', page);
-console.groupEnd();
+
+const textFields = [
+	'text',
+	'textField',
+	'number',
+	'email',
+	'password',
+	'tel',
+	'url',
+];
+
+function getComponent(fieldType: string): any {
+	if (fieldType === 'autocomplete') {
+		return markRaw(VAutocomplete);
+	}
+
+	if (fieldType === 'color') {
+		return markRaw(VColorField);
+	}
+
+	if (fieldType === 'combobox') {
+		return markRaw(VCombobox);
+	}
+
+	if (fieldType === 'file') {
+		return markRaw(VFileInput);
+	}
+
+	if (fieldType === 'select') {
+		return markRaw(VSelect);
+	}
+
+	if (fieldType === 'textarea') {
+		return markRaw(VTextarea);
+	}
+
+	if (textFields.includes(fieldType)) {
+		return markRaw(VTextField);
+	}
+
+
+	return null;
+}
+
 
 const modelValue = defineModel<any>();
 
-
-function nextPage(field: Field) {
-	const fieldIndex = page.fields.findIndex((f) => f.name === field.name);
-
-	// ? Before advancing to the next page, check if the current field is the last field on the page //
-	if (fieldIndex === page.fields.length - 1) {
-		emit('next');
-	}
+function onValidate(field: Field): void {
+	emit('validate', field);
 }
 </script>
 

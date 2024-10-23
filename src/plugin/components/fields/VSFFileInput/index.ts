@@ -11,6 +11,7 @@ interface InternalField extends Omit<Field,
 > {
 	chips?: VFileInput['chips'];
 	density?: VFileInput['density'];
+	hideDetails?: VFileInput['hideDetails'];
 	multiple?: VFileInput['multiple'];
 	variant?: VFileInput['variant'];
 }

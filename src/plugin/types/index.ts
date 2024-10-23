@@ -3,27 +3,76 @@
 import { App, CSSProperties } from 'vue';
 import type {
 	VBtn,
-	// VCard,
-	VCheckbox,
 	// VIcon,
-	VRadio,
-	VSelect,
 	VStepper,
 	VStepperItem,
 	// VStepperActions,
 	VStepperWindowItem,
-	VSwitch,
-	VTextField,
-	VTextarea,
 } from 'vuetify/components';
 import VStepperForm from '../VStepperForm.vue';
+import type { Schema } from 'yup';
+import type {
+	GenericObject,
+	FieldValidator,
+	FormValidationResult,
+} from 'vee-validate';
+
 
 
 export * from '../index';
 
+// -------------------------------------------------- Globals //
+declare global {
+	type ValidateAction = 'page' | 'blur' | 'change' | 'input' | 'submit' | 'click';
+	type ValidateFieldResult = FieldValidator<GenericObject>;
+	type ValidateResult = FormValidationResult<GenericObject, GenericObject>;
+	type FieldValidateResult = () => Promise<Partial<FieldValidator<GenericObject>>>;
+}
 
-// -------------------------------------------------- Types //
-export type GlobalDensity = VCheckbox['density'] | VSelect['density'] | VSwitch['density'] | VTextField['density'] | VTextarea['density'] | VRadio['density'];
+/* Good for:
+	* VAutocomplete
+	* VCheckbox
+	* VColorField
+	* VCombobox
+	* VFancyRadio
+	* VFileInput
+	* VRadio
+	* VSelect
+	* VSwitch
+	* VTextField
+	* VTextarea
+*/
+export type GlobalDensity = null | 'default' | 'comfortable' | 'compact';
+export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'solo' | 'solo-inverted' | 'solo-filled';
+
+
+// type VBtnVariants = "flat" | "text" | "elevated" | "tonal" | "outlined" | "plain";
+// type VCheckboxVariants = null;
+// type VRadioVariants = null;
+// type VSwitchariants = null;
+
+/* Good for:
+	* VAutocomplete
+	* VCheckbox
+	* VCombobox
+	* VColorField
+	// * VFancyRadio
+	* VFileInput
+	* VSelect
+	* VSwitch
+	* VRadioGroup
+	* VTextarea
+	* VTextField
+*/
+export type GlobalHideDetails = boolean | 'auto' | undefined;
+
+export type GlobalClosableChips = boolean;
+export type GlobalCloseText = string;
+export type GlobalChips = boolean;
+export type GlobalMultiple = boolean;
+
+
+
 
 // -------------------------------------------------- Misc //
 export interface KeyStringAny<T = any> {
@@ -31,45 +80,29 @@ export interface KeyStringAny<T = any> {
 };
 
 
-
-
-// ! TS Issue with this, possible bug makes it not work ! //
-// export interface VStepperProps extends Pick<VStepper,
-// 	'altLabels' |
-// 	'bgColor' |
-// 	'border' |
-// 	'disabled' |
-// 	'editable' |
-// 	'editIcon' |
-// 	'nextText' |
-// 	'prevText' |
-// 	'rounded' |
-// 	'width'
-// > { }
-
-export interface VStepperProps {
-	altLabels?: VStepper['altLabels'];
-	bgColor?: VStepper['bgColor'];
-	border?: VStepper['border'];
-	disabled?: VStepper['disabled'];
-	editIcon?: VStepper['editIcon'];
-	editable?: VStepper['editable'];
-	elevation?: VStepper['elevation'];
-	flat?: VStepper['flat'];
-	height?: VStepper['height'];
-	hideActions?: VStepper['hideActions'];
-	maxHeight?: VStepper['maxHeight'];
-	maxWidth?: VStepper['maxWidth'];
-	minHeight?: VStepper['minHeight'];
-	minWidth?: VStepper['minWidth'];
-	nextText?: VStepper['nextText'];
-	prevText?: VStepper['prevText'];
-	rounded?: VStepper['rounded'];
-	selectedClass?: VStepper['selectedClass'];
-	theme?: VStepper['theme'];
-	tile?: VStepper['tile'];
-	width?: VStepper['width'];
-}
+export interface VStepperProps extends Pick<VStepper,
+	'altLabels' |
+	'bgColor' |
+	'border' |
+	'disabled' |
+	'editIcon' |
+	'editable' |
+	'elevation' |
+	'flat' |
+	'height' |
+	'hideActions' |
+	'maxHeight' |
+	'maxWidth' |
+	'minHeight' |
+	'minWidth' |
+	'nextText' |
+	'prevText' |
+	'rounded' |
+	'selectedClass' |
+	'theme' |
+	'tile' |
+	'width'
+> { }
 
 interface VStepperWindowItemProps {
 	transition?: VStepperWindowItem['transition'];
@@ -82,21 +115,69 @@ export interface SummaryColumns {
 	xl?: number | string;
 }
 
+// -------------------------------------------------- Field //
+export interface Field {
+	autoPage?: Props['autoPage'];
+	autoPageDelay?: Props['autoPageDelay'];
+	canReview?: Props['canReview'];
+	color?: Props['color'];
+	density?: Props['density'];
+	disabled?: boolean | ((value: any) => boolean);
+	error?: boolean;
+	errorMessages?: string | string[];
+	hideDetails?: GlobalHideDetails;
+	hidden?: boolean;
+	id?: string;
+	items?: readonly any[] | undefined;
+	label?: string;
+	name: string;
+	options?: KeyStringAny;
+	required?: boolean | undefined;
+	rules?: ValidationRule[];
+	text?: string;
+	type?: FieldTypes;
+	validateOn?: string;
+	when?: (value: any) => boolean;
+
+	// ? Date Field //
+	// dateFormat?: string;
+	// dateSeparator?: string;
+
+	// ? Checkboxes //
+	inline?: boolean;
+	inlineSpacing?: string;
+	labelPositionLeft?: boolean;
+}
+
+
+// -------------------------------------------------- Page //
+export interface Page {
+	autoPage?: boolean;
+	editable?: VStepperItem['editable'];
+	error?: boolean;
+	fields: Field[];
+	isReview?: boolean;
+	text?: string;
+	title?: string;
+}
+
 
 // -------------------------------------------------- Props //
-export interface Props extends VStepperProps, VStepperWindowItemProps {
+// TODO: Revert this back to the stupid way //
+export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
+	schema: Schema<any>;
 
 	// Optional //
 	autoPage?: boolean;
 	autoPageDelay?: number;
-	// TODO: Determine a better prop name for canReview //
-	canReview?: boolean;
-	color?: string;
-	density?: GlobalDensity;
+	canReview?: boolean; // TODO: Determine a better prop name for canReview //
+	color?: string | undefined; 						// * Vuetify Checked
+	density?: GlobalDensity;								// * Vuetify Checked
 	direction?: 'horizontal' | 'vertical';
-	hideDetails?: boolean;
+	errorIcon?: VStepper['errorIcon'];
+	hideDetails?: GlobalHideDetails;
 	navButtonSize?: VBtn['size'];
 	summaryColumns?: SummaryColumns;
 	title?: string;
@@ -105,41 +186,16 @@ export interface Props extends VStepperProps, VStepperWindowItemProps {
 	width?: string;
 }
 
-export interface PluginOptions extends Partial<Props> { }
-export interface Settings extends Partial<Omit<Props, 'pages'>> { }
+export interface PluginOptions extends Partial<Omit<Props, 'pages' | 'schema'>> { }
+export interface Settings extends PluginOptions { }
 
-
-// -------------------------------------------------- Components //
-export interface SharedProps {
-	field: Field;
-	settings: Settings;
-}
-
-// TODO: Need to remove the "type" for some fields as they are not valid field types //
-export interface Field {
-	// Required //
-	name: string;
-
-	// Optional //
-	autoPage?: Props['autoPage'];
-	autoPageDelay?: Props['autoPageDelay'];
-	canReview?: Props['canReview'];
-	color?: Props['color'];
-	// dateFormat?: string;
-	// dateSeparator?: string;
-	density?: Props['density'];
-	disabled?: boolean | ((value: any) => boolean);
-	error?: boolean;
-	hidden?: boolean;
-	label?: string;
-	options?: KeyStringAny;
-	required?: boolean | undefined;
-	text?: string;
-	type?: 'autocomplete' |
+type FieldTypes =
+	'autocomplete' |
 	'checkbox' |
 	'color' |
 	'combobox' |
 	'custom' |
+	'date' |
 	'email' |
 	'fancyRadio' |
 	'file' |
@@ -148,7 +204,7 @@ export interface Field {
 	'password' |
 	'radio' |
 	'select' |
-	'submit' |
+	// 'submit' | // ? Maybe
 	'switch' |
 	'tel' |
 	'text' |
@@ -156,44 +212,43 @@ export interface Field {
 	'textarea' |
 	'url' |
 	undefined;
-	when?: (value: any) => boolean;
-	validate?: (field: Field, value: any) => boolean;
-	validateOn?: string;
 
-	inline?: boolean; 							// ? Checkboxes
-	inlineSpacing?: string;					// ? Checkboxes
-	labelPositionLeft?: boolean;		// ? Checkboxes
+export interface SharedProps {
+	field: Field;
+	settings: Settings;
 }
 
 
-export interface Page {
-	autoPage?: boolean;
-	editable?: VStepperItem['editable'];
-	fields: Field[];
-	isReview?: boolean;
-	text?: string;
-	title?: string;
-}
+// -------------------------------------------------- Validation //
+type ValidationRule = {
+	params?: string[];
+	type?: string;
+};
 
-// ------------------------- Helpers //
-export interface UseConvertToUnit {
+export type EmitValidateEvent = (event: 'validate', field: Field) => void;
+
+export interface UseOnActions {
 	(
 		options: {
-			unit?: string,
-			value: string | number,
+			action: ValidateAction;
+			emit: EmitValidateEvent;
+			field: Field;
+			settingsValidateOn: Settings['validateOn'];
+			validate: FieldValidateResult;
 		}
-	): string | void;
+	): Promise<void>;
 }
 
 
+// -------------------------------------------------- Composables //
+// ------------------------- Helpers //
 export interface UseMergeProps {
 	(
 		A: Record<string, any>,
-		B: Omit<Props, 'pages'>,
+		B: PluginOptions,
 		C: Props
 	): Record<string, any>;
 }
-
 
 export interface UseAutoPage {
 	(
@@ -209,12 +264,14 @@ export interface UseAutoPage {
 }
 
 // ------------------------- Classes //
+export type ComputedClasses = Record<string, boolean>;
+
 export interface UseContainerClasses {
 	(
 		options: {
 			direction?: Props['direction'];
 		}
-	): object;
+	): ComputedClasses;
 }
 
 export interface UseStepperContainerClasses {
@@ -222,9 +279,8 @@ export interface UseStepperContainerClasses {
 		options: {
 			direction?: Props['direction'];
 		}
-	): object;
+	): ComputedClasses;
 }
-
 
 // ------------------------- Styles //
 export interface UseContainerStyle {
@@ -236,6 +292,7 @@ export interface UseContainerStyle {
 }
 
 
+// -------------------------------------------------- Plugin Component //
 declare module "vue" {
 	interface ComponentCustomProperties { }
 
@@ -244,7 +301,7 @@ declare module "vue" {
 	}
 }
 
-declare function createVStepperForm(vuetify?: PluginOptions): {
+declare function createVStepperForm(options?: PluginOptions): {
 	install: (app: App) => void;
 };
 

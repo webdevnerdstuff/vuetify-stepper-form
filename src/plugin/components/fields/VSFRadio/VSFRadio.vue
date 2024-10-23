@@ -15,11 +15,14 @@
 						'pb-5': field.labelPositionLeft,
 					}"
 					:label="field.label"
-					:required="field.required"
+					:required="fieldRequired"
 				/>
 			</v-label>
 
-			<div :style="checkboxContainerStyle">
+			<div
+				:id="field?.groupId"
+				:style="radioContainerStyle"
+			>
 				<v-radio-group
 					v-model="modelValue"
 					:append-icon="field?.appendIcon"
@@ -34,15 +37,29 @@
 					:theme="field?.theme"
 					:width="field?.width"
 				>
-					<v-radio
+					<Field
 						v-for="option in field?.options"
-						v-bind="boundSettings"
 						:key="option.value"
-						:label="option.label"
-						:style="radioStyle"
-						:value="option.value"
+						v-slot="{ errorMessage, validate }"
+						v-model="modelValue"
+						:name="field.name"
+						type="radio"
+						:validate-on-model-update="true"
 					>
-					</v-radio>
+						<v-radio
+							v-bind="boundSettings"
+							:id="undefined"
+							:error="hasErrors"
+							:error-messages="errorMessage"
+							:label="option.label"
+							:style="radioStyle"
+							:value="option.value"
+							@blur="onActions(validate, 'blur')"
+							@change="onActions(validate, 'change')"
+							@input="onActions(validate, 'input')"
+						>
+						</v-radio>
+					</Field>
 				</v-radio-group>
 			</div>
 		</div>
@@ -51,21 +68,37 @@
 
 
 <script lang="ts" setup>
-import type {
-	VSFRadioProps,
-} from './index';
-import FieldLabel from '../../shared/FieldLabel.vue';
+import type { VSFRadioProps } from './index';
+import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
-import { useAutoPage } from '../../../composables/helpers';
+import { useOnActions } from '../../../composables/validation';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { Field } from 'vee-validate';
 
 
-const emit = defineEmits(['next']);
+const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
-const { field, settings } = defineProps<VSFRadioProps>();
+const props = defineProps<VSFRadioProps>();
+
+const { field, settings } = props;
+
+const fieldRequired = computed(() => {
+	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
+	return field.required || hasRequiredRule as FieldLabelProps['required'];
+});
 
 
-// Auto Paging //
-useAutoPage({ emit, field, modelValue, settings });
+// ------------------------- Validate On Actions //
+async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+	useOnActions({
+		action,
+		emit,
+		field,
+		settingsValidateOn: settings.validateOn,
+		validate,
+	});
+}
+
 
 const hasErrors = computed(() => {
 	let err = field?.error;
@@ -76,14 +109,15 @@ const hasErrors = computed(() => {
 });
 
 // -------------------------------------------------- Bound Settings //
-const bindSettings = reactive({
+const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
 	falseValue: field.falseValue || undefined,
-});
+	hideDetails: field.hideDetails || settings?.hideDetails,
+}));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings));
+const boundSettings = computed(() => useBindingSettings(bindSettings.value));
 
 
 // Styles //
@@ -106,8 +140,8 @@ const inputControlContainerStyle = computed<CSSProperties>(() => {
 });
 
 
-// Inline Checkboxes //
-const checkboxContainerStyle = computed<CSSProperties>(() => ({
+// Inline Radios //
+const radioContainerStyle = computed<CSSProperties>(() => ({
 	'display': field.inline ? 'flex' : undefined,
 }));
 

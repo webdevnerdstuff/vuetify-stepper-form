@@ -7,6 +7,7 @@ import type VSFCheckbox from './VSFCheckbox.vue';
 
 
 interface InternalField extends Field {
+	color?: VCheckbox['color'];
 	density?: VCheckbox['density'];
 	falseIcon?: VCheckbox['falseIcon'];
 	falseValue?: VCheckbox['falseValue'];

@@ -5,11 +5,13 @@
 		:name="field.name"
 		:validate-on-model-update="false"
 	>
-		<v-text-field
+		<component
+			:is="component"
 			v-model="modelValue"
 			v-bind="boundSettings"
-			:error="errorMessage ? errorMessage?.length > 0 : false"
-			:error-messages="errorMessage"
+			:error="hasErrors"
+			:error-messages="errorMessage || field.errorMessages"
+			:items="fieldItems"
 			@blur="onActions(validate, 'blur')"
 			@change="onActions(validate, 'change')"
 			@input="onActions(validate, 'input')"
@@ -20,13 +22,15 @@
 					:required="fieldRequired"
 				/>
 			</template>
-		</v-text-field>
+		</component>
 	</Field>
+
+	<!-- Vuetify Field {{ field }} -->
 </template>
 
 
 <script lang="ts" setup>
-import type { VSFTextFieldProps } from './index';
+import type { CommonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
@@ -36,7 +40,7 @@ import { Field } from 'vee-validate';
 
 const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
-const props = defineProps<VSFTextFieldProps>();
+const props = defineProps<CommonFieldProps>();
 
 const { field, settings } = props;
 
@@ -57,6 +61,21 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 	});
 }
 
+const fieldItems = computed(() => field?.items ? field.items as any : undefined);
+const fieldType = computed(() => {
+	if (field.type === 'color') {
+		return 'text';
+	}
+
+	return field.type;
+});
+const hasErrors = computed(() => {
+	let err = field?.error;
+
+	err = field?.errorMessages ? field.errorMessages.length > 0 : err;
+
+	return err;
+});
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
@@ -64,6 +83,7 @@ const bindSettings = computed(() => ({
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
 	hideDetails: field.hideDetails || settings?.hideDetails,
+	type: fieldType.value,
 	variant: field.variant || settings?.variant,
 }));
 

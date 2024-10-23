@@ -10,9 +10,11 @@ import type VSFSelect from './VSFSelect.vue';
 interface InternalField extends Omit<Field,
 	'inline' | 'inlineSpacing' | 'labelPositionLeft'
 > {
+	color?: VSelect['color'];
 	density?: VSelect['density'];
 	closeText?: VSelect['closeText'];
 	closableChips?: VSelect['closableChips'];
+	hideDetails?: VSelect['hideDetails'];
 	items?: VSelect['items'];
 	variant?: VSelect['variant'];
 }
