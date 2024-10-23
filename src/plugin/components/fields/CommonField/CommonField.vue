@@ -30,7 +30,7 @@
 
 
 <script lang="ts" setup>
-import type { VuetifyFieldProps } from './index';
+import type { CommonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
@@ -40,7 +40,7 @@ import { Field } from 'vee-validate';
 
 const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
-const props = defineProps<VuetifyFieldProps>();
+const props = defineProps<CommonFieldProps>();
 
 const { field, settings } = props;
 

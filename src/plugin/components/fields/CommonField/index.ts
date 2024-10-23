@@ -7,7 +7,7 @@ import type {
 	GlobalVariant,
 	SharedProps,
 } from '@/plugin/types';
-import type VuetifyField from './VuetifyField.vue';
+import type CommonField from './CommonField.vue';
 
 
 interface InternalField extends Omit<Field,
@@ -20,11 +20,11 @@ interface InternalField extends Omit<Field,
 	variant?: GlobalVariant;
 }
 
-export interface VuetifyFieldProps extends SharedProps {
+export interface CommonFieldProps extends SharedProps {
 	field: InternalField;
 	component: string;
 }
 
-export type VuetifyField = InstanceType<typeof VuetifyField>;
+export type CommonField = InstanceType<typeof CommonField>;
 
-export default VuetifyField;
+export default CommonField;
