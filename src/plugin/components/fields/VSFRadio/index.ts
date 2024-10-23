@@ -8,8 +8,8 @@ import type VSFRadio from './VSFRadio.vue';
 
 export interface RadioGroupProps {
 	appendIcon?: VRadioGroup['appendIcon'];
+	direction?: VRadioGroup['direction'];
 	error?: VRadioGroup['error'];
-	errorMessages?: VRadioGroup['errorMessages'];
 	hideDetails?: VRadioGroup['hideDetails'];
 	groupId?: VRadioGroup['id'];
 	maxErrors?: VRadioGroup['maxErrors'];

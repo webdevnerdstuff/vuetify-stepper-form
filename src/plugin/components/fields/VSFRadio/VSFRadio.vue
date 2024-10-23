@@ -21,7 +21,7 @@
 
 			<div
 				:id="field?.groupId"
-				:style="checkboxContainerStyle"
+				:style="radioContainerStyle"
 			>
 				<v-radio-group
 					v-model="modelValue"
@@ -140,8 +140,8 @@ const inputControlContainerStyle = computed<CSSProperties>(() => {
 });
 
 
-// Inline Checkboxes //
-const checkboxContainerStyle = computed<CSSProperties>(() => ({
+// Inline Radios //
+const radioContainerStyle = computed<CSSProperties>(() => ({
 	'display': field.inline ? 'flex' : undefined,
 }));
 
