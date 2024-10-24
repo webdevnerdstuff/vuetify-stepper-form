@@ -1,7 +1,7 @@
 {
 	"name": "vuetify-stepper-form",
 	"version": "1.0.0",
-	"description": "Vuetify Plugin Stepper Form",
+	"description": "Vuetify Stepper Form",
 	"private": false,
 	"publishConfig": {
 		"access": "public"
