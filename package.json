@@ -1,6 +1,6 @@
 {
 	"name": "vuetify-stepper-form",
-	"version": "1.0.0",
+	"version": "1.0.0-beta1",
 	"description": "Vuetify Stepper Form",
 	"private": false,
 	"publishConfig": {
