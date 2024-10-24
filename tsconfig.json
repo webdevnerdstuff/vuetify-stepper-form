@@ -70,7 +70,6 @@
 		"node_modules"
 	],
 	"include": [
-		"src/playground/PlaygroundPage.vue",
 		"src/plugin/**/*.ts",
 		"src/plugin/**/*.tsx",
 		"src/plugin/**/*.vue"
