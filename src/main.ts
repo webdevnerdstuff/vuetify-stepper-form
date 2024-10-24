@@ -1,6 +1,6 @@
 import '@/libraries/fontawesome';
 import App from './App.vue';
-// import { createVCodeBlock } from '@wdns/vue-code-block';
+import { createVCodeBlock } from '@wdns/vue-code-block';
 import { createVStepperForm } from './plugin/index';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const app = createApp(App);
 
-// app.use(createVCodeBlock());
+app.use(createVCodeBlock());
 app.use(createVStepperForm());
 app.use(createPinia());
 

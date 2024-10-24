@@ -88,9 +88,9 @@
 				/>
 
 				<!-- ================================================== Custom Field (slot) -->
-				<template v-if="field.type === 'custom'">
+				<template v-if="field.type === 'field'">
 					<Fields.VSFCustom
-						v-if="field.type === 'custom'"
+						v-if="field.type === 'field'"
 						v-model="modelValue[field.name]"
 						:field="field"
 						:settings="settings"
@@ -111,17 +111,7 @@
 
 				<!-- TODO: User Select Field -->
 				<!-- TODO: Date Field -->
-
-				<!-- <template v-if="field.type === 'submit'">
-						<v-btn
-							:color="field.color || settings.color"
-							:type="field.type"
-						>
-							{{ field.label }}
-						</v-btn>
-					</template> -->
 			</v-col>
-
 		</template>
 	</v-row>
 </template>
@@ -173,7 +163,7 @@ const textFields = [
 	'url',
 ];
 
-function getComponent(fieldType: string): any {
+function getComponent(fieldType: string): Component | null {
 	if (fieldType === 'autocomplete') {
 		return markRaw(VAutocomplete);
 	}

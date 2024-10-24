@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import packageJson from '@root/package.json';
+import packageJson from '../../package.json';
 
 
 export const useCoreStore = defineStore('core', () => {
@@ -14,9 +14,14 @@ export const useCoreStore = defineStore('core', () => {
 		githubProfile: 'https://github.com/webdevnerdstuff',
 		license: `${repoBaseUrl}/blob/main/LICENSE.md`,
 		npm: `https://www.npmjs.com/package/${scopedPackageName}`,
+		vColorField: 'https://webdevnerdstuff.github.io/vuetify-color-field/',
+		veeValidate: 'https://vee-validate.logaretm.com/v4/',
 		vue: 'https://vuejs.org/',
+		vueUse: 'https://vueuse.org/',
 		vuetify: 'https://vuetifyjs.com/',
 		vuetifyGithub: 'https://github.com/vuetifyjs/vuetify',
+		yup: 'https://github.com/jquense/yup',
+		yupWhen: 'https://github.com/jquense/yup?tab=readme-ov-file#schemawhenkeys-string--string-builder-object--values-any-schema--schema-schema',
 	};
 
 	const actions = {

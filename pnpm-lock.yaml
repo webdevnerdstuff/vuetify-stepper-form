@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@vueuse/core':
+        specifier: ^11.1.0
+        version: 11.1.0(vue@3.5.11(typescript@5.6.3))
+      '@wdns/vuetify-color-field':
+        specifier: ^1.1.8
+        version: 1.1.8(typescript@5.6.3)(vite-plugin-vuetify@2.0.4(vite@5.4.8(@types/node@22.7.5)(sass@1.79.4)(terser@5.34.1))(vue@3.5.11(typescript@5.6.3))(vuetify@3.7.2))
       vue:
         specifier: ^3.5.11
         version: 3.5.11(typescript@5.6.3)
@@ -164,7 +170,7 @@ importers:
         version: 5.6.3
       unplugin-auto-import:
         specifier: ^0.18.3
-        version: 0.18.3(rollup@4.23.0)(webpack-sources@3.2.3)
+        version: 0.18.3(@vueuse/core@11.1.0(vue@3.5.11(typescript@5.6.3)))(rollup@4.23.0)(webpack-sources@3.2.3)
       vee-validate:
         specifier: ^4.13.2
         version: 4.13.2(vue@3.5.11(typescript@5.6.3))
@@ -842,6 +848,9 @@ packages:
   '@types/sockjs@0.3.36':
     resolution: {integrity: sha512-MK9V6NzAS1+Ud7JV9lJLFqW85VbC9dq3LmwZCuBe4wBDgKC0Kj/jd8Xl+nSviU+Qc3+m7umHHyHg//2KSa0a0Q==}
 
+  '@types/web-bluetooth@0.0.20':
+    resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
+
   '@types/ws@8.5.12':
     resolution: {integrity: sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==}
 
@@ -1077,8 +1086,29 @@ packages:
       vue: ^3.0.0
       vuetify: ^3.0.0
 
+  '@vueuse/core@10.11.1':
+    resolution: {integrity: sha512-guoy26JQktXPcz+0n3GukWIy/JDNKti9v6VEMu6kV2sYBsWuGiTU8OWdg+ADfUbHg3/3DlqySDe7JmdHrktiww==}
+
+  '@vueuse/core@11.1.0':
+    resolution: {integrity: sha512-P6dk79QYA6sKQnghrUz/1tHi0n9mrb/iO1WTMk/ElLmTyNqgDeSZ3wcDf6fRBGzRJbeG1dxzEOvLENMjr+E3fg==}
+
+  '@vueuse/metadata@10.11.1':
+    resolution: {integrity: sha512-IGa5FXd003Ug1qAZmyE8wF3sJ81xGLSqTqtQ6jaVfkeZ4i5kS2mwQF61yhVqojRnenVew5PldLyRgvdl4YYuSw==}
+
+  '@vueuse/metadata@11.1.0':
+    resolution: {integrity: sha512-l9Q502TBTaPYGanl1G+hPgd3QX5s4CGnpXriVBR5fEZ/goI6fvDaVmIl3Td8oKFurOxTmbXvBPSsgrd6eu6HYg==}
+
+  '@vueuse/shared@10.11.1':
+    resolution: {integrity: sha512-LHpC8711VFZlDaYUXEBbFBCQ7GS3dVU9mjOhhMhXP6txTV4EhYQg/KGnQuvt/sPAtoUKq7VVUnL6mVtFoL42sA==}
+
+  '@vueuse/shared@11.1.0':
+    resolution: {integrity: sha512-YUtIpY122q7osj+zsNMFAfMTubGz0sn5QzE5gPzAIiCmtt2ha3uQUY1+JPyL4gRCTsLPX82Y9brNbo/aqlA91w==}
+
   '@wdns/vue-code-block@2.3.3':
     resolution: {integrity: sha512-eOsCTatfi/8/zcgk7yzjuu+t4Ms4Te9SwYUE5PA/+JYcgp+JXAnYBgvqwPFVoTVKq3IpQCiGZg2zMblssvUCUQ==}
+
+  '@wdns/vuetify-color-field@1.1.8':
+    resolution: {integrity: sha512-KuMUcM4yNI+DcxTRMoDOXSnUOgkLid4XYUlNSMw9pIn7EPe3XJF/E3+4SRnsRO+8CCclWtopsnPWshqoc8KjKA==}
 
   '@webassemblyjs/ast@1.12.1':
     resolution: {integrity: sha512-EKfMUOPRRUTy5UII4qJDGPpqfwjOmZ5jeGFwid9mnoqIFK+e0vqoi1qH56JpmZSzEL53jKnNzScdmftJyG5xWg==}
@@ -5792,6 +5822,8 @@ snapshots:
     dependencies:
       '@types/node': 22.7.5
 
+  '@types/web-bluetooth@0.0.20': {}
+
   '@types/ws@8.5.12':
     dependencies:
       '@types/node': 22.7.5
@@ -6291,6 +6323,44 @@ snapshots:
       vue: 3.5.11(typescript@5.6.3)
       vuetify: 3.7.2(typescript@5.6.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.11(typescript@5.6.3))
 
+  '@vueuse/core@10.11.1(vue@3.5.11(typescript@5.6.3))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.20
+      '@vueuse/metadata': 10.11.1
+      '@vueuse/shared': 10.11.1(vue@3.5.11(typescript@5.6.3))
+      vue-demi: 0.14.10(vue@3.5.11(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  '@vueuse/core@11.1.0(vue@3.5.11(typescript@5.6.3))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.20
+      '@vueuse/metadata': 11.1.0
+      '@vueuse/shared': 11.1.0(vue@3.5.11(typescript@5.6.3))
+      vue-demi: 0.14.10(vue@3.5.11(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  '@vueuse/metadata@10.11.1': {}
+
+  '@vueuse/metadata@11.1.0': {}
+
+  '@vueuse/shared@10.11.1(vue@3.5.11(typescript@5.6.3))':
+    dependencies:
+      vue-demi: 0.14.10(vue@3.5.11(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  '@vueuse/shared@11.1.0(vue@3.5.11(typescript@5.6.3))':
+    dependencies:
+      vue-demi: 0.14.10(vue@3.5.11(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
   '@wdns/vue-code-block@2.3.3(typescript@5.6.3)':
     dependencies:
       highlight.js: 11.10.0
@@ -6299,6 +6369,17 @@ snapshots:
       vue: 3.5.11(typescript@5.6.3)
     transitivePeerDependencies:
       - typescript
+
+  '@wdns/vuetify-color-field@1.1.8(typescript@5.6.3)(vite-plugin-vuetify@2.0.4(vite@5.4.8(@types/node@22.7.5)(sass@1.79.4)(terser@5.34.1))(vue@3.5.11(typescript@5.6.3))(vuetify@3.7.2))':
+    dependencies:
+      '@vueuse/core': 10.11.1(vue@3.5.11(typescript@5.6.3))
+      vue: 3.5.11(typescript@5.6.3)
+      vuetify: 3.7.2(typescript@5.6.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.11(typescript@5.6.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - typescript
+      - vite-plugin-vuetify
+      - webpack-plugin-vuetify
 
   '@webassemblyjs/ast@1.12.1':
     dependencies:
@@ -10036,7 +10117,7 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unplugin-auto-import@0.18.3(rollup@4.23.0)(webpack-sources@3.2.3):
+  unplugin-auto-import@0.18.3(@vueuse/core@11.1.0(vue@3.5.11(typescript@5.6.3)))(rollup@4.23.0)(webpack-sources@3.2.3):
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.1.2(rollup@4.23.0)
@@ -10046,6 +10127,8 @@ snapshots:
       minimatch: 9.0.5
       unimport: 3.13.1(rollup@4.23.0)(webpack-sources@3.2.3)
       unplugin: 1.14.1(webpack-sources@3.2.3)
+    optionalDependencies:
+      '@vueuse/core': 11.1.0(vue@3.5.11(typescript@5.6.3))
     transitivePeerDependencies:
       - rollup
       - webpack-sources

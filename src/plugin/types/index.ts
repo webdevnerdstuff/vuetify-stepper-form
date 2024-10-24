@@ -9,6 +9,7 @@ import type {
 	// VStepperActions,
 	VStepperWindowItem,
 } from 'vuetify/components';
+import type { ValidationRule } from 'vuetify/composables/validation';
 import VStepperForm from '../VStepperForm.vue';
 import type { Schema } from 'yup';
 import type {
@@ -137,7 +138,7 @@ export interface Field {
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean | undefined;
-	rules?: ValidationRule[];
+	rules?: ValidationRule;
 	text?: string;
 	type?: FieldTypes;
 	validateOn?: 'blur' | 'change' | 'click' | 'input';
@@ -180,7 +181,7 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	color?: string | undefined; 						// * Vuetify Checked
 	density?: GlobalDensity;								// * Vuetify Checked
 	direction?: 'horizontal' | 'vertical';
-	errorIcon?: VStepper['errorIcon'];
+	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
 	hideDetails?: GlobalHideDetails;
 	navButtonSize?: VBtn['size'];
@@ -200,17 +201,16 @@ type FieldTypes =
 	'checkbox' |
 	'color' |
 	'combobox' |
-	'custom' |
 	'date' |
 	'email' |
 	'fancyRadio' |
+	'field' |
 	'file' |
 	'hidden' |
 	'number' |
 	'password' |
 	'radio' |
 	'select' |
-	// 'submit' | // ? Maybe
 	'switch' |
 	'tel' |
 	'text' |
@@ -226,11 +226,6 @@ export interface SharedProps {
 
 
 // -------------------------------------------------- Validation //
-type ValidationRule = {
-	params?: string[];
-	type?: string;
-};
-
 export type EmitValidateEvent = (event: 'validate', field: Field) => void;
 
 export interface UseOnActions {

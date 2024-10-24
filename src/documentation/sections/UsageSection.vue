@@ -23,8 +23,8 @@
 			>
 				<template #label>
 					Global Plugin Registration
-					<br>
-					<i>Global options have a higher precedence and will override local props</i>
+					<!-- <br>
+					<i>Global options have a higher precedence and will override local props</i> -->
 				</template>
 			</VCodeBlock>
 		</v-col>
@@ -69,11 +69,11 @@ const classes = inject('classes');
 
 const usageGlobalPlugin = `import { createApp } from 'vue';
 import App from './App.vue';
-import { createVStepperForm } from 'vuetify-stepper-form';
+import { createVStepperForm } from '@wdns/vuetify-stepper-form';
 
 const app = createApp(App);
 
-app.use(createVPluginTemplate({
+app.use(createVStepperForm({
   // options
 }));
 
@@ -81,7 +81,7 @@ app.mount('#app');`;
 
 const usageGlobalComponent = `import { createApp } from 'vue';
 import App from './App.vue';
-import { VStepperForm } from  'vuetify-stepper-form';
+import { VStepperForm } from  '@wdns/vuetify-stepper-form';
 
 const app = createApp(App);
 
@@ -90,13 +90,13 @@ app.component('VStepperForm', VStepperForm);
 app.mount('#app');`;
 
 const usageIndividual = `<template>
-  <VPluginTemplate
+  <VStepperForm
     v-model="foo"
   />
 </template>
 
 \<script setup\>
-  import VStepperForm from  'vuetify-stepper-form';
+  import VStepperForm from  '@wdns/vuetify-stepper-form';
 
   const foo = ref(null);
 \</script\>`;

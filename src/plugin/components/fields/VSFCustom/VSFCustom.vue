@@ -3,7 +3,7 @@
 		v-for="(_, slot) in slots"
 		:key="slot"
 	>
-		<div v-if="slot === `custom.${[field.name]}`">
+		<div v-if="slot === `field.${[field.name]}`">
 			<Field
 				v-slot="{ errorMessage, validate }"
 				v-model="modelValue"
@@ -13,9 +13,9 @@
 				<slot
 					v-bind="{
 						errorMessage,
-						field,
-						boundSettings,
+						field: boundSettings,
 						FieldLabel: FieldLabelComponent,
+						value: modelValue,
 						blur: () => onActions(validate, 'blur'),
 						change: () => onActions(validate, 'change'),
 						input: () => onActions(validate, 'input'),
