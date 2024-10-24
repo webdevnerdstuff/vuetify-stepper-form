@@ -3,7 +3,7 @@
 </p>
 
 <p>
-  <h1 align="center">Vuetify Plugin Template</h1>
+  <h1 align="center">Vuetify Stepper Form (Beta)</h1>
 </p>
 
 <p align="center">
@@ -19,11 +19,7 @@
 
 ## Description
 
-Vuetify Plugin Template is a template to help you get starting building your own plugin/component for Vuetify (v3).
-
-## Features
- 
-See [Documentation & Demo](https://webdevnerdstuff.github.io/vuetify-stepper-form/#features) page for a list of features.
+Vuetify Stepper Form builder for Vuetify (v3).
 
 ## Documentation
  
