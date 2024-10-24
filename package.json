@@ -37,6 +37,11 @@
 		"LICENSE.md",
 		"README.md"
 	],
+	"repository": "https://github.com/webdevnerdstuff/vuetify-stepper-form",
+	"bugs": {
+		"url": "https://github.com/webdevnerdstuff/vuetify-stepper-form/issues"
+	},
+	"homepage": "https://webdevnerdstuff.github.io/vuetify-stepper-form/",
 	"keywords": [
 		"vuetify-stepper-form",
 		"vuetify",
