@@ -4,6 +4,9 @@
 		v-slot="{ errorMessage, validate }"
 		v-model="modelValue"
 		:name="field.name"
+		:validate-on-blur="fieldValidateOn === 'blur'"
+		:validate-on-change="fieldValidateOn === 'change'"
+		:validate-on-input="fieldValidateOn === 'input'"
 		:validate-on-model-update="false"
 	>
 		<v-checkbox
@@ -55,27 +58,36 @@
 				:style="checkboxContainerStyle"
 			>
 				<Field
-					v-for="option in field?.options"
-					:key="option.value"
 					v-slot="{ errorMessage, validate }"
 					v-model="modelValue"
 					:name="field.name"
+					:validate-on-blur="fieldValidateOn === 'blur'"
+					:validate-on-change="fieldValidateOn === 'change'"
+					:validate-on-input="fieldValidateOn === 'input'"
 					:validate-on-model-update="false"
 				>
-					<v-checkbox
-						v-bind="boundSettings"
-						:id="option.id"
-						v-model="modelValue"
-						:error="errorMessage ? errorMessage?.length > 0 : false"
-						:error-messages="errorMessage"
-						:label="option.label"
-						:style="checkboxStyle"
-						:true-value="option.value"
-						@blur="onActions(validate, 'blur')"
-						@change="onActions(validate, 'change')"
-						@input="onActions(validate, 'input')"
+					<template
+						v-for="option, key in field?.options"
+						:key="option.value"
 					>
-					</v-checkbox>
+						<v-checkbox
+							v-bind="boundSettings"
+							:id="option.id"
+							v-model="modelValue"
+							:error="errorMessage ? errorMessage?.length > 0 : false"
+							:error-messages="errorMessage"
+							:label="option.label"
+							:style="checkboxStyle"
+							:true-value="option.value"
+							@blur="onActions(validate, 'blur')"
+							@change="onActions(validate, 'change')"
+							@input="onActions(validate, 'input')"
+						>
+							<template #message>
+								{{ Object.keys(field?.options as KeyStringAny).length - 1 === key ? errorMessage : '' }}
+							</template>
+						</v-checkbox>
+					</template>
 				</Field>
 			</div>
 		</div>
@@ -102,6 +114,7 @@ const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
+const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
 
 
 // ------------------------- Validate On Actions //

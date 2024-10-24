@@ -11,11 +11,13 @@ export interface RadioGroupProps {
 	direction?: VRadioGroup['direction'];
 	error?: VRadioGroup['error'];
 	hideDetails?: VRadioGroup['hideDetails'];
+	hint?: VRadioGroup['hint'];
 	groupId?: VRadioGroup['id'];
 	maxErrors?: VRadioGroup['maxErrors'];
 	maxWidth?: VRadioGroup['maxWidth'];
 	minWidth?: VRadioGroup['minWidth'];
 	messages?: VRadioGroup['messages'];
+	persistentHint?: VRadioGroup['persistentHint'];
 	prependIcon?: VRadioGroup['prependIcon'];
 	theme?: VRadioGroup['theme'];
 	width?: VRadioGroup['width'];

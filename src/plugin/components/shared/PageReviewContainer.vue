@@ -80,8 +80,8 @@
 import type {
 	Field,
 	Page,
+	ResponsiveColumns,
 	Settings,
-	SummaryColumns,
 } from '../../types/index';
 
 
@@ -89,7 +89,7 @@ export interface PageReviewContainerProps {
 	page: Page;
 	pages: Page[];
 	settings: Settings;
-	summaryColumns: SummaryColumns | undefined;
+	summaryColumns: ResponsiveColumns | undefined;
 }
 
 const { summaryColumns, page, pages } = defineProps<PageReviewContainerProps>();
@@ -143,7 +143,7 @@ const columnDefaults = {
 	xl: 6,
 };
 
-const columnsMerged = ref<SummaryColumns>({
+const columnsMerged = ref<ResponsiveColumns>({
 	...columnDefaults,
 	...summaryColumns,
 });

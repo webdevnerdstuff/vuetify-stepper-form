@@ -13,18 +13,19 @@
 		</v-col>
 	</v-row>
 
-	<template
-		v-for="field in page.fields"
-		:key="`${field.name}-${field.type}`"
-	>
-		<input
-			v-if="field.type === 'hidden' || !field.type"
-			v-model="modelValue[field.name]"
-			:name="field.name"
-			type="hidden"
-		/>
+	<v-row>
+		<template
+			v-for="field in page.fields"
+			:key="`${field.name}-${field.type}`"
+		>
+			<input
+				v-if="field.type === 'hidden' || !field.type"
+				v-model="modelValue[field.name]"
+				:name="field.name"
+				type="hidden"
+			/>
 
-		<v-row v-else>
+
 			<v-col
 				v-if="field.text"
 				cols="12"
@@ -32,7 +33,7 @@
 				<div v-html="field.text" />
 			</v-col>
 
-			<v-col cols="12">
+			<v-col :class="getColumnClasses(field)">
 				<!-- ================================================== Checkbox -->
 				<Fields.VSFCheckbox
 					v-if="field.type === 'checkbox'"
@@ -59,31 +60,6 @@
 					@validate="onValidate"
 				/>
 
-				<!-- ================================================== Select -->
-				<!-- <Fields.VSFSelect
-					v-if="field.type === 'select'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
-				<!-- <Fields.VSFAutocomplete
-					v-if="field.type === 'autocomplete'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
-				<!-- <Fields.VSFCombobox
-					v-if="field.type === 'combobox'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
 				<!-- ================================================== Switch -->
 				<Fields.VSFSwitch
 					v-if="field.type === 'switch'"
@@ -93,57 +69,25 @@
 					@validate="onValidate"
 				/>
 
-				<!-- ========================= Color Field -->
-				<!-- <Fields.VSFColorField
-					v-if="field.type === 'color'"
+				<!-- ================================================== Common Fields
+						* VAutocomplete
+						* VColorField
+						* VCombobox
+						* VFileInput
+						* VSelect
+						* VTextField
+						* VTextarea
+					-->
+				<Fields.CommonField
+					v-if="getComponent(field.type as string) != null"
 					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
-
-				<!-- ! ================================================== Vuetify Field -->
-				<Fields.VuetifyField
-					v-if="getComponent(field.type) != null"
-					v-model="modelValue[field.name]"
-					:component="getComponent(field.type)"
+					:component="getComponent(field.type as string)"
 					:field="field"
 					:settings="settings"
 					@validate="onValidate"
 				/>
-				<!-- ! ================================================== Vuetify Field -->
 
-				<!-- ================================================== Text Field -->
-				<!-- <Fields.VSFTextField
-					v-if="field.type === 'text' || field.type === 'textField' || field.type === 'number' || field.type === 'email' || field.type === 'password' || field.type === 'tel' || field.type === 'url'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
-
-
-				<!-- ========================= File Input -->
-				<!-- <Fields.VSFFileInput
-					v-if="field.type === 'file'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
-				<!-- ================================================== Textarea -->
-				<!-- <Fields.VSFTextarea
-					v-if="field.type === 'textarea'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/> -->
-
-				<!-- ================================================== Custom Field -->
+				<!-- ================================================== Custom Field (slot) -->
 				<template v-if="field.type === 'custom'">
 					<Fields.VSFCustom
 						v-if="field.type === 'custom'"
@@ -169,16 +113,17 @@
 				<!-- TODO: Date Field -->
 
 				<!-- <template v-if="field.type === 'submit'">
-					<v-btn
-						:color="field.color || settings.color"
-						:type="field.type"
-					>
-						{{ field.label }}
-					</v-btn>
-				</template> -->
+						<v-btn
+							:color="field.color || settings.color"
+							:type="field.type"
+						>
+							{{ field.label }}
+						</v-btn>
+					</template> -->
 			</v-col>
-		</v-row>
-	</template>
+
+		</template>
+	</v-row>
 </template>
 
 <script setup lang="ts">
@@ -186,6 +131,7 @@ import * as Fields from '../fields/index';
 import type {
 	Field,
 	Page,
+	ResponsiveColumns,
 	Settings,
 } from '../../types/index';
 import {
@@ -197,6 +143,7 @@ import {
 	VTextField,
 } from 'vuetify/components';
 import { VColorField } from '@wdns/vuetify-color-field';
+import { useColumnErrorCheck } from '../../composables/helpers';
 
 
 export interface FieldLabelProps {
@@ -205,9 +152,15 @@ export interface FieldLabelProps {
 	settings: Settings;
 }
 
+export interface PageContainerProps {
+	fieldColumns: ResponsiveColumns | undefined;
+	page: Page;
+	settings: Settings;
+}
+
 const emit = defineEmits(['validate']);
 const slots = defineSlots();
-const { page } = defineProps<FieldLabelProps>();
+const { fieldColumns, page } = defineProps<PageContainerProps>();
 
 
 const textFields = [
@@ -249,12 +202,41 @@ function getComponent(fieldType: string): any {
 		return markRaw(VTextField);
 	}
 
-
 	return null;
 }
 
-
 const modelValue = defineModel<any>();
+
+
+// -------------------------------------------------- Columns //
+const columnDefaults = {
+	lg: 12,
+	md: 12,
+	sm: 12,
+	xl: 12,
+};
+
+const columnsMerged = ref<ResponsiveColumns>({
+	...columnDefaults,
+	...fieldColumns,
+});
+
+function getColumnClasses(field: Field) {
+	useColumnErrorCheck({
+		columns: field.columns,
+		propName: `${field.name} prop "columns"`,
+	});
+
+	return {
+		'py-0': true,
+		'v-col-12': true,
+		'v-cols': true,
+		[`v-col-sm-${field?.columns?.sm ?? columnsMerged.value.sm}`]: true,
+		[`v-col-md-${field?.columns?.md ?? columnsMerged.value.md}`]: true,
+		[`v-col-lg-${field?.columns?.lg ?? columnsMerged.value.lg}`]: true,
+		[`v-col-xl-${field?.columns?.xl ?? columnsMerged.value.xl}`]: true,
+	};
+}
 
 function onValidate(field: Field): void {
 	emit('validate', field);

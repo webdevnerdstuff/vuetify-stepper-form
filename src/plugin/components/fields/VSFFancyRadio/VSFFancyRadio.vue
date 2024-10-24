@@ -9,11 +9,15 @@
 				v-model="modelValue"
 				:name="field.name"
 				type="radio"
-				:validate-on-model-update="true"
+				:validate-on-blur="fieldValidateOn === 'blur'"
+				:validate-on-change="fieldValidateOn === 'change'"
+				:validate-on-input="fieldValidateOn === 'input'"
+				:validate-on-model-update="false"
 			>
 				<v-radio-group
 					v-model="modelValue"
 					class="vsf-fancy-radio__control"
+					:density="fieldDensity"
 					:direction="field?.direction"
 					:error="hasErrors"
 					:error-messages="errorMessage || field?.errorMessages"
@@ -26,7 +30,9 @@
 					:min-width="field?.minWidth"
 					:multiple="field?.multiple"
 					:persistentHint="field?.persistentHint"
+					:prepend-icon="field?.prependIcon"
 					:theme="field?.theme"
+					:width="field?.width"
 				>
 					<template #label>
 						<FieldLabel
@@ -58,9 +64,6 @@
 							type="radio"
 							:value="option.value"
 							:width="field?.width"
-							@blur="onActions(validate, 'blur')"
-							@change="onActions(validate, 'change')"
-							@input="onActions(validate, 'input')"
 						/>
 
 						<label
@@ -70,7 +73,9 @@
 							}"
 							:for="`vsf-radio-${field.name}-${option.value}`"
 							:style="labelStyle"
+							tabindex="0"
 							@click="onActions(validate, 'click', option.value)"
+							@keydown.space.prevent="onActions(validate, 'click', option.value)"
 							@mousedown="onFocus(option.value)"
 							@mouseleave="onFocus(null)"
 							@mouseup="onFocus(null)"
@@ -113,15 +118,20 @@ const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
+const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
 
 
 if (modelValue?.value == null) {
 	modelValue.value = field?.multiple ? [] : null;
 }
 
+const currentValue = ref(modelValue.value);
+
 // ------------------------- Validate On Actions //
 async function onActions(validate: FieldValidateResult, action: ValidateAction, value?: unknown): Promise<void> {
-	// TODO: Check the other validate on states //
+	if (currentValue.value === value && (fieldValidateOn.value === 'change' || fieldValidateOn.value === 'input')) {
+		return;
+	}
 
 	if (!field?.disabled && value) {
 		if (field?.multiple) {
@@ -144,6 +154,8 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		field,
 		settingsValidateOn: settings.validateOn,
 		validate,
+	}).then(() => {
+		currentValue.value = modelValue.value;
 	});
 }
 
@@ -174,13 +186,15 @@ const fieldColor = computed(() => {
 
 	return colorAdjustment;
 });
+const fieldDensity = computed(() => field?.density ?? settings?.density);
 
 const fieldHeight = computed(() => {
 	if (field?.height) {
 		return field?.height;
 	}
 
-	return field?.density ? densityHeight[field?.density] : densityHeight['default'];
+
+	return fieldDensity.value ? densityHeight[fieldDensity.value] : densityHeight['default'];
 });
 
 // -------------------------------------------------- Styles //
@@ -246,8 +260,8 @@ const fieldClasses = computed(() => {
 
 const labelClasses = computed(() => {
 	return {
-		'pa-1': field?.density === 'compact',
-		'pa-4': field?.density !== 'compact',
+		'pa-1': fieldDensity.value === 'compact',
+		'pa-4': fieldDensity.value !== 'compact',
 		'vsf-fancy-radio__label': true,
 		[`vsf-fancy-radio__label-variant-${fieldVariant.value}`]: true,
 	};
@@ -281,7 +295,6 @@ function onFocus(value: any) {
 	}
 
 	&__control {
-		gap: 10px;
 		min-height: fit-content !important;
 		min-width: fit-content !important;
 
@@ -462,8 +475,11 @@ function onFocus(value: any) {
 			&-outlined {
 				--v-field-border-width: 2px;
 
-				&:hover {
+				&:hover,
+				&:focus-visible {
 					--v-field-border-width: 2px;
+
+					outline: none;
 
 					.vsf-fancy-radio__overlay {
 						opacity: 1 !important;

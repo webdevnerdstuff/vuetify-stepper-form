@@ -11,10 +11,15 @@ export const useOnActions: UseOnActions = async (options) => {
 	const validateOn = field.validateOn || settingsValidateOn;
 
 	const isBlur = action === 'blur' && validateOn === 'blur';
-	const isInput = action === 'input' && validateOn === 'input';
 	const isChange = action === 'change' && validateOn === 'change';
+	const isInput = action === 'input' && validateOn === 'input';
 
-	if (isBlur || isInput || isChange || validateOn === 'click') {
+	if (
+		isBlur ||
+		isInput ||
+		isChange ||
+		validateOn === 'click'
+	) {
 		validate()
 			.then(() => {
 				emit('validate', field);

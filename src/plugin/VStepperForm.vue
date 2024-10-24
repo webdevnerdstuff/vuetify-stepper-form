@@ -59,7 +59,8 @@
 						<Form
 							ref="stepperFormRef"
 							v-slot="{ validate }"
-							:validation-schema="validateSchema"
+							:validate-on-mount="settings?.validateOnMount"
+							:validation-schema="validationSchema"
 							@submit="onSubmit"
 						>
 							<v-stepper-window>
@@ -75,6 +76,7 @@
 											v-if="!page.isReview"
 											:key="`${getIndex(i)}-page`"
 											v-model="modelValue"
+											:fieldColumns="settings?.fieldColumns"
 											:index="getIndex(i)"
 											:page="page"
 											:settings="settings"
@@ -146,7 +148,6 @@
 </template>
 
 <script setup lang="ts">
-// TODO: Conditionals needs to update the validation //
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { AllProps } from './utils/props';
@@ -159,7 +160,6 @@ import type {
 	Page,
 	Props,
 	Settings,
-	SummaryColumns,
 } from '@/plugin/types';
 import {
 	useContainerClasses,
@@ -170,7 +170,10 @@ import { globalOptions } from './';
 import { toTypedSchema } from '@vee-validate/yup';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
-import { useMergeProps } from './composables/helpers';
+import {
+	useColumnErrorCheck,
+	useMergeProps,
+} from './composables/helpers';
 import { watchDeep } from '@vueuse/core';
 
 
@@ -201,6 +204,7 @@ const settings = ref<Settings>({
 	editable: stepperProps.editable,
 	elevation: stepperProps.elevation,
 	errorIcon: stepperProps.errorIcon,
+	fieldColumns: stepperProps.fieldColumns,
 	flat: stepperProps.flat,
 	height: stepperProps.height,
 	hideActions: stepperProps.hideActions,
@@ -217,6 +221,7 @@ const settings = ref<Settings>({
 	tile: stepperProps.tile,
 	transition: stepperProps.transition,
 	validateOn: stepperProps.validateOn,
+	validateOnMount: stepperProps.validateOnMount,
 	variant: stepperProps.variant,
 });
 
@@ -237,7 +242,16 @@ Object.values(pages).forEach((p: Page) => {
 // -------------------------------------------------- Mounted //
 onMounted(() => {
 	whenCallback();
-	summaryColumnErrorCheck();
+
+	useColumnErrorCheck({
+		columns: props.fieldColumns,
+		propName: '"fieldColumns"',
+	});
+
+	useColumnErrorCheck({
+		columns: props.summaryColumns,
+		propName: '"summaryColumns"',
+	});
 });
 
 
@@ -307,7 +321,7 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // & ------------------------------------------------ Validation //
-const validateSchema = computed(() => toTypedSchema(props.schema as Props['schema']));
+const validationSchema = computed(() => toTypedSchema(props.validationSchema as Props['validationSchema']));
 const fieldsHaveErrors = ref(false);
 const currentPageHasErrors = ref(false);
 const errorPageIndexes = ref<number[]>([]);
@@ -386,6 +400,7 @@ function onFieldValidate(field: Field, next: () => void): void {
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
 	// ! Auto page not working //
+	// TODO: Add debouncing //
 
 	checkForPageErrors(errors, 'field', shouldAutoPage);
 }
@@ -451,28 +466,6 @@ const formContainerStyle = computed<CSSProperties>(() => {
 // -------------------------------------------------- Helpers //
 function getIndex(i: number): number {
 	return i + 1;
-}
-
-
-// ------------------------------------------------ Error Checking //
-function summaryColumnErrorCheck(): void {
-	let err = false;
-
-	if (!props.summaryColumns) {
-		return;
-	}
-
-	Object.values(props.summaryColumns as SummaryColumns).forEach((column) => {
-		if (column < 1 || column > 12) {
-			err = true;
-		}
-	});
-
-	if (!err) {
-		return;
-	}
-
-	throw new Error('Summary column values must be between 1 and 12');
 }
 </script>
 

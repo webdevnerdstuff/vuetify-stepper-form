@@ -3,6 +3,9 @@
 		v-slot="{ errorMessage, validate }"
 		v-model="modelValue"
 		:name="field.name"
+		:validate-on-blur="fieldValidateOn === 'blur'"
+		:validate-on-change="fieldValidateOn === 'change'"
+		:validate-on-input="fieldValidateOn === 'input'"
 		:validate-on-model-update="false"
 	>
 		<component
@@ -24,8 +27,6 @@
 			</template>
 		</component>
 	</Field>
-
-	<!-- Vuetify Field {{ field }} -->
 </template>
 
 
@@ -48,6 +49,7 @@ const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
+const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
 
 
 // ------------------------- Validate On Actions //

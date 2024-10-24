@@ -4,15 +4,26 @@
 		:key="slot"
 	>
 		<div v-if="slot === `custom.${[field.name]}`">
-			<slot
-				v-bind="{
-					field,
-					boundSettings,
-					FieldLabel: FieldLabelComponent,
-				}"
-				:name="slot"
+			<Field
+				v-slot="{ errorMessage, validate }"
+				v-model="modelValue"
+				:name="field.name"
+				:validate-on-model-update="false"
 			>
-			</slot>
+				<slot
+					v-bind="{
+						errorMessage,
+						field,
+						boundSettings,
+						FieldLabel: FieldLabelComponent,
+						blur: () => onActions(validate, 'blur'),
+						change: () => onActions(validate, 'change'),
+						input: () => onActions(validate, 'input'),
+					}"
+					:name="slot"
+				>
+				</slot>
+			</Field>
 		</div>
 	</template>
 </template>
@@ -21,13 +32,33 @@
 import type {
 	VSFCustomProps,
 } from './index';
-import FieldLabel from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
+import { useOnActions } from '../../../composables/validation';
+import FieldLabel from '../../shared/FieldLabel.vue';
+import { Field } from 'vee-validate';
 
 
 const slots = useSlots();
-const { field, settings } = defineProps<VSFCustomProps>();
+const emit = defineEmits(['validate']);
+const modelValue = defineModel<any>();
+const props = defineProps<VSFCustomProps>();
+
+const { field, settings } = props;
+
 const FieldLabelComponent = toRaw(FieldLabel);
+
+
+// ------------------------- Validate On Actions //
+async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+	useOnActions({
+		action,
+		emit,
+		field,
+		settingsValidateOn: settings.validateOn,
+		validate,
+	});
+}
+
 
 // Bound Settings //
 const bindSettings = computed(() => ({

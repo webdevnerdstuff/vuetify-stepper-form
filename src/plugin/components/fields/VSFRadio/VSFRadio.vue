@@ -23,44 +23,55 @@
 				:id="field?.groupId"
 				:style="radioContainerStyle"
 			>
-				<v-radio-group
+				<Field
+					v-slot="{ errorMessage, validate }"
 					v-model="modelValue"
-					:append-icon="field?.appendIcon"
-					:error="hasErrors"
-					:error-messages="field?.errorMessages"
-					:inline="field?.inline"
-					:max-errors="field?.maxErrors"
-					:max-width="field?.maxWidth"
-					:messages="field?.messages"
-					:min-width="field?.minWidth"
-					:prepend-icon="field?.prependIcon"
-					:theme="field?.theme"
-					:width="field?.width"
+					:name="field.name"
+					type="radio"
+					:validate-on-blur="fieldValidateOn === 'blur'"
+					:validate-on-change="fieldValidateOn === 'change'"
+					:validate-on-input="fieldValidateOn === 'input'"
+					:validate-on-model-update="fieldValidateOn != null"
 				>
-					<Field
-						v-for="option in field?.options"
-						:key="option.value"
-						v-slot="{ errorMessage, validate }"
+					<v-radio-group
 						v-model="modelValue"
-						:name="field.name"
-						type="radio"
-						:validate-on-model-update="true"
+						:append-icon="field?.appendIcon"
+						:density="fieldDensity"
+						:direction="field?.direction"
+						:error="hasErrors"
+						:error-messages="errorMessage || field?.errorMessages"
+						:hideDetails="field?.hideDetails || settings?.hideDetails"
+						:hint="field?.hint"
+						:inline="field?.inline"
+						:max-errors="field?.maxErrors"
+						:max-width="field?.maxWidth"
+						:messages="field?.messages"
+						:min-width="field?.minWidth"
+						:multiple="field?.multiple"
+						:persistentHint="field?.persistentHint"
+						:prepend-icon="field?.prependIcon"
+						:theme="field?.theme"
+						:width="field?.width"
 					>
-						<v-radio
-							v-bind="boundSettings"
-							:id="undefined"
-							:error="hasErrors"
-							:error-messages="errorMessage"
-							:label="option.label"
-							:style="radioStyle"
-							:value="option.value"
-							@blur="onActions(validate, 'blur')"
-							@change="onActions(validate, 'change')"
-							@input="onActions(validate, 'input')"
+						<div
+							v-for="option, key in field?.options"
+							:key="key"
 						>
-						</v-radio>
-					</Field>
-				</v-radio-group>
+							<v-radio
+								v-bind="boundSettings"
+								:id="undefined"
+								:error="errorMessage ? errorMessage?.length > 0 : false"
+								:error-messages="errorMessage"
+								:label="option.label"
+								:name="field.name"
+								:style="radioStyle"
+								:value="option.value"
+								@click="onActions(validate, 'click')"
+							>
+							</v-radio>
+						</div>
+					</v-radio-group>
+				</Field>
 			</div>
 		</div>
 	</div>
@@ -82,10 +93,12 @@ const props = defineProps<VSFRadioProps>();
 
 const { field, settings } = props;
 
+const fieldDensity = computed(() => field?.density ?? settings?.density);
 const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
+const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
 
 
 // ------------------------- Validate On Actions //

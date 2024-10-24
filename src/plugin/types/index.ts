@@ -23,7 +23,17 @@ export * from '../index';
 
 // -------------------------------------------------- Globals //
 declare global {
-	type ValidateAction = 'page' | 'blur' | 'change' | 'input' | 'submit' | 'click';
+	interface KeyStringAny<T = any> {
+		[key: string]: T;
+	}
+
+	type ValidateAction =
+		'blur' |
+		'change' |
+		'click' |
+		'input' |
+		'page' |
+		'submit';
 	type ValidateFieldResult = FieldValidator<GenericObject>;
 	type ValidateResult = FormValidationResult<GenericObject, GenericObject>;
 	type FieldValidateResult = () => Promise<Partial<FieldValidator<GenericObject>>>;
@@ -49,7 +59,7 @@ export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'so
 // type VBtnVariants = "flat" | "text" | "elevated" | "tonal" | "outlined" | "plain";
 // type VCheckboxVariants = null;
 // type VRadioVariants = null;
-// type VSwitchariants = null;
+// type VSwitchVariants = null;
 
 /* Good for:
 	* VAutocomplete
@@ -71,13 +81,6 @@ export type GlobalCloseText = string;
 export type GlobalChips = boolean;
 export type GlobalMultiple = boolean;
 
-
-
-
-// -------------------------------------------------- Misc //
-export interface KeyStringAny<T = any> {
-	[key: string]: T;
-};
 
 
 export interface VStepperProps extends Pick<VStepper,
@@ -108,7 +111,7 @@ interface VStepperWindowItemProps {
 	transition?: VStepperWindowItem['transition'];
 }
 
-export interface SummaryColumns {
+export interface ResponsiveColumns {
 	sm?: number | string;
 	md?: number | string;
 	lg?: number | string;
@@ -121,6 +124,7 @@ export interface Field {
 	autoPageDelay?: Props['autoPageDelay'];
 	canReview?: Props['canReview'];
 	color?: Props['color'];
+	columns?: Props['fieldColumns'];
 	density?: Props['density'];
 	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
@@ -136,7 +140,7 @@ export interface Field {
 	rules?: ValidationRule[];
 	text?: string;
 	type?: FieldTypes;
-	validateOn?: string;
+	validateOn?: 'blur' | 'change' | 'click' | 'input';
 	when?: (value: any) => boolean;
 
 	// ? Date Field //
@@ -167,7 +171,7 @@ export interface Page {
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
-	schema: Schema<any>;
+	validationSchema: Schema<any>;
 
 	// Optional //
 	autoPage?: boolean;
@@ -177,16 +181,18 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	density?: GlobalDensity;								// * Vuetify Checked
 	direction?: 'horizontal' | 'vertical';
 	errorIcon?: VStepper['errorIcon'];
+	fieldColumns?: ResponsiveColumns | undefined;
 	hideDetails?: GlobalHideDetails;
 	navButtonSize?: VBtn['size'];
-	summaryColumns?: SummaryColumns;
+	summaryColumns?: ResponsiveColumns;
 	title?: string;
 	validateOn?: Field['validateOn'];
+	validateOnMount?: boolean;
 	variant?: string;
 	width?: string;
 }
 
-export interface PluginOptions extends Partial<Omit<Props, 'pages' | 'schema'>> { }
+export interface PluginOptions extends Partial<Omit<Props, 'pages' | 'validationSchema'>> { }
 export interface Settings extends PluginOptions { }
 
 type FieldTypes =
@@ -259,6 +265,15 @@ export interface UseAutoPage {
 			field: Field;
 			modelValue: any;
 			settings: Settings;
+		}
+	): void;
+}
+
+export interface UseColumnErrorCheck {
+	(
+		options: {
+			columns: ResponsiveColumns | undefined;
+			propName?: string;
 		}
 	): void;
 }
