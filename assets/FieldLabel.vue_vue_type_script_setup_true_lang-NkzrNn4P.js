@@ -1,0 +1,1 @@
+import{d as n,x as s,C as a,D as o,L as t,G as l}from"./index-BB1x2l_V.js";const d=["innerHTML"],p={key:0,class:"text-error ms-1"},u=n({__name:"FieldLabel",props:{label:{},required:{type:Boolean,default:!1}},setup(i){return(e,r)=>(s(),a("div",null,[o("span",{innerHTML:e.label},null,8,d),r[0]||(r[0]=t()),e.required?(s(),a("span",p,"*")):l("",!0)]))}});export{u as _};
