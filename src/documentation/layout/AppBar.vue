@@ -24,7 +24,7 @@
 			<v-icon icon="mdi:mdi-home"></v-icon>
 		</v-app-bar-nav-icon>
 
-		<div class="site-title">Vuetify Plugin Template</div>
+		<div class="site-title">Vuetify Stepper Form</div>
 
 		<v-spacer></v-spacer>
 
@@ -149,5 +149,4 @@ function toggleDrawer() {
 }
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

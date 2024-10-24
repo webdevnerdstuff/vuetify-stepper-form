@@ -10,9 +10,10 @@
 		</v-col>
 
 		<v-col class="mb-4">
-			<h1 class="v-heading text-h3 text-sm-h3 mb-4">
-				Vuetify Plugin Template
+			<h1 class="v-heading text-h3 text-sm-h3 mb-1">
+				Vuetify Stepper Form
 			</h1>
+			<p class="mb-4 text-grey-darken-1">by WebDevNerdStuff</p>
 			<v-chip
 				color="primary"
 				size="small"
@@ -40,7 +41,7 @@
 			<v-row>
 				<v-col cols="12">
 					<VCodeBlock
-						code="pnpm add vuetify-plugin-template"
+						code="pnpm add @wdns/vuetify-stepper-form"
 						:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
 						lang="plain"
 						:prismjs="codeBlockSettings.plugin === 'prismjs'"
@@ -56,7 +57,7 @@
 				</v-col>
 				<v-col cols="12">
 					<VCodeBlock
-						code="npm i vuetify-plugin-template"
+						code="npm i @wdns/vuetify-stepper-form"
 						highlightjs
 						lang="plain"
 					>
@@ -68,59 +69,43 @@
 	</v-row>
 
 	<!-- Description -->
-	<DescriptionSection />
-
-	<!-- Description -->
-	<FeaturesSection />
+	<Section.Description />
 
 	<!-- Usage -->
-	<UsageSection :codeBlockOptions="codeBlockOptions" />
+	<Section.Usage :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Example -->
-	<ExampleSection />
+	<!-- <Section.Example :codeBlockOptions="codeBlockOptions" /> -->
 
 	<!-- Components -->
-	<!-- <ComponentsSection :codeBlockOptions="codeBlockOptions" /> -->
+	<!-- <Section.Components :codeBlockOptions="codeBlockOptions" /> -->
 
 	<!-- Props -->
-	<PropsSection />
+	<Section.Props :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Events -->
-	<EventsSection :codeBlockOptions="codeBlockOptions" />
+	<Section.Events :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Slots -->
-	<SlotsSection :codeBlockOptions="codeBlockOptions" />
+	<Section.Slots :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Playground -->
-	<PlaygroundSection :codeBlockOptions="codeBlockOptions" />
+	<!-- <PlaygroundSection :codeBlockOptions="codeBlockOptions" /> -->
 
 	<!-- Dependencies -->
-	<DependenciesSection />
+	<Section.Dependencies />
 
 	<!-- License -->
-	<LicenseSection />
+	<Section.License />
 
 	<!-- Legal -->
-	<LegalSection />
+	<Section.Legal />
 </template>
 
 <script setup>
 import { inject, provide, reactive, ref } from 'vue';
 import packageInfo from '../../package.json';
-import {
-	// ComponentsSection,
-	DependenciesSection,
-	DescriptionSection,
-	EventsSection,
-	ExampleSection,
-	FeaturesSection,
-	LegalSection,
-	LicenseSection,
-	PlaygroundSection,
-	PropsSection,
-	SlotsSection,
-	UsageSection,
-} from '@/documentation/sections';
+import * as Section from '@/documentation/sections';
 
 
 const props = defineProps({
@@ -145,6 +130,7 @@ provide('classes', classes);
 </script>
 
 <style lang="scss" scoped>
+:deep(pre),
 :deep(code) {
 	&.ic {
 		background-color: rgb(255 255 255 / 10%) !important;
@@ -158,6 +144,7 @@ provide('classes', classes);
 
 <style lang="scss">
 .v-theme--light {
+	pre,
 	code {
 		&.ic {
 			background-color: rgb(0 0 0 / 10%) !important;

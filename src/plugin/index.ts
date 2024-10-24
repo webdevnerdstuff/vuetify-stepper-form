@@ -1,25 +1,29 @@
-import type { App } from 'vue';
-import type { GlobalOptions } from './types';
+import type { App, Plugin } from 'vue';
+import type { PluginOptions } from './types';
 import './styles/main.scss';
-import VPluginTemplate from './VPluginTemplate.vue';
+import VStepperForm from './VStepperForm.vue';
+import FieldLabel from './components/shared/FieldLabel.vue';
+import { AllProps } from './utils/props';
 
 
+const defaultOptions = AllProps;
 export const globalOptions = Symbol();
 
-export function createVPluginTemplate(options: GlobalOptions = {}) {
+export function createVStepperForm(options: PluginOptions = defaultOptions): Plugin {
 	const install = (app: App) => {
 		app.provide(globalOptions, options);
 
-		app.component('VPluginTemplate', VPluginTemplate);
+		app.component('VStepperForm', defineAsyncComponent(() => import('./VStepperForm.vue')));
+		app.component('FieldLabel', defineAsyncComponent(() => import('./components/shared/FieldLabel.vue')));
 	};
-
 	return {
 		install,
-	};
+	} as Plugin;
 }
 
-export default VPluginTemplate;
+export default VStepperForm;
 
 export {
-	VPluginTemplate,
+	FieldLabel,
+	VStepperForm,
 };

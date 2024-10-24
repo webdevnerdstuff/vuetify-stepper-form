@@ -11,11 +11,6 @@
 				>#</a>
 				Slots
 			</h2>
-
-			For component specific slots, please refer to the <a
-				:href="store.links.vuetify"
-				target="_blank"
-			>Vuetify</a> documentation.
 		</v-col>
 
 		<v-col cols="12">
@@ -31,9 +26,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!-- display.append slot -->
 						<tr
-							id="slots-display-default"
+							id="slots-custom"
 							:class="rowClass"
 						>
 							<td>
@@ -42,12 +36,12 @@
 									<a
 										class="text-primary"
 										:class="classes.appLink"
-										href="#slots-display-default"
-									>display.default</a>
+										href="#slots-custom"
+									>[`custom.${string}`]</a>
 								</span>
 							</td>
 							<td>
-								Slot that is appended to the displayed value
+								Slot that is used for adding your own fields
 							</td>
 						</tr>
 						<tr>
@@ -70,7 +64,6 @@
 
 <script setup>
 import { inject } from 'vue';
-import { useCoreStore } from '@/stores/index';
 
 const props = defineProps({
 	codeBlockOptions: {
@@ -80,7 +73,6 @@ const props = defineProps({
 });
 
 const codeBlockSettings = computed(() => props.codeBlockOptions);
-const store = useCoreStore();
 const classes = inject('classes');
 const theme = useTheme();
 const isDark = ref(true);
@@ -95,8 +87,17 @@ const rowClass = computed(() => {
 });
 
 const displaySlotsCode = `{
-  foo: string,
   error: boolean | undefined,
+  errorMessage: string[],
+  field: Field,
+
+  // Validation callbacks
+  blur: () => void,
+  change: () => void,
+  input: () => void,
+
+  // Internal FieldLabel component
+  FieldLabel: Component
 }`;
 
 

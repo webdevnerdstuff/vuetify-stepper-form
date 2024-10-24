@@ -1,5 +1,6 @@
 export default [
 	// 'error',
 	// 'update',
-	// 'update:model-value',
+	'submit',
+	'update:model-value',
 ];

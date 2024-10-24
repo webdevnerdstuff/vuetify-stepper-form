@@ -16,7 +16,7 @@
 
 			<VCodeBlock
 				class="mb-6"
-				code="git clone git@github.com:webdevnerdstuff/vuetify-plugin-templates.git"
+				code="git clone git@github.com:webdevnerdstuff/vuetify-stepper-form.git"
 				:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
 				lang="plain"
 				:prismjs="codeBlockSettings.plugin === 'prismjs'"

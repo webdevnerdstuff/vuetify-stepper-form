@@ -12,6 +12,9 @@
 				v-if="subtitle"
 				v-html="subtitle"
 			></div>
+
+			<div>Props can be used as a global property in <code class="ic">createVStepperForm</code>.
+			</div>
 		</v-col>
 	</v-row>
 
@@ -54,9 +57,10 @@
 					</template>
 
 					<template #[`item.type`]="{ item }">
-						<td class="text-success">
-							{{ item.type }}
-						</td>
+						<td
+							class="text-success"
+							v-html="item.type"
+						></td>
 					</template>
 
 					<template #[`item.default`]="{ item }">
@@ -107,5 +111,4 @@ defineProps({
 const search = ref('');
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -11,33 +11,16 @@
 				>#</a>
 				Events
 			</h2>
-
-			For component specific events, please refer to the <a
-				:href="store.links.vuetify"
-				target="_blank"
-			>Vuetify</a> documentation.
 		</v-col>
 
 		<v-col cols="12">
 			<v-row>
 				<v-col cols="12">
 					<v-card>
-						<v-card-title>
-							<v-text-field
-								v-model="search"
-								append-icon="mdi:mdi-magnify"
-								hide-details
-								label="Search"
-								single-line
-								variant="underlined"
-							></v-text-field>
-						</v-card-title>
-
 						<v-data-table
 							:headers="headers"
 							hide-default-footer
 							:items="items"
-							:search="search"
 						>
 							<template #item="{ item }">
 								<tr>
@@ -77,7 +60,7 @@
 				:theme="codeBlockSettings.theme"
 			>
 				<template #label>
-					<code class="ic">@update</code> Event Example
+					<code class="ic">@submit</code> Event Example
 				</template>
 			</VCodeBlock>
 		</v-col>
@@ -86,8 +69,7 @@
 
 
 <script setup>
-import { computed, inject, ref } from 'vue';
-import { useCoreStore } from '@/stores/index';
+import { computed, inject } from 'vue';
 
 
 const props = defineProps({
@@ -99,7 +81,6 @@ const props = defineProps({
 
 const codeBlockSettings = computed(() => props.codeBlockOptions);
 const classes = inject('classes');
-const store = useCoreStore();
 
 const headers = [
 	{
@@ -120,25 +101,28 @@ const headers = [
 ];
 const items = [
 	{
-		desc: 'Emitted when the component has been updated',
-		name: 'update',
+		desc: 'Emitted when the form has been successfully submitted.',
+		name: 'submit',
 	},
 ];
-const search = ref('');
 
 const exampleCode = `<template>
-  <VPluginTemplate
-    v-model="componentValue"
-    @update="updatedValue"
+  <VStepperForm
+    v-model="answers"
+    :pages="pages"
+    :validationSchema="validationSchema"
+    @submit="onSubmit"
   />
 <\/template>
 
 <script setup>
 import { ref } from 'vue';
 
-const componentValue = ref(true);
+const answers = ref({ foo: 'bar' });
+const pages = [...];
+const validationSchema = {...};
 
-function updatedValue(value, field) {
+function onSubmit(value) {
   // ...do something awesome
 }
 <\/script>`;

@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import AutoImport from 'unplugin-auto-import/vite';
 
-const baseUrl = '/vuetify-plugin-template/';
+const baseUrl = '/vuetify-stepper-form/';
 const playgroundUrl = baseUrl + 'playground/';
 
 
@@ -14,6 +14,14 @@ export default defineConfig({
 	base: baseUrl,
 	build: {
 		outDir: 'docs',
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: 'modern-compiler', // or "modern", "legacy"
+				importers: [],
+			},
+		},
 	},
 	plugins: [
 		eslint({

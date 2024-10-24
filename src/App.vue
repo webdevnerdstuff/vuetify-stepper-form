@@ -77,6 +77,18 @@ function toggleDrawer() {
 }
 </script>
 
+<style lang="scss" scoped>
+:deep(code) {
+	&.ic {
+		background-color: rgb(255 255 255 / 10%) !important;
+		border-radius: 3px;
+		font-size: 85%;
+		font-weight: normal;
+		padding: 0.2em 0.4em;
+	}
+}
+</style>
+
 <style lang="scss">
 html {
 	scroll-behavior: smooth;
@@ -101,6 +113,12 @@ a {
 			&:hover {
 				color: #3700b3;
 			}
+		}
+	}
+
+	code {
+		&.ic {
+			background-color: rgb(0 0 0 / 10%) !important;
 		}
 	}
 }

@@ -52,6 +52,7 @@ declare global {
 	const useCssVars: typeof import('vue')['useCssVars'];
 	const useSlots: typeof import('vue')['useSlots'];
 	const useTheme: typeof import('vuetify')['useTheme'];
+	const useTemplateRef: typeof import('vue')['useTemplateRef'];
 	const watch: typeof import('vue')['watch'];
 	const watchEffect: typeof import('vue')['watchEffect'];
 	const watchPostEffect: typeof import('vue')['watchPostEffect'];
@@ -124,6 +125,7 @@ declare module 'vue' {
 		readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>;
 		readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>;
 		readonly useTheme: UnwrapRef<typeof import('vuetify')['useTheme']>;
+		readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>;
 		readonly watch: UnwrapRef<typeof import('vue')['watch']>;
 		readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>;
 		readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>;

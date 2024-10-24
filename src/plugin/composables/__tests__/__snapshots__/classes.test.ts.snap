@@ -2,8 +2,9 @@
 
 exports[`Classes Composable > useContainerClasses > should return class object 1`] = `
 {
-  "v-plugin-template": true,
-  "v-plugin-template--container": true,
-  "v-plugin-template--container-option": true,
+  "d-flex flex-column justify-center align-center": false,
+  "v-stepper-form": true,
+  "v-stepper-form--container": true,
+  "v-stepper-form--container-undefined": true,
 }
 `;
