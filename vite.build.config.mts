@@ -11,27 +11,30 @@ import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+const scopedPackageName = pkg.name;
+const packageName = scopedPackageName.split('/')[1];
+
 
 const banner = `/**
- * @name ${pkg.name}
+ * @name ${scopedPackageName}
  * @version ${pkg.version}
  * @description ${pkg.description}
  * @author ${pkg.author}
- * @copyright Copyright ${new Date().getFullYear()}, __USERNAME__
+ * @copyright Copyright ${new Date().getFullYear()}, WebDevNerdStuff
+ * @homepage ${pkg.homepage}
+ * @repository ${pkg.repository}
  * @license ${pkg.license} License
-*/
+ */
 `;
-// * @homepage ${pkg.homepage}
-// * @repository ${pkg.repository}
 
 export default defineConfig({
 	publicDir: false,
 	build: {
 		lib: {
 			entry: './src/plugin/index.ts',
-			name: pkg.name,
+			name: packageName,
 			formats: ['es', 'cjs'],
-			fileName: format => `${pkg.name}.${format}.js`,
+			fileName: format => `${packageName}.${format}.js`,
 		},
 		rollupOptions: {
 			input: {
@@ -39,9 +42,19 @@ export default defineConfig({
 			},
 			external: [
 				...Object.keys(pkg.dependencies || {}),
+				/^vuetify($|\/.+)/,
 			],
 			output: {
 				banner,
+				exports: 'named',
+			},
+		},
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: 'modern-compiler', // or "modern", "legacy"
+				importers: [],
 			},
 		},
 	},
@@ -69,6 +82,7 @@ export default defineConfig({
 		}),
 		vuetify({
 			autoImport: true,
+			styles: 'none',
 		}),
 		cssInjectedByJsPlugin({ topExecutionPriority: false }),
 		viteStaticCopy({
@@ -79,7 +93,11 @@ export default defineConfig({
 				},
 			]
 		}),
-		terser(),
+		terser({
+			compress: {
+				drop_console: ['log'],
+			},
+		}),
 	],
 	resolve: {
 		alias: {
