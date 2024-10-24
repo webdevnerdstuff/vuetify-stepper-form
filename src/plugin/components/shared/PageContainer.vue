@@ -132,7 +132,7 @@ import {
 	VTextarea,
 	VTextField,
 } from 'vuetify/components';
-import { VColorField } from '@wdns/vuetify-color-field';
+import VColorField from '@wdns/vuetify-color-field';
 import { useColumnErrorCheck } from '../../composables/helpers';
 
 
@@ -218,7 +218,6 @@ function getColumnClasses(field: Field) {
 	});
 
 	return {
-		'py-0': true,
 		'v-col-12': true,
 		'v-cols': true,
 		[`v-col-sm-${field?.columns?.sm ?? columnsMerged.value.sm}`]: true,

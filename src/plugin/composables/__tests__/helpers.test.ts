@@ -1,28 +1,38 @@
 import { describe, it, expect } from 'vitest';
 import {
-	useConvertToUnit,
+	useColumnErrorCheck,
 } from '../helpers';
 
 describe('Helpers Composable', () => {
-	describe('useConvertToUnit', () => {
-		it('should return string with a default px unit', () => {
-			const unit = useConvertToUnit({ value: '10' });
-			expect(unit).toBe('10px');
-		});
+	describe('useColumnErrorCheck', () => {
+		describe('Errors', () => {
+			const propName = 'columns';
 
-		it('should return number with a default px unit', () => {
-			const unit = useConvertToUnit({ value: 10 });
-			expect(unit).toBe('10px');
-		});
+			it('should return without throwing error if using correct column values', () => {
+				expect(() => useColumnErrorCheck({
+					columns: {
+						lg: 12,
+						md: 12,
+						sm: 12,
+						xl: 12,
+					},
+					propName: 'columns',
+				}))
+					.not.toThrow();
+			});
 
-		it('should return string with a supplied unit', () => {
-			const unit = useConvertToUnit({ unit: 'em', value: '10' });
-			expect(unit).toBe('10em');
-		});
-
-		it('should return number with a supplied unit', () => {
-			const unit = useConvertToUnit({ unit: 'em', value: 10 });
-			expect(unit).toBe('10em');
+			it('should fail if using incorrect column values', () => {
+				expect(() => useColumnErrorCheck({
+					columns: {
+						lg: 120,
+						md: 120,
+						sm: 120,
+						xl: 120,
+					},
+					propName: propName,
+				}))
+					.toThrowError(`The ${propName} prop column values must be between 1 and 12`);
+			});
 		});
 	});
 });

@@ -13,9 +13,9 @@
 			v-model="modelValue"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
-			@blur="onActions(validate, 'blur')"
-			@change="onActions(validate, 'change')"
-			@input="onActions(validate, 'input')"
+			@blur="onActions((validate as ValidateFieldResult), 'blur')"
+			@change="onActions((validate as ValidateFieldResult), 'change')"
+			@input="onActions((validate as ValidateFieldResult), 'input')"
 		>
 			<template #label>
 				<FieldLabel
@@ -51,7 +51,7 @@ const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn
 
 
 // ------------------------- Validate On Actions //
-async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+async function onActions(validate: ValidateFieldResult, action: ValidateAction): Promise<void> {
 	useOnActions({
 		action,
 		emit,

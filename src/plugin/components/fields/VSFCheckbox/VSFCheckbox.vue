@@ -83,7 +83,11 @@
 							@change="onActions(validate, 'change')"
 							@input="onActions(validate, 'input')"
 						>
-							<template #message>
+							<!-- ! TODO: This needs to be fixed as it doesn't work when using inline prop -->
+							<template
+								v-if="!field.inline"
+								#message
+							>
 								{{ Object.keys(field?.options as KeyStringAny).length - 1 === key ? errorMessage : '' }}
 							</template>
 						</v-checkbox>

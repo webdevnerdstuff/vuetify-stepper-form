@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
-import { App, CSSProperties } from 'vue';
+import { App } from 'vue';
 import type {
 	VBtn,
 	// VIcon,
@@ -291,16 +291,6 @@ export interface UseStepperContainerClasses {
 		}
 	): ComputedClasses;
 }
-
-// ------------------------- Styles //
-export interface UseContainerStyle {
-	(
-		options: {
-			displayType?: string;
-		}
-	): CSSProperties;
-}
-
 
 // -------------------------------------------------- Plugin Component //
 declare module "vue" {

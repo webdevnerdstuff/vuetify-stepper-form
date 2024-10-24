@@ -12,15 +12,6 @@
 						</h2>
 					</v-col>
 				</v-row>
-				<v-row>
-					<v-col>
-						stepperMode: {{ stepperModel }}
-						<br />
-						currentPageHasErrors: {{ currentPageHasErrors }}
-						<br />
-						errorPageIndexes: {{ errorPageIndexes }}
-					</v-col>
-				</v-row>
 			</v-container>
 
 			<v-container
@@ -185,12 +176,12 @@ const injectedOptions = inject(globalOptions, {});
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
-const stepperProps = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
+const stepperProps: Settings = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
 const { direction, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
-const settings = ref<Settings>({
+const settings: Ref<Settings> = ref<Settings>({
 	altLabels: stepperProps.altLabels,
 	autoPage: stepperProps.autoPage,
 	autoPageDelay: stepperProps.autoPageDelay,
@@ -226,7 +217,7 @@ const settings = ref<Settings>({
 });
 
 
-const allFieldsArray = ref<Field[]>([]);
+const allFieldsArray: Ref<Field[]> = ref<Field[]>([]);
 
 Object.values(pages).forEach((p: Page) => {
 	Object.values(p.fields).forEach((field: Field) => {
@@ -266,7 +257,7 @@ const stepperModel = ref(1);
 
 
 const { sm } = useDisplay();
-const transition = computed<Props['transition']>(() => stepperProps.transition);
+const transition: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
 const parentForm = useTemplateRef<PrivateFormContext>('stepperFormRef');
 
 provide('parentForm', parentForm);
@@ -324,7 +315,7 @@ function headerItemDisabled(page: Page): boolean {
 const validationSchema = computed(() => toTypedSchema(props.validationSchema as Props['validationSchema']));
 const fieldsHaveErrors = ref(false);
 const currentPageHasErrors = ref(false);
-const errorPageIndexes = ref<number[]>([]);
+const errorPageIndexes: Ref<number[]> = ref<number[]>([]);
 
 // ------------------------ Run Validation //
 function runValidation(
