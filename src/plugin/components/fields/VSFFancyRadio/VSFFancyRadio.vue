@@ -12,7 +12,7 @@
 				:validate-on-blur="fieldValidateOn === 'blur'"
 				:validate-on-change="fieldValidateOn === 'change'"
 				:validate-on-input="fieldValidateOn === 'input'"
-				:validate-on-model-update="false"
+				:validate-on-model-update="fieldValidateOn != null"
 			>
 				<v-radio-group
 					v-model="modelValue"
@@ -321,6 +321,12 @@ function onFocus(value: any) {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+
+				&__message {
+					display: flex;
+					justify-content: center;
+					width: 100%;
+				}
 			}
 		}
 

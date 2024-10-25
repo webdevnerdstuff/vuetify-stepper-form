@@ -158,7 +158,6 @@ import {
 } from './composables/classes';
 import componentEmits from './utils/emits';
 import { globalOptions } from './';
-import { toTypedSchema } from '@vee-validate/yup';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import {
@@ -312,7 +311,7 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // & ------------------------------------------------ Validation //
-const validationSchema = computed(() => toTypedSchema(props.validationSchema as Props['validationSchema']));
+const validationSchema = computed(() => props.validationSchema as Props['validationSchema']);
 const fieldsHaveErrors = ref(false);
 const currentPageHasErrors = ref(false);
 const errorPageIndexes: Ref<number[]> = ref<number[]>([]);

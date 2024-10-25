@@ -12,6 +12,7 @@ import type {
 import type { ValidationRule } from 'vuetify/composables/validation';
 import VStepperForm from '../VStepperForm.vue';
 import type { Schema } from 'yup';
+import type { ZodSchema } from 'zod';
 import type {
 	GenericObject,
 	FieldValidator,
@@ -172,7 +173,7 @@ export interface Page {
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
-	validationSchema: Schema<any>;
+	validationSchema: Schema<any> | ZodSchema;
 
 	// Optional //
 	autoPage?: boolean;

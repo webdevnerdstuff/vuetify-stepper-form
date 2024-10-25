@@ -89,6 +89,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@vee-validate/yup": "^4.13.2",
+		"@vee-validate/zod": "^4.14.4",
 		"@vitejs/plugin-vue": "^5.1.4",
 		"@vue/cli-plugin-eslint": "^5.0.8",
 		"@vue/cli-service": "^5.0.8",
@@ -136,6 +137,7 @@
 		"vitest": "^2.1.2",
 		"vue-tsc": "^2.1.6",
 		"webfontloader": "^1.6.28",
-		"yup": "^1.4.0"
+		"yup": "^1.4.0",
+		"zod": "^3.23.8"
 	}
 }

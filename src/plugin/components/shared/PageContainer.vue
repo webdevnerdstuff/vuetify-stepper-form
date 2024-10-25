@@ -25,51 +25,51 @@
 				type="hidden"
 			/>
 
+			<template v-else>
+				<v-col
+					v-if="field.text"
+					cols="12"
+				>
+					<div v-html="field.text" />
+				</v-col>
 
-			<v-col
-				v-if="field.text"
-				cols="12"
-			>
-				<div v-html="field.text" />
-			</v-col>
+				<v-col :class="getColumnClasses(field)">
+					<!-- ================================================== Checkbox -->
+					<Fields.VSFCheckbox
+						v-if="field.type === 'checkbox'"
+						v-model="modelValue[field.name]"
+						:field="field"
+						:settings="settings"
+						@validate="onValidate"
+					/>
 
-			<v-col :class="getColumnClasses(field)">
-				<!-- ================================================== Checkbox -->
-				<Fields.VSFCheckbox
-					v-if="field.type === 'checkbox'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/>
+					<!-- ================================================== Radio & Fancy Radio -->
+					<Fields.VSFRadio
+						v-if="field.type === 'radio'"
+						v-model="modelValue[field.name]"
+						:field="field"
+						:settings="settings"
+						@validate="onValidate"
+					/>
 
-				<!-- ================================================== Radio & Fancy Radio -->
-				<Fields.VSFRadio
-					v-if="field.type === 'radio'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/>
+					<Fields.VSFFancyRadio
+						v-if="field.type === 'fancyRadio'"
+						v-model="modelValue[field.name]"
+						:field="field"
+						:settings="settings"
+						@validate="onValidate"
+					/>
 
-				<Fields.VSFFancyRadio
-					v-if="field.type === 'fancyRadio'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/>
+					<!-- ================================================== Switch -->
+					<Fields.VSFSwitch
+						v-if="field.type === 'switch'"
+						v-model="modelValue[field.name]"
+						:field="field"
+						:settings="settings"
+						@validate="onValidate"
+					/>
 
-				<!-- ================================================== Switch -->
-				<Fields.VSFSwitch
-					v-if="field.type === 'switch'"
-					v-model="modelValue[field.name]"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/>
-
-				<!-- ================================================== Common Fields
+					<!-- ================================================== Common Fields
 						* VAutocomplete
 						* VColorField
 						* VCombobox
@@ -78,40 +78,41 @@
 						* VTextField
 						* VTextarea
 					-->
-				<Fields.CommonField
-					v-if="getComponent(field.type as string) != null"
-					v-model="modelValue[field.name]"
-					:component="getComponent(field.type as string)"
-					:field="field"
-					:settings="settings"
-					@validate="onValidate"
-				/>
-
-				<!-- ================================================== Custom Field (slot) -->
-				<template v-if="field.type === 'field'">
-					<Fields.VSFCustom
-						v-if="field.type === 'field'"
+					<Fields.CommonField
+						v-if="getComponent(field.type as string) != null"
 						v-model="modelValue[field.name]"
+						:component="getComponent(field.type as string)"
 						:field="field"
 						:settings="settings"
 						@validate="onValidate"
-					>
-						<!-- ========================= Pass Slots -->
-						<template
-							v-for="(_, slot) in slots"
-							#[slot]="scope"
-						>
-							<slot
-								:name="slot"
-								v-bind="{ ...scope }"
-							/>
-						</template>
-					</Fields.VSFCustom>
-				</template>
+					/>
 
-				<!-- TODO: User Select Field -->
-				<!-- TODO: Date Field -->
-			</v-col>
+					<!-- ================================================== Custom Field (slot) -->
+					<template v-if="field.type === 'field'">
+						<Fields.VSFCustom
+							v-if="field.type === 'field'"
+							v-model="modelValue[field.name]"
+							:field="field"
+							:settings="settings"
+							@validate="onValidate"
+						>
+							<!-- ========================= Pass Slots -->
+							<template
+								v-for="(_, slot) in slots"
+								#[slot]="scope"
+							>
+								<slot
+									:name="slot"
+									v-bind="{ ...scope }"
+								/>
+							</template>
+						</Fields.VSFCustom>
+					</template>
+
+					<!-- TODO: User Select Field -->
+					<!-- TODO: Date Field -->
+				</v-col>
+			</template>
 		</template>
 	</v-row>
 </template>
