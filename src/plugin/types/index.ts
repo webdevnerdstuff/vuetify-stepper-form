@@ -274,6 +274,7 @@ export interface UseColumnErrorCheck {
 	): void;
 }
 
+
 // ------------------------- Classes //
 export type ComputedClasses = Record<string, boolean>;
 
@@ -292,6 +293,17 @@ export interface UseStepperContainerClasses {
 		}
 	): ComputedClasses;
 }
+
+export interface UseColumnClasses {
+	(
+		options: {
+			columnsMerged: ResponsiveColumns;
+			fieldColumns?: ResponsiveColumns | undefined;
+			propName?: string;
+		}
+	): ComputedClasses;
+}
+
 
 // -------------------------------------------------- Plugin Component //
 declare module "vue" {

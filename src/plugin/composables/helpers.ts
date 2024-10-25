@@ -60,5 +60,5 @@ export const useColumnErrorCheck: UseColumnErrorCheck = (options) => {
 		return;
 	}
 
-	throw new Error(`The ${propName} prop column values must be between 1 and 12`);
+	throw new Error(`The ${propName} values must be between 1 and 12`);
 };

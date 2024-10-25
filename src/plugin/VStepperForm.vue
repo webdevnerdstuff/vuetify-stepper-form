@@ -235,12 +235,12 @@ onMounted(() => {
 
 	useColumnErrorCheck({
 		columns: props.fieldColumns,
-		propName: '"fieldColumns"',
+		propName: '"fieldColumns" prop',
 	});
 
 	useColumnErrorCheck({
 		columns: props.summaryColumns,
-		propName: '"summaryColumns"',
+		propName: '"summaryColumns" prop',
 	});
 });
 

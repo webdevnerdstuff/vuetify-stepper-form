@@ -78,11 +78,13 @@
 
 <script setup lang="ts">
 import type {
+	ComputedClasses,
 	Field,
 	Page,
 	ResponsiveColumns,
 	Settings,
 } from '../../types/index';
+import { useColumnClasses } from '../../composables/classes';
 
 
 export interface PageReviewContainerProps {
@@ -136,30 +138,21 @@ function checkIfEditable(field: Field) {
 
 
 // -------------------------------------------------- Answer Columns //
-const columnDefaults = {
-	lg: 12,
-	md: 12,
-	sm: 12,
-	xl: 6,
-};
-
 const columnsMerged = ref<ResponsiveColumns>({
-	...columnDefaults,
+	...{
+		lg: undefined,
+		md: undefined,
+		sm: undefined,
+		xl: undefined,
+	},
 	...summaryColumns,
 });
 
-const columnClasses = computed(() => {
-	return {
-		'py-0': true,
-		'v-col-12': true,
-		'v-cols': true,
-		[`v-col-sm-${columnsMerged.value.sm}`]: true,
-		[`v-col-md-${columnsMerged.value.md}`]: true,
-		[`v-col-lg-${columnsMerged.value.lg}`]: true,
-		[`v-col-xl-${columnsMerged.value.xl}`]: true,
-	};
+const columnClasses: Ref<ComputedClasses> = computed<ComputedClasses>(() => {
+	return useColumnClasses({
+		columnsMerged: columnsMerged.value,
+	});
 });
-
 
 // -------------------------------------------------- Submit Form //
 function submitForm() {

@@ -1,5 +1,6 @@
 declare module 'vee-validate' {
 	import {
+		ErrorMessage,
 		Field,
 		FieldValidator,
 		Form,
@@ -9,6 +10,7 @@ declare module 'vee-validate' {
 	} from 'vee-validate';
 
 	export {
+		ErrorMessage,
 		Field,
 		FieldValidator,
 		Form,
