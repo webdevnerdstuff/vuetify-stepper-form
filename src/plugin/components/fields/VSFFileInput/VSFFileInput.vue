@@ -40,9 +40,17 @@ const props = defineProps<VFileInputProps>();
 
 const { field, settings } = props;
 
+
 const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
+});
+const originalValue = modelValue.value;
+
+onUnmounted(() => {
+	if (!settings.keepValuesOnUnmount) {
+		modelValue.value = originalValue;
+	}
 });
 
 

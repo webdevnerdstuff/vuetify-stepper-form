@@ -4,8 +4,11 @@
 		:style="containerStyle"
 	>
 		<div :style="formContainerStyle">
-			<v-container fluid>
-				<v-row v-if="title">
+			<v-container
+				v-if="title"
+				fluid
+			>
+				<v-row>
 					<v-col>
 						<h2>
 							{{ title }}
@@ -50,6 +53,7 @@
 						<Form
 							ref="stepperFormRef"
 							v-slot="{ validate }"
+							:keep-values-on-unmount="settings?.keepValuesOnUnmount"
 							:validate-on-mount="settings?.validateOnMount"
 							:validation-schema="validationSchema"
 							@submit="onSubmit"
@@ -99,6 +103,7 @@
 							</v-stepper-window>
 
 							<v-stepper-actions v-if="!settings.hideActions">
+
 								<template #next>
 									<v-btn
 										v-if="!lastPage"
@@ -110,7 +115,7 @@
 									<!-- TODO: This will change to use v-else when done -->
 									<v-btn
 										:color="settings.color"
-										:disabled="fieldsHaveErrors && errorPageIndexes.includes(stepperModel - 1)"
+										:disabled="fieldsHaveErrors"
 										:size="navButtonSize"
 										type="submit"
 									>Submit</v-btn>
@@ -158,7 +163,6 @@ import {
 } from './composables/classes';
 import componentEmits from './utils/emits';
 import { globalOptions } from './';
-import { toTypedSchema } from '@vee-validate/yup';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import {
@@ -200,6 +204,7 @@ const settings: Ref<Settings> = ref<Settings>({
 	height: stepperProps.height,
 	hideActions: stepperProps.hideActions,
 	hideDetails: stepperProps.hideDetails,
+	keepValuesOnUnmount: stepperProps.keepValuesOnUnmount,
 	maxHeight: stepperProps.maxHeight,
 	maxWidth: stepperProps.maxWidth,
 	minHeight: stepperProps.minHeight,
@@ -220,9 +225,11 @@ const settings: Ref<Settings> = ref<Settings>({
 const allFieldsArray: Ref<Field[]> = ref<Field[]>([]);
 
 Object.values(pages).forEach((p: Page) => {
-	Object.values(p.fields).forEach((field: Field) => {
-		allFieldsArray.value.push(field as Field);
-	});
+	if (p.fields) {
+		Object.values(p.fields).forEach((field: Field) => {
+			allFieldsArray.value.push(field as Field);
+		});
+	}
 });
 
 
@@ -236,12 +243,12 @@ onMounted(() => {
 
 	useColumnErrorCheck({
 		columns: props.fieldColumns,
-		propName: '"fieldColumns"',
+		propName: '"fieldColumns" prop',
 	});
 
 	useColumnErrorCheck({
 		columns: props.summaryColumns,
-		propName: '"summaryColumns"',
+		propName: '"summaryColumns" prop',
 	});
 });
 
@@ -272,9 +279,7 @@ const stepperActionsDisabled = computed(() => {
 const nextButtonDisabled = computed(() => {
 	const isDisabled = ((stepperActionsDisabled.value === 'next' || settings.value.disabled) as boolean);
 
-	const currentPageHasError = errorPageIndexes.value.includes(stepperModel.value - 1);
-
-	return currentPageHasError || isDisabled;
+	return fieldsHaveErrors.value || isDisabled;
 });
 
 // TODO: Make this disabled if the previous page is not editable //
@@ -312,10 +317,11 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // & ------------------------------------------------ Validation //
-const validationSchema = computed(() => toTypedSchema(props.validationSchema as Props['validationSchema']));
-const fieldsHaveErrors = ref(false);
+const validationSchema = computed(() => props.validationSchema as Props['validationSchema']);
 const currentPageHasErrors = ref(false);
 const errorPageIndexes: Ref<number[]> = ref<number[]>([]);
+
+const fieldsHaveErrors = computed(() => errorPageIndexes.value.includes(stepperModel.value - 1));
 
 // ------------------------ Run Validation //
 function runValidation(
@@ -353,7 +359,7 @@ function checkForPageErrors(errors: ValidateResult['errors'], source: string, ne
 	}
 
 	const pageIndex = pages.findIndex((p) => p === page);
-	const pageFields = page.fields;
+	const pageFields = page?.fields ?? [];
 	const hasErrorInField = Object.keys(errors).some(errorKey => pageFields.some(field => field.name === errorKey));
 
 	if (hasErrorInField) {
@@ -386,12 +392,22 @@ function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void
 }
 
 // ------------------------ Validation callback from fields //
+let debounceTimer: ReturnType<typeof setTimeout>;
+
 function onFieldValidate(field: Field, next: () => void): void {
 	const errors = parentForm.value?.errors as unknown as ValidateResult['errors'];
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
-	// ! Auto page not working //
-	// TODO: Add debouncing //
+	// If autoPage debounce next //
+	if (field?.autoPage || settings.value?.autoPage) {
+		clearTimeout(debounceTimer);
+
+		debounceTimer = setTimeout(() => {
+			checkForPageErrors(errors, 'field', shouldAutoPage);
+		}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
+
+		return;
+	}
 
 	checkForPageErrors(errors, 'field', shouldAutoPage);
 }
@@ -399,7 +415,7 @@ function onFieldValidate(field: Field, next: () => void): void {
 
 // -------------------------------------------------- Submit //
 function onSubmit(values: any): void {
-	console.log('%c%s', 'color: #00ff00; font-weight: bold;', '======================== onSubmit SUBMIT FORM \n', values);
+	console.log('%c%s', 'color: #00ff00; font-weight: bold;', 'onSubmit SUBMIT FORM \n', values);
 	emit('submit', values);
 }
 
@@ -412,16 +428,18 @@ function callbacks() {
 // ------------------------ Conditional "when" callback //
 function whenCallback(): void {
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
-		Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
-			if (field.when) {
-				const enabledField: boolean = field.when(modelValue.value);
-				const indexPage = pages[pageIdx];
+		if (page.fields) {
+			Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
+				if (field.when) {
+					const enabledField: boolean = field.when(modelValue.value);
+					const indexPage = pages[pageIdx];
 
-				if (indexPage?.fields[fieldIdx]) {
-					indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';
+					if (indexPage?.fields && indexPage?.fields[fieldIdx]) {
+						indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';
+					}
 				}
-			}
-		});
+			});
+		}
 	});
 }
 

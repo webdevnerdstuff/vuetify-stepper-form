@@ -99,6 +99,13 @@ const fieldRequired = computed(() => {
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
 const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
+const originalValue = modelValue.value;
+
+onUnmounted(() => {
+	if (!settings.keepValuesOnUnmount) {
+		modelValue.value = originalValue;
+	}
+});
 
 
 // ------------------------- Validate On Actions //

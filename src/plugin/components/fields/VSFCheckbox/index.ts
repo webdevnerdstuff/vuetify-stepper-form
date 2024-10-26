@@ -12,7 +12,10 @@ interface InternalField extends Field {
 	falseIcon?: VCheckbox['falseIcon'];
 	falseValue?: VCheckbox['falseValue'];
 	hideDetails?: VCheckbox['hideDetails'];
+	hint?: VCheckbox['hint'];
+	messages?: VCheckbox['messages'];
 	multiple?: VCheckbox['multiple'];
+	persistentHint?: VCheckbox['persistentHint'];
 	trueValue?: VCheckbox['trueValue'];
 }
 

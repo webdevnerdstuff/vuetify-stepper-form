@@ -10,6 +10,7 @@ import Playground from './PlaygroundSection.vue';
 import Props from './PropsSection.vue';
 import Slots from './SlotsSection.vue';
 import Usage from './UsageSection.vue';
+import Validation from './ValidationSection.vue';
 
 export {
 	Components,
@@ -24,4 +25,5 @@ export {
 	Props,
 	Slots,
 	Usage,
+	Validation,
 };

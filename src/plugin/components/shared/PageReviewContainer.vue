@@ -65,24 +65,17 @@
 			</v-list>
 		</v-col>
 	</v-row>
-
-	<v-row>
-		<v-col>
-			<v-btn
-				:color="settings.color"
-				@click="submitForm"
-			>Submit</v-btn>
-		</v-col>
-	</v-row>
 </template>
 
 <script setup lang="ts">
 import type {
+	ComputedClasses,
 	Field,
 	Page,
 	ResponsiveColumns,
 	Settings,
 } from '../../types/index';
+import { useColumnClasses } from '../../composables/classes';
 
 
 export interface PageReviewContainerProps {
@@ -106,15 +99,17 @@ const modelValue = defineModel<any>();
 const allFieldsArray = ref<Field[]>([]);
 
 Object.values(pages).forEach((p) => {
-	Object.values(p.fields).forEach((field: Field) => {
-		allFieldsArray.value.push(field as Field);
-	});
+	if (p.fields) {
+		Object.values(p.fields).forEach((field: Field) => {
+			allFieldsArray.value.push(field as Field);
+		});
+	}
 });
 
 
 // -------------------------------------------------- Go to question navigation //
 function goToQuestion(field: Field) {
-	let pageIndex = pages.findIndex(page => page.fields.some(f => f.name === field.name));
+	let pageIndex = pages.findIndex(page => page.fields ? page.fields.some(f => f.name === field.name) : -1);
 
 	if (pages[pageIndex]?.editable === false) {
 		return;
@@ -129,42 +124,28 @@ function goToQuestion(field: Field) {
 
 
 function checkIfEditable(field: Field) {
-	const pageIndex = pages.findIndex(page => page.fields.some(f => f.name === field.name));
+	const pageIndex = pages.findIndex(page => page.fields ? page.fields.some(f => f.name === field.name) : -1);
 
 	return pages[pageIndex]?.editable !== false;
 }
 
 
 // -------------------------------------------------- Answer Columns //
-const columnDefaults = {
-	lg: 12,
-	md: 12,
-	sm: 12,
-	xl: 6,
-};
-
 const columnsMerged = ref<ResponsiveColumns>({
-	...columnDefaults,
+	...{
+		lg: undefined,
+		md: undefined,
+		sm: undefined,
+		xl: undefined,
+	},
 	...summaryColumns,
 });
 
-const columnClasses = computed(() => {
-	return {
-		'py-0': true,
-		'v-col-12': true,
-		'v-cols': true,
-		[`v-col-sm-${columnsMerged.value.sm}`]: true,
-		[`v-col-md-${columnsMerged.value.md}`]: true,
-		[`v-col-lg-${columnsMerged.value.lg}`]: true,
-		[`v-col-xl-${columnsMerged.value.xl}`]: true,
-	};
+const columnClasses: Ref<ComputedClasses> = computed<ComputedClasses>(() => {
+	return useColumnClasses({
+		columnsMerged: columnsMerged.value,
+	});
 });
-
-
-// -------------------------------------------------- Submit Form //
-function submitForm() {
-	emit('submit');
-}
 </script>
 
 <style lang="scss" scoped></style>

@@ -12,7 +12,7 @@
 				:validate-on-blur="fieldValidateOn === 'blur'"
 				:validate-on-change="fieldValidateOn === 'change'"
 				:validate-on-input="fieldValidateOn === 'input'"
-				:validate-on-model-update="false"
+				:validate-on-model-update="fieldValidateOn != null"
 			>
 				<v-radio-group
 					v-model="modelValue"
@@ -114,11 +114,19 @@ const props = defineProps<VSFFancyRadioProps>();
 
 const { field, settings } = props;
 
+
 const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
 const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
+const originalValue = modelValue.value;
+
+onUnmounted(() => {
+	if (!settings.keepValuesOnUnmount) {
+		modelValue.value = originalValue;
+	}
+});
 
 
 if (modelValue?.value == null) {
@@ -321,6 +329,12 @@ function onFocus(value: any) {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+
+				&__message {
+					display: flex;
+					justify-content: center;
+					width: 100%;
+				}
 			}
 		}
 

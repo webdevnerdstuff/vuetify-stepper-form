@@ -12,6 +12,7 @@ import type {
 import type { ValidationRule } from 'vuetify/composables/validation';
 import VStepperForm from '../VStepperForm.vue';
 import type { Schema } from 'yup';
+import type { ZodSchema } from 'zod';
 import type {
 	GenericObject,
 	FieldValidator,
@@ -160,8 +161,9 @@ export interface Page {
 	autoPage?: boolean;
 	editable?: VStepperItem['editable'];
 	error?: boolean;
-	fields: Field[];
+	fields?: Field[];
 	isReview?: boolean;
+	pageFieldColumns?: ResponsiveColumns;
 	text?: string;
 	title?: string;
 }
@@ -172,18 +174,19 @@ export interface Page {
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
-	validationSchema: Schema<any>;
+	validationSchema: Schema<any> | ZodSchema;
 
 	// Optional //
 	autoPage?: boolean;
 	autoPageDelay?: number;
-	canReview?: boolean; // TODO: Determine a better prop name for canReview //
-	color?: string | undefined; 						// * Vuetify Checked
-	density?: GlobalDensity;								// * Vuetify Checked
+	canReview?: boolean; 													// TODO: Determine a better prop name for canReview //
+	color?: string | undefined;
+	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';
 	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
 	hideDetails?: GlobalHideDetails;
+	keepValuesOnUnmount?: boolean,								// TODO: ADD TO DOCS //
 	navButtonSize?: VBtn['size'];
 	summaryColumns?: ResponsiveColumns;
 	title?: string;
@@ -273,6 +276,7 @@ export interface UseColumnErrorCheck {
 	): void;
 }
 
+
 // ------------------------- Classes //
 export type ComputedClasses = Record<string, boolean>;
 
@@ -291,6 +295,17 @@ export interface UseStepperContainerClasses {
 		}
 	): ComputedClasses;
 }
+
+export interface UseColumnClasses {
+	(
+		options: {
+			columnsMerged: ResponsiveColumns;
+			fieldColumns?: ResponsiveColumns | undefined;
+			propName?: string;
+		}
+	): ComputedClasses;
+}
+
 
 // -------------------------------------------------- Plugin Component //
 declare module "vue" {

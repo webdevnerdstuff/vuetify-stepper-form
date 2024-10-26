@@ -1,4 +1,6 @@
 const excludedSettings: string[] = [
+	'columns',
+	'options',
 	'required',
 	'rules',
 	'when',

@@ -22,6 +22,7 @@ export const useCoreStore = defineStore('core', () => {
 		vuetifyGithub: 'https://github.com/vuetifyjs/vuetify',
 		yup: 'https://github.com/jquense/yup',
 		yupWhen: 'https://github.com/jquense/yup?tab=readme-ov-file#schemawhenkeys-string--string-builder-object--values-any-schema--schema-schema',
+		zod: 'https://zod.dev/',
 	};
 
 	const actions = {

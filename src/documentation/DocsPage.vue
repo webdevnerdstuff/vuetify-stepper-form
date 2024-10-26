@@ -74,14 +74,17 @@
 	<!-- Usage -->
 	<Section.Usage :codeBlockOptions="codeBlockOptions" />
 
-	<!-- Example -->
-	<!-- <Section.Example :codeBlockOptions="codeBlockOptions" /> -->
-
 	<!-- Components -->
 	<!-- <Section.Components :codeBlockOptions="codeBlockOptions" /> -->
 
 	<!-- Props -->
 	<Section.Props :codeBlockOptions="codeBlockOptions" />
+
+	<!-- Validation -->
+	<Section.Validation />
+
+	<!-- Examples -->
+	<Section.Example :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Events -->
 	<Section.Events :codeBlockOptions="codeBlockOptions" />
@@ -90,7 +93,7 @@
 	<Section.Slots :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Playground -->
-	<!-- <PlaygroundSection :codeBlockOptions="codeBlockOptions" /> -->
+	<Section.Playground :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Dependencies -->
 	<Section.Dependencies />
@@ -122,11 +125,13 @@ const classes = reactive({
 	appLink: 'app-link text-decoration-none primary--text font-weight-medium d-inline-block font-weight-bold',
 	h2: 'text-primary v-heading text-h4 text-sm-h4 mb-2',
 	h3: 'text-blue-darken-2 v-heading text-h5 text-sm-h5 mb-0',
+	h4: 'text-secondary v-heading text-h6 text-sm-h6 mb-0',
 	headerA: 'text-decoration-none text-right text-md-left d-none d-sm-flex',
 });
 const componentVersion = ref(packageInfo.version);
 
 provide('classes', classes);
+provide('codeBlockSettings', codeBlockSettings);
 </script>
 
 <style lang="scss" scoped>

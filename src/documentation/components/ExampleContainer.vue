@@ -2,7 +2,7 @@
 	<v-col
 		v-if="code.name"
 		:id="`${getHrefId}`"
-		class="v-col-12 offset-lg-2 offset-xl-1 v-col-sm-12 v-col-lg-8 v-col-xl-10 mb-0 pb-0"
+		cols="12"
 	>
 		<h3 class="text-info mb-1"><a
 				class="text-info"
@@ -12,12 +12,12 @@
 
 	<v-col
 		v-if="code.desc"
-		class="v-col-12 offset-lg-2 offset-xl-1 v-col-sm-12 v-col-lg-8 v-col-xl-10 mt-0 pt-0"
+		cols="12"
 	>
 		<div v-html="code.desc"></div>
 	</v-col>
 
-	<v-col class="v-col-12 offset-lg-2 offset-xl-1 v-col-sm-12 v-col-lg-8 v-col-xl-10">
+	<v-col cols="12">
 		<v-sheet
 			border
 			class="overflow-hidden"
@@ -100,7 +100,7 @@
 					:class="showCode && 'border-t'"
 					with-background
 				>
-					<v-col class="offset-md-4 offset-lg-3 offset-xl-4 v-col-sm-12 v-col-md-4 v-col-lg-6 v-col-xl-4">
+					<v-col cols="12">
 						<slot name="default" />
 					</v-col>
 				</v-theme-provider>

@@ -144,16 +144,6 @@
 				Refer to the code example below to see which component corresponds to each field type. Additionally, the order
 				of the fields in the array determines the order in which they will appear on the page.
 			</p>
-			<p>
-				Conditional fields can be managed using the <code class="ic">when</code> functionality provided by Yup for
-				validation. This allows you to dynamically validate and show/hide fields based on the values of other fields in
-				the form. By leveraging this feature, you can create flexible, conditional logic within your stepper form. For
-				more details on how to use Yup's when functionality, refer to the <a
-					:href="links.yupWhen"
-					nofollow
-					target="_blank"
-				>Yup documentation</a>.
-			</p>
 		</v-col>
 
 		<v-col cols="12">
@@ -187,7 +177,6 @@ const classes = inject('classes');
 const store = useCoreStore();
 const propsStore = usePropsStore();
 const codeBlockSettings = computed(() => props.codeBlockOptions);
-const links = inject('links');
 
 
 const pagesObject = `const pages = [

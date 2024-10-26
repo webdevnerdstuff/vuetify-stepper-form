@@ -18,7 +18,7 @@ export const useOnActions: UseOnActions = async (options) => {
 		isBlur ||
 		isInput ||
 		isChange ||
-		validateOn === 'click'
+		action === 'click'
 	) {
 		validate()
 			.then(() => {

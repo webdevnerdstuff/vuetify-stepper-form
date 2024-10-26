@@ -15,7 +15,6 @@
 						errorMessage,
 						field: boundSettings,
 						FieldLabel: FieldLabelComponent,
-						value: modelValue,
 						blur: () => onActions(validate, 'blur'),
 						change: () => onActions(validate, 'change'),
 						input: () => onActions(validate, 'input'),
@@ -60,14 +59,19 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 }
 
 
-// Bound Settings //
+// -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings?.color,
 	density: field.density || settings?.density,
 }));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings.value));
+const boundSettings = computed(() => {
+	return {
+		...useBindingSettings(bindSettings.value),
+		options: field.options,
+	};
+});
 </script>
 
 <style scoped lang="scss"></style>
