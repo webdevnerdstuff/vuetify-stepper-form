@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { provide, ref } from 'vue';
+import { computed, provide, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 import AppBar from './documentation/layout/AppBar.vue';
 import MenuComponent from './documentation/components/MenuComponent.vue';
@@ -144,8 +144,18 @@ a {
 		margin: 0 -0.7em;
 		position: absolute;
 
+		&:hover {
+			color: rgb(var(--v-theme-primary));
+		}
+
 		&:not(:hover, :focus) {
 			opacity: 0;
+		}
+	}
+
+	&.text-secondary {
+		> a {
+			color: rgb(var(--v-theme-secondary));
 		}
 	}
 }

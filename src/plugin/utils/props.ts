@@ -6,6 +6,7 @@ export const AllProps = {
 	direction: 'horizontal' as const,
 	disabled: false,
 	editable: true,
+	keepValuesOnUnmount: false,
 	navButtonSize: 'large' as const,
 	transition: 'fade-transition',
 	width: '100%',

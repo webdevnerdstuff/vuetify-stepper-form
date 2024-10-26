@@ -161,8 +161,9 @@ export interface Page {
 	autoPage?: boolean;
 	editable?: VStepperItem['editable'];
 	error?: boolean;
-	fields: Field[];
+	fields?: Field[];
 	isReview?: boolean;
+	pageFieldColumns?: ResponsiveColumns;
 	text?: string;
 	title?: string;
 }
@@ -178,13 +179,14 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	// Optional //
 	autoPage?: boolean;
 	autoPageDelay?: number;
-	canReview?: boolean; // TODO: Determine a better prop name for canReview //
-	color?: string | undefined; 						// * Vuetify Checked
-	density?: GlobalDensity;								// * Vuetify Checked
+	canReview?: boolean; 													// TODO: Determine a better prop name for canReview //
+	color?: string | undefined;
+	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';
 	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
 	hideDetails?: GlobalHideDetails;
+	keepValuesOnUnmount?: boolean,								// TODO: ADD TO DOCS //
 	navButtonSize?: VBtn['size'];
 	summaryColumns?: ResponsiveColumns;
 	title?: string;

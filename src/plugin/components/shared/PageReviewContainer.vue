@@ -65,15 +65,6 @@
 			</v-list>
 		</v-col>
 	</v-row>
-
-	<v-row>
-		<v-col>
-			<v-btn
-				:color="settings.color"
-				@click="submitForm"
-			>Submit</v-btn>
-		</v-col>
-	</v-row>
 </template>
 
 <script setup lang="ts">
@@ -108,15 +99,17 @@ const modelValue = defineModel<any>();
 const allFieldsArray = ref<Field[]>([]);
 
 Object.values(pages).forEach((p) => {
-	Object.values(p.fields).forEach((field: Field) => {
-		allFieldsArray.value.push(field as Field);
-	});
+	if (p.fields) {
+		Object.values(p.fields).forEach((field: Field) => {
+			allFieldsArray.value.push(field as Field);
+		});
+	}
 });
 
 
 // -------------------------------------------------- Go to question navigation //
 function goToQuestion(field: Field) {
-	let pageIndex = pages.findIndex(page => page.fields.some(f => f.name === field.name));
+	let pageIndex = pages.findIndex(page => page.fields ? page.fields.some(f => f.name === field.name) : -1);
 
 	if (pages[pageIndex]?.editable === false) {
 		return;
@@ -131,7 +124,7 @@ function goToQuestion(field: Field) {
 
 
 function checkIfEditable(field: Field) {
-	const pageIndex = pages.findIndex(page => page.fields.some(f => f.name === field.name));
+	const pageIndex = pages.findIndex(page => page.fields ? page.fields.some(f => f.name === field.name) : -1);
 
 	return pages[pageIndex]?.editable !== false;
 }
@@ -153,11 +146,6 @@ const columnClasses: Ref<ComputedClasses> = computed<ComputedClasses>(() => {
 		columnsMerged: columnsMerged.value,
 	});
 });
-
-// -------------------------------------------------- Submit Form //
-function submitForm() {
-	emit('submit');
-}
 </script>
 
 <style lang="scss" scoped></style>

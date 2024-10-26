@@ -190,6 +190,8 @@ function getComponent(fieldType: string): Component | null {
 
 const modelValue = defineModel<any>();
 
+const pageColumns = computed(() => page?.pageFieldColumns ?? {});
+
 
 // -------------------------------------------------- Columns //
 const columnsMerged = ref<ResponsiveColumns>({
@@ -200,6 +202,7 @@ const columnsMerged = ref<ResponsiveColumns>({
 		xl: undefined,
 	},
 	...fieldColumns,
+	...pageColumns.value,
 });
 
 function getColumnClasses(field: Field): ComputedClasses {
