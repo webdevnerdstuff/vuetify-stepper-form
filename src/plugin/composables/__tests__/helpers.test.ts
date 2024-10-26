@@ -31,7 +31,7 @@ describe('Helpers Composable', () => {
 					},
 					propName: propName,
 				}))
-					.toThrowError(`The ${propName} prop column values must be between 1 and 12`);
+					.toThrowError(`The ${propName} values must be between 1 and 12`);
 			});
 		});
 	});
