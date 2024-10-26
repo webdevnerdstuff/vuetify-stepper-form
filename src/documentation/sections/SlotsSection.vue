@@ -27,7 +27,7 @@
 					</thead>
 					<tbody>
 						<tr
-							id="slots-custom"
+							id="slots-field"
 							:class="rowClass"
 						>
 							<td>
@@ -36,8 +36,8 @@
 									<a
 										class="text-primary"
 										:class="classes.appLink"
-										href="#slots-custom"
-									>[`custom.${string}`]</a>
+										href="#slots-field"
+									>[`field.${string}`]</a>
 								</span>
 							</td>
 							<td>
@@ -87,7 +87,6 @@ const rowClass = computed(() => {
 });
 
 const displaySlotsCode = `{
-  error: boolean | undefined,
   errorMessage: string[],
   field: Field,
 

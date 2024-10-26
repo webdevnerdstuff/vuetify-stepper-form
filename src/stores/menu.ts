@@ -133,11 +133,6 @@ export const useMenuStore = defineStore('menu', () => {
 			title: 'Usage',
 		},
 		{
-			href: '#example',
-			icon: 'mdi:mdi-code-json',
-			title: 'Example',
-		},
-		{
 			href: '#components',
 			icon: '$vuetify',
 			items: [
@@ -177,6 +172,54 @@ export const useMenuStore = defineStore('menu', () => {
 				},
 			],
 			title: 'Props',
+		},
+		{
+			href: '#validation',
+			icon: 'mdi:mdi-check-circle-outline',
+			title: 'Validation',
+		},
+		{
+			href: '#examples',
+			icon: 'mdi:mdi-code-json',
+			items: [
+				{
+					href: '#examples',
+					icon: 'mdi:mdi-code-json',
+					key: 'examples-basic',
+					title: 'Simple Form',
+				},
+				{
+					href: '#examples-columns',
+					icon: 'mdi:mdi-code-json',
+					key: 'examples-columns',
+					title: 'Columns',
+				},
+				{
+					href: '#examples-field-slots',
+					icon: 'mdi:mdi-code-json',
+					key: 'examples-field-slots',
+					title: 'Slots',
+				},
+				{
+					href: '#examples-validation',
+					icon: 'mdi:mdi-code-json',
+					key: 'examples-validation',
+					title: 'Validation',
+				},
+				{
+					href: '#examples-conditional-fields',
+					icon: 'mdi:mdi-code-json',
+					key: 'examples-conditional-fields',
+					title: 'Conditional Fields',
+				},
+				{
+					href: '#examples-summary-page',
+					icon: 'mdi:mdi-code-json',
+					key: 'examples-summary-page',
+					title: 'Summary Page',
+				},
+			],
+			title: 'Examples',
 		},
 		{
 			href: '#events',

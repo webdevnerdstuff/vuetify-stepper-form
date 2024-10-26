@@ -34,13 +34,6 @@
 			>
 				VeeValidate
 			</a>
-			<br />
-			<a
-				:href="store.links.yup"
-				target="_blank"
-			>
-				Yup
-			</a>
 		</v-col>
 	</v-row>
 </template>
