@@ -39,7 +39,6 @@
 						v-if="field.type === 'checkbox'"
 						v-model="modelValue[field.name]"
 						:field="field"
-						:settings="settings"
 						@validate="onValidate"
 					/>
 
@@ -48,7 +47,6 @@
 						v-if="field.type === 'radio'"
 						v-model="modelValue[field.name]"
 						:field="field"
-						:settings="settings"
 						@validate="onValidate"
 					/>
 
@@ -56,7 +54,13 @@
 						v-if="field.type === 'fancyRadio'"
 						v-model="modelValue[field.name]"
 						:field="field"
-						:settings="settings"
+						@validate="onValidate"
+					/>
+
+					<Fields.VSFButtonField
+						v-if="field.type === 'buttons'"
+						v-model="modelValue[field.name]"
+						:field="field"
 						@validate="onValidate"
 					/>
 
@@ -65,7 +69,6 @@
 						v-if="field.type === 'switch'"
 						v-model="modelValue[field.name]"
 						:field="field"
-						:settings="settings"
 						@validate="onValidate"
 					/>
 
@@ -83,7 +86,6 @@
 						v-model="modelValue[field.name]"
 						:component="getComponent(field.type as string)"
 						:field="field"
-						:settings="settings"
 						@validate="onValidate"
 					/>
 
@@ -93,7 +95,6 @@
 							v-if="field.type === 'field'"
 							v-model="modelValue[field.name]"
 							:field="field"
-							:settings="settings"
 							@validate="onValidate"
 						>
 							<!-- ========================= Pass Slots -->
@@ -124,7 +125,6 @@ import type {
 	Field,
 	Page,
 	ResponsiveColumns,
-	Settings,
 } from '../../types/index';
 import {
 	VAutocomplete,
@@ -138,16 +138,9 @@ import { useColumnClasses } from '../../composables/classes';
 import VColorField from '@wdns/vuetify-color-field';
 
 
-export interface FieldLabelProps {
-	index: number;
-	page: Page;
-	settings: Settings;
-}
-
 export interface PageContainerProps {
 	fieldColumns: ResponsiveColumns | undefined;
 	page: Page;
-	settings: Settings;
 }
 
 const emit = defineEmits(['validate']);

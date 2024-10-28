@@ -41,17 +41,18 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFSwitchProps>();
 
-const { field, settings } = props;
+const { field } = props;
+const settings = inject<Ref<Settings>>('settings')!;
 
 const fieldRequired = computed(() => {
 	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
 	return field.required || hasRequiredRule as FieldLabelProps['required'];
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
+const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
 onUnmounted(() => {
-	if (!settings.keepValuesOnUnmount) {
+	if (!settings.value.keepValuesOnUnmount) {
 		modelValue.value = originalValue;
 	}
 });
@@ -63,7 +64,7 @@ async function onActions(validate: ValidateFieldResult, action: ValidateAction):
 		action,
 		emit,
 		field,
-		settingsValidateOn: settings.validateOn,
+		settingsValidateOn: settings.value.validateOn,
 		validate,
 	});
 }
@@ -72,9 +73,9 @@ async function onActions(validate: ValidateFieldResult, action: ValidateAction):
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings?.color,
-	density: field.density || settings?.density,
-	hideDetails: field.hideDetails || settings?.hideDetails,
+	color: field.color || settings.value.color,
+	density: field.density || settings.value.density,
+	hideDetails: field.hideDetails || settings.value.hideDetails,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value));

@@ -125,6 +125,7 @@ export interface Field {
 	autoPage?: Props['autoPage'];
 	autoPageDelay?: Props['autoPageDelay'];
 	canReview?: Props['canReview'];
+	class?: string;
 	color?: Props['color'];
 	columns?: Props['fieldColumns'];
 	density?: Props['density'];
@@ -197,10 +198,14 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 }
 
 export interface PluginOptions extends Partial<Omit<Props, 'pages' | 'validationSchema'>> { }
-export interface Settings extends PluginOptions { }
+
+declare global {
+	export interface Settings extends PluginOptions { }
+}
 
 type FieldTypes =
 	'autocomplete' |
+	'buttons' |
 	'checkbox' |
 	'color' |
 	'combobox' |
@@ -224,7 +229,6 @@ type FieldTypes =
 
 export interface SharedProps {
 	field: Field;
-	settings: Settings;
 }
 
 
@@ -245,6 +249,12 @@ export interface UseOnActions {
 
 
 // -------------------------------------------------- Composables //
+// ------------------------- Helpers //
+export interface UseBuildSettings {
+	(
+		props: Settings,
+	): Settings;
+}
 // ------------------------- Helpers //
 export interface UseMergeProps {
 	(

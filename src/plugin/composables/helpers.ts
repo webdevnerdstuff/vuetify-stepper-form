@@ -1,6 +1,7 @@
 import {
 	ResponsiveColumns,
 	UseAutoPage,
+	UseBuildSettings,
 	UseColumnErrorCheck,
 	UseMergeProps,
 } from '@/plugin/types';
@@ -18,6 +19,48 @@ export const useMergeProps: UseMergeProps = (A, B, C) => {
 	});
 
 	return res;
+};
+
+
+/**
+* Builds the settings object.
+*/
+export const useBuildSettings: UseBuildSettings = (stepperProps: Settings) => {
+	return {
+		altLabels: stepperProps.altLabels,
+		autoPage: stepperProps.autoPage,
+		autoPageDelay: stepperProps.autoPageDelay,
+		bgColor: stepperProps.bgColor,
+		border: stepperProps.border,
+		canReview: stepperProps.canReview,
+		color: stepperProps.color,
+		density: stepperProps.density,
+		disabled: stepperProps.disabled,
+		editIcon: stepperProps.editIcon,
+		editable: stepperProps.editable,
+		elevation: stepperProps.elevation,
+		errorIcon: stepperProps.errorIcon,
+		fieldColumns: stepperProps.fieldColumns,
+		flat: stepperProps.flat,
+		height: stepperProps.height,
+		hideActions: stepperProps.hideActions,
+		hideDetails: stepperProps.hideDetails,
+		keepValuesOnUnmount: stepperProps.keepValuesOnUnmount,
+		maxHeight: stepperProps.maxHeight,
+		maxWidth: stepperProps.maxWidth,
+		minHeight: stepperProps.minHeight,
+		minWidth: stepperProps.minWidth,
+		nextText: stepperProps.nextText,
+		prevText: stepperProps.prevText,
+		rounded: stepperProps.rounded,
+		selectedClass: stepperProps.selectedClass,
+		theme: stepperProps.theme,
+		tile: stepperProps.tile,
+		transition: stepperProps.transition,
+		validateOn: stepperProps.validateOn,
+		validateOnMount: stepperProps.validateOnMount,
+		variant: stepperProps.variant,
+	};
 };
 
 

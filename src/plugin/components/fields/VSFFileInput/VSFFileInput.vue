@@ -38,7 +38,8 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VFileInputProps>();
 
-const { field, settings } = props;
+const { field } = props;
+const settings = inject<Ref<Settings>>('settings')!;
 
 
 const fieldRequired = computed(() => {
@@ -48,7 +49,7 @@ const fieldRequired = computed(() => {
 const originalValue = modelValue.value;
 
 onUnmounted(() => {
-	if (!settings.keepValuesOnUnmount) {
+	if (!settings.value.keepValuesOnUnmount) {
 		modelValue.value = originalValue;
 	}
 });
@@ -60,7 +61,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 		action,
 		emit,
 		field,
-		settingsValidateOn: settings.validateOn,
+		settingsValidateOn: settings.value.validateOn,
 		validate,
 	});
 }
@@ -69,10 +70,10 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings?.color,
-	density: field.density || settings?.density,
-	hideDetails: field.hideDetails || settings?.hideDetails,
-	variant: field.variant || settings?.variant,
+	color: field.color || settings.value.color,
+	density: field.density || settings.value.density,
+	hideDetails: field.hideDetails || settings.value.hideDetails,
+	variant: field.variant || settings.value.variant,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value));

@@ -112,8 +112,8 @@
 										:size="navButtonSize"
 										@click="runValidation(validate, 'next', next)"
 									/>
-									<!-- TODO: This will change to use v-else when done -->
 									<v-btn
+										v-else
 										:color="settings.color"
 										:disabled="fieldsHaveErrors"
 										:size="navButtonSize"
@@ -138,7 +138,6 @@
 					</template>
 				</v-stepper>
 			</v-container>
-
 		</div>
 	</div>
 </template>
@@ -155,7 +154,6 @@ import type {
 	Field,
 	Page,
 	Props,
-	Settings,
 } from '@/plugin/types';
 import {
 	useContainerClasses,
@@ -166,6 +164,7 @@ import { globalOptions } from './';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import {
+	useBuildSettings,
 	useColumnErrorCheck,
 	useMergeProps,
 } from './composables/helpers';
@@ -180,46 +179,19 @@ const injectedOptions = inject(globalOptions, {});
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
-const stepperProps: Settings = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
+let stepperProps: Settings = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
 const { direction, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
-const settings: Ref<Settings> = ref<Settings>({
-	altLabels: stepperProps.altLabels,
-	autoPage: stepperProps.autoPage,
-	autoPageDelay: stepperProps.autoPageDelay,
-	bgColor: stepperProps.bgColor,
-	border: stepperProps.border,
-	canReview: stepperProps.canReview,
-	color: stepperProps.color || 'primary',
-	density: stepperProps.density,
-	disabled: stepperProps.disabled,
-	editIcon: stepperProps.editIcon,
-	editable: stepperProps.editable,
-	elevation: stepperProps.elevation,
-	errorIcon: stepperProps.errorIcon,
-	fieldColumns: stepperProps.fieldColumns,
-	flat: stepperProps.flat,
-	height: stepperProps.height,
-	hideActions: stepperProps.hideActions,
-	hideDetails: stepperProps.hideDetails,
-	keepValuesOnUnmount: stepperProps.keepValuesOnUnmount,
-	maxHeight: stepperProps.maxHeight,
-	maxWidth: stepperProps.maxWidth,
-	minHeight: stepperProps.minHeight,
-	minWidth: stepperProps.minWidth,
-	nextText: stepperProps.nextText,
-	prevText: stepperProps.prevText,
-	rounded: stepperProps.rounded,
-	selectedClass: stepperProps.selectedClass,
-	theme: stepperProps.theme,
-	tile: stepperProps.tile,
-	transition: stepperProps.transition,
-	validateOn: stepperProps.validateOn,
-	validateOnMount: stepperProps.validateOnMount,
-	variant: stepperProps.variant,
-});
+const settings: Ref<Settings> = ref<Settings>(useBuildSettings(stepperProps));
+
+watch(props, () => {
+	stepperProps = useMergeProps(attrs, injectedOptions, props);
+	settings.value = useBuildSettings(stepperProps);
+}, { deep: true });
+
+provide<Ref<Settings>>('settings', settings);
 
 
 const allFieldsArray: Ref<Field[]> = ref<Field[]>([]);

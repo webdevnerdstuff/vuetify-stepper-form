@@ -42,7 +42,8 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFCustomProps>();
 
-const { field, settings } = props;
+const { field } = props;
+const settings = inject<Ref<Settings>>('settings')!;
 
 const FieldLabelComponent = toRaw(FieldLabel);
 
@@ -53,7 +54,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 		action,
 		emit,
 		field,
-		settingsValidateOn: settings.validateOn,
+		settingsValidateOn: settings.value.validateOn,
 		validate,
 	});
 }
@@ -62,8 +63,8 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings?.color,
-	density: field.density || settings?.density,
+	color: field.color || settings.value.color,
+	density: field.density || settings.value.density,
 }));
 
 const boundSettings = computed(() => {

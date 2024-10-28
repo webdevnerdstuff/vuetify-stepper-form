@@ -73,7 +73,6 @@ import type {
 	Field,
 	Page,
 	ResponsiveColumns,
-	Settings,
 } from '../../types/index';
 import { useColumnClasses } from '../../composables/classes';
 
@@ -81,11 +80,11 @@ import { useColumnClasses } from '../../composables/classes';
 export interface PageReviewContainerProps {
 	page: Page;
 	pages: Page[];
-	settings: Settings;
 	summaryColumns: ResponsiveColumns | undefined;
 }
 
 const { summaryColumns, page, pages } = defineProps<PageReviewContainerProps>();
+const settings = inject<Settings>('settings')!;
 
 const emit = defineEmits([
 	'goToQuestion',
