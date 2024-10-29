@@ -159,25 +159,16 @@
 	</v-row>
 </template>
 
-<script setup>
-import { defineProps, inject } from 'vue';
+<script setup lang="ts">
 import { useCoreStore } from '@/stores/index';
 import { usePropsStore } from '@/stores/props';
 import PropsTable from '@/documentation/components/PropsTable.vue';
 
 
-const props = defineProps({
-	codeBlockOptions: {
-		required: true,
-		type: Object,
-	},
-});
-
-const classes = inject('classes');
+const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
+const classes = inject<Docs.GlobalClasses>('classes')!;
 const store = useCoreStore();
 const propsStore = usePropsStore();
-const codeBlockSettings = computed(() => props.codeBlockOptions);
-
 
 const pagesObject = `const pages = [
   {
@@ -249,11 +240,11 @@ interface KeyStringAny<T = any> {
 const fieldTypes = `type FieldTypes =
     'autocomplete'  // VAutocomplete
   | 'checkbox'      // VCheckbox
+	| 'buttons' 		 	// VButtonField is a custom component with this plugin
   | 'color'         // VColorField (from @wdns/vuetify-color-field)
   | 'combobox'      // VCombobox
   | 'date'          // VDateInput (current not supported as the component is in labs)
   | 'email'         // VTextField with type="email"
-  | 'fancyRadio'    // VFancyRadio is a custom component with this plugin
   | 'field'         // Used for the field slot
   | 'file'          // VFileInput
   | 'hidden'        // input with type="hidden"

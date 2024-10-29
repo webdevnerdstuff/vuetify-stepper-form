@@ -14,6 +14,7 @@ export const useCoreStore = defineStore('core', () => {
 		githubProfile: 'https://github.com/webdevnerdstuff',
 		license: `${repoBaseUrl}/blob/main/LICENSE.md`,
 		npm: `https://www.npmjs.com/package/${scopedPackageName}`,
+		pnpm: 'https://pnpm.io/',
 		vColorField: 'https://webdevnerdstuff.github.io/vuetify-color-field/',
 		veeValidate: 'https://vee-validate.logaretm.com/v4/',
 		vue: 'https://vuejs.org/',

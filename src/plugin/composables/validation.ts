@@ -1,8 +1,7 @@
-/* eslint-disable no-param-reassign */
+
 import {
 	UseOnActions,
 } from '../types/index';
-
 
 
 export const useOnActions: UseOnActions = async (options) => {
@@ -20,7 +19,7 @@ export const useOnActions: UseOnActions = async (options) => {
 		isChange ||
 		action === 'click'
 	) {
-		validate()
+		await validate()
 			.then(() => {
 				emit('validate', field);
 			});

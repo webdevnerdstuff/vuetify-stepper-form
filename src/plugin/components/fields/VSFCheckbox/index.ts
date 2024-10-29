@@ -1,9 +1,9 @@
-import type { VCheckbox } from 'vuetify/components';
+import type VSFCheckbox from './VSFCheckbox.vue';
 import type {
 	Field,
 	SharedProps,
 } from '@/plugin/types';
-import type VSFCheckbox from './VSFCheckbox.vue';
+import type { VCheckbox } from 'vuetify/components';
 
 
 interface InternalField extends Field {
@@ -23,6 +23,6 @@ export interface VSFCheckboxProps extends SharedProps {
 	field: InternalField;
 }
 
-export type VSFCheckbox = InstanceType<typeof VSFCheckbox>;
+// export type VSFCheckbox = InstanceType<typeof VSFCheckbox>;
 
 export default VSFCheckbox;

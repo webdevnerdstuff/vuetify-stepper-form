@@ -9,7 +9,7 @@
 		:validate-on-model-update="false"
 	>
 		<v-switch
-			v-bind="boundSettings"
+			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
 			v-model="modelValue"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
@@ -29,29 +29,29 @@
 
 
 <script lang="ts" setup>
+import { Field } from 'vee-validate';
 import type { VSFSwitchProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
-import { Field } from 'vee-validate';
 
 
 const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFSwitchProps>();
 
-const { field, settings } = props;
+const { field } = props;
+const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldRequired = computed(() => {
-	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
-	return field.required || hasRequiredRule as FieldLabelProps['required'];
+const fieldRequired = computed<FieldLabelProps['required']>(() => {
+	return field.required || false;
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings?.validateOn);
+const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
 onUnmounted(() => {
-	if (!settings.keepValuesOnUnmount) {
+	if (!settings.value.keepValuesOnUnmount) {
 		modelValue.value = originalValue;
 	}
 });
@@ -59,11 +59,11 @@ onUnmounted(() => {
 
 // ------------------------- Validate On Actions //
 async function onActions(validate: ValidateFieldResult, action: ValidateAction): Promise<void> {
-	useOnActions({
+	await useOnActions({
 		action,
 		emit,
 		field,
-		settingsValidateOn: settings.validateOn,
+		settingsValidateOn: settings.value.validateOn,
 		validate,
 	});
 }
@@ -72,12 +72,12 @@ async function onActions(validate: ValidateFieldResult, action: ValidateAction):
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings?.color,
-	density: field.density || settings?.density,
-	hideDetails: field.hideDetails || settings?.hideDetails,
+	color: field.color || settings.value.color,
+	density: field.density || settings.value.density,
+	hideDetails: field.hideDetails || settings.value.hideDetails,
 }));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings.value));
+const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));
 </script>
 
 <style lang="scss" scoped></style>

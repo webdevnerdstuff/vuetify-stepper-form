@@ -1,29 +1,27 @@
-import Components from './ComponentsSection.vue';
-import Dependencies from './DependenciesSection.vue';
-import Description from './DescriptionSection.vue';
-import Events from './EventsSection.vue';
-import Example from './ExampleSection.vue';
-import Features from './FeaturesSection.vue';
-import Legal from './LegalSection.vue';
-import License from './LicenseSection.vue';
-import Playground from './PlaygroundSection.vue';
-import Props from './PropsSection.vue';
-import Slots from './SlotsSection.vue';
-import Usage from './UsageSection.vue';
-import Validation from './ValidationSection.vue';
+import ComponentsSection from './ComponentsSection.vue';
+import DependenciesSection from './DependenciesSection.vue';
+import DescriptionSection from './DescriptionSection.vue';
+import EventsSection from './EventsSection.vue';
+import ExampleSection from './ExampleSection.vue';
+import LegalSection from './LegalSection.vue';
+import LicenseSection from './LicenseSection.vue';
+import PlaygroundSection from './PlaygroundSection.vue';
+import PropsSection from './PropsSection.vue';
+import SlotsSection from './SlotsSection.vue';
+import UsageSection from './UsageSection.vue';
+import ValidationSection from './ValidationSection.vue';
 
 export {
-	Components,
-	Dependencies,
-	Description,
-	Events,
-	Example,
-	Features,
-	Legal,
-	License,
-	Playground,
-	Props,
-	Slots,
-	Usage,
-	Validation,
+	ComponentsSection,
+	DependenciesSection,
+	DescriptionSection,
+	EventsSection,
+	ExampleSection,
+	LegalSection,
+	LicenseSection,
+	PlaygroundSection,
+	PropsSection,
+	SlotsSection,
+	UsageSection,
+	ValidationSection,
 };
