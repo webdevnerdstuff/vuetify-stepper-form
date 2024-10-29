@@ -75,16 +75,16 @@
 	<Section.UsageSection />
 
 	<!-- Components -->
-	<!-- <Section.Components :codeBlockOptions="codeBlockOptions" /> -->
+	<!-- <Section.Components /> -->
 
 	<!-- Props -->
 	<Section.PropsSection />
 
 	<!-- Validation -->
-	<Section.Validation />
+	<Section.ValidationSection />
 
 	<!-- Examples -->
-	<Section.Example :codeBlockOptions="codeBlockOptions" />
+	<Section.ExampleSection />
 
 	<!-- Events -->
 	<Section.EventsSection />
