@@ -29,7 +29,7 @@ const pages = [
 			{
 				label: 'Foo',
 				name: 'foo',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 1',
@@ -39,14 +39,14 @@ const pages = [
 			{
 				label: 'Bar',
 				name: 'bar',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 2',
-	}
+	},
 ];
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -76,7 +76,7 @@ const pages = [
       {
         label: 'Foo',
         name: 'foo',
-        type: 'text',
+        type: 'text' as const,
       },
     ],
   },
@@ -86,7 +86,7 @@ const pages = [
         {
         label: 'Bar',
         name: 'bar',
-        type: 'text',
+        type: 'text' as const,
         },
       ],
   }
@@ -102,7 +102,7 @@ defineExpose({
 		desc: 'A simple example of the <code class="ic">VStepperForm</code> component.',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

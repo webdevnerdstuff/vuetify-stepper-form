@@ -84,13 +84,13 @@
 </template>
 
 <script setup lang="ts">
+import type { ExampleCode } from '../components/ExampleContainer.vue';
 import ExampleContainer from '../components/ExampleContainer.vue';
 import * as Example from '../components/examples';
 
 
 const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
 const classes = inject<Docs.GlobalClasses>('classes')!;
-
 
 const SimpleExampleRef = ref(null);
 const ColumnsExampleRef = ref(null);
@@ -117,14 +117,14 @@ const refElementsOpen = ref({
 	ValidationExampleRef: null,
 });
 
-function getTemplateCode(exampleName) {
+function getTemplateCode(exampleName: string): ExampleCode {
 	const el = refElements.value[exampleName];
 	const example = el?.exampleCode ?? { code: '', desc: undefined, name: undefined, template: '' };
 
 	return example;
 }
 
-function closePicker(key) {
+function closePicker(key: string) {
 	refElementsOpen.value[key] = new Date().getTime().toString();
 }
 </script>

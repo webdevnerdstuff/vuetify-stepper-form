@@ -32,7 +32,7 @@ const pages = [
 			{
 				label: 'Foo',
 				name: 'foo',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 1',
@@ -42,7 +42,7 @@ const pages = [
 			{
 				label: 'Bar',
 				name: 'bar',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 2',
@@ -54,7 +54,7 @@ const pages = [
 	},
 ];
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -86,7 +86,7 @@ const pages = [
       {
         label: 'Foo',
         name: 'foo',
-        type: 'text',
+        type: 'text' as const,
       },
     ],
     title: 'Page 1',
@@ -96,7 +96,7 @@ const pages = [
       {
         label: 'Bar',
         name: 'bar',
-        type: 'text',
+        type: 'text' as const,
       },
     ],
     title: 'Page 2',
@@ -115,11 +115,11 @@ function submitForm() {
 
 defineExpose({
 	exampleCode: {
-		desc: `This example walks through creating a form with multiple fields and a final summary page to review the submitted information before completion. The <code class="ic">summaryColumns</code> prop works similarly to the <code class="ic">fieldColumns</code> prop by allowing you to define a column layout, but it specifically applies to the summary page. While <code class="ic">fieldColumns</code> arranges the form fields during input, <code class="ic">summaryColumns</code> customizes the layout of the final review, making it easy to structure and display the user's responses in a clear, organized format.`,
+		desc: 'This example walks through creating a form with multiple fields and a final summary page to review the submitted information before completion. The <code class="ic">summaryColumns</code> prop works similarly to the <code class="ic">fieldColumns</code> prop by allowing you to define a column layout, but it specifically applies to the summary page. While <code class="ic">fieldColumns</code> arranges the form fields during input, <code class="ic">summaryColumns</code> customizes the layout of the final review, making it easy to structure and display the user\'s responses in a clear, organized format.',
 		name: 'Summary Page',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

@@ -62,7 +62,7 @@ const pages = [
 	},
 ];
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -135,7 +135,7 @@ defineExpose({
 		name: 'Conditional Fields',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

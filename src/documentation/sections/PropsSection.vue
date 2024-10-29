@@ -160,9 +160,9 @@
 </template>
 
 <script setup lang="ts">
+import PropsTable from '@/documentation/components/PropsTable.vue';
 import { useCoreStore } from '@/stores/index';
 import { usePropsStore } from '@/stores/props';
-import PropsTable from '@/documentation/components/PropsTable.vue';
 
 
 const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;

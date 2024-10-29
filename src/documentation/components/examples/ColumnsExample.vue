@@ -18,12 +18,11 @@
 	/>
 </template>
 
-<script setup>
-import { inject, ref } from 'vue';
+<script setup lang="ts">
 import AnswersDialog from '../AnswersDialog.vue';
 
 
-const links = inject('links');
+const links = inject<Docs.Links>('links')!;
 const dialog = ref(false);
 
 const answers = ref({
@@ -43,7 +42,7 @@ const pages = [
 				},
 				label: 'Foo',
 				name: 'foo',
-				type: 'text',
+				type: 'text' as const,
 			},
 			{
 				columns: {
@@ -52,7 +51,7 @@ const pages = [
 				},
 				label: 'Bar',
 				name: 'bar',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 	},
@@ -61,12 +60,12 @@ const pages = [
 			{
 				label: 'Biz',
 				name: 'biz',
-				type: 'text',
+				type: 'text' as const,
 			},
 			{
 				label: 'Baz',
 				name: 'baz',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		pageFieldColumns: {
@@ -76,7 +75,7 @@ const pages = [
 	},
 ];
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -165,7 +164,7 @@ defineExpose({
 		name: 'Columns',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

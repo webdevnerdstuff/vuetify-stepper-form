@@ -1,5 +1,6 @@
 import '@/libraries/fontawesome';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { createVCodeBlock } from '@wdns/vue-code-block';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createVStepperForm } from '../../plugin/index';
@@ -9,6 +10,7 @@ import PlaygroundApp from './PlaygroundApp.vue';
 
 const app = createApp(PlaygroundApp);
 
+app.use(createVCodeBlock());
 app.use(createVStepperForm());
 app.use(createPinia());
 app.component('font-awesome-icon', FontAwesomeIcon);

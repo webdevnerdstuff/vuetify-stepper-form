@@ -173,7 +173,7 @@ export interface Page {
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
-	validationSchema: Schema<any> | ZodSchema;
+	validationSchema?: Schema<any> | ZodSchema;
 
 	// Optional //
 	autoPage?: boolean;

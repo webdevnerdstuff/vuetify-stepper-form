@@ -15,12 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import AnswersDialog from '../AnswersDialog.vue';
 import {
-	string as yupString,
 	object as yupObject,
+	string as yupString,
 } from 'yup';
+import AnswersDialog from '../AnswersDialog.vue';
 
 const dialog = ref(false);
 
@@ -36,7 +35,7 @@ const pages = [
 				label: 'Foo',
 				name: 'foo',
 				required: true,
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 1',
@@ -47,11 +46,11 @@ const pages = [
 				label: 'Bar',
 				name: 'bar',
 				required: true,
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 2',
-	}
+	},
 ];
 
 const validationSchema = yupObject({
@@ -59,7 +58,7 @@ const validationSchema = yupObject({
 	foo: yupString().required(),
 });
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -95,7 +94,7 @@ const pages = [
   	    label: 'Foo',
   	    name: 'foo',
   	    required: true,
-  	    type: 'text',
+  	    type: 'text' as const,
   	  },
   	],
   	title: 'Page 1',
@@ -106,7 +105,7 @@ const pages = [
         label: 'Bar',
         name: 'bar',
         required: true,
-        type: 'text',
+        type: 'text' as const,
       },
     ],
     title: 'Page 2',
@@ -125,7 +124,7 @@ defineExpose({
 		name: 'Validation',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

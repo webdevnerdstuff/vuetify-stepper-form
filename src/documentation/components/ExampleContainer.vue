@@ -110,21 +110,20 @@
 	</v-col>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 const emit = defineEmits(['closePicker']);
-const props = defineProps({
-	code: {
-		required: true,
-		type: Object,
-	},
-	codeBlockOptions: {
-		required: true,
-		type: Object,
-	},
-});
 
-const codeBlockSettings = computed(() => props.codeBlockOptions);
+export interface ExampleCode {
+	desc?: string;
+	name?: string;
+	script?: string;
+	template: string;
+}
+
+const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
+const { code } = defineProps<{ code: ExampleCode; }>();
+
 const hasRendered = ref(true);
 const showCode = ref(false);
 const template = ref('template');
@@ -135,10 +134,10 @@ function showCodeBlocks() {
 }
 
 const getHrefId = computed(() => {
-	const id = props.code.name?.toLowerCase().replace(/\s+/g, '-');
+	const id = code.name?.toLowerCase().replace(/\s+/g, '-');
 
 	return `examples-${id}`;
-})
+});
 
 </script>
 
