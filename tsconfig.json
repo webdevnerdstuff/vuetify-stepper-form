@@ -48,6 +48,7 @@
 		"target": "ESNext",
 		"typeRoots": [
 			"./src/types",
+			"./src/documentation/types",
 			"./node_modules/@types",
 			"./node_modules/vuetify"
 		],
@@ -60,16 +61,19 @@
 		"playground",
 		"src/**/*.spec.ts",
 		"src/**/*.test.ts",
-		"src/App.vue",
-		"src/documentation/**/*.ts",
-		"src/documentation/**/*.vue",
-		"src/main.ts",
-		"src/playground/**/*.ts",
 		"src/plugins/**/*.ts",
 		"src/stores/**/*.ts",
-		"node_modules"
+		"node_modules",
 	],
 	"include": [
+		"eslint.config.mjs",
+		"src/App.vue",
+		"src/main.ts",
+		"src/playground/**/*.ts",
+		"src/playground/**/*.vue",
+		"src/documentation/**/*.ts",
+		"src/documentation/**/*.tsx",
+		"src/documentation/**/*.vue",
 		"src/plugin/**/*.ts",
 		"src/plugin/**/*.tsx",
 		"src/plugin/**/*.vue"

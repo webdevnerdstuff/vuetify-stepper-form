@@ -26,12 +26,12 @@
 
 
 <script lang="ts" setup>
+import { Field } from 'vee-validate';
 import type { VFileInputProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
-import { Field } from 'vee-validate';
 
 
 const emit = defineEmits(['validate']);
@@ -42,9 +42,8 @@ const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
 
-const fieldRequired = computed(() => {
-	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
-	return field.required || hasRequiredRule as FieldLabelProps['required'];
+const fieldRequired = computed<FieldLabelProps['required']>(() => {
+	return field.required || false;
 });
 const originalValue = modelValue.value;
 
@@ -57,7 +56,7 @@ onUnmounted(() => {
 
 // ------------------------- Validate On Actions //
 async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
-	useOnActions({
+	await useOnActions({
 		action,
 		emit,
 		field,
@@ -76,7 +75,7 @@ const bindSettings = computed(() => ({
 	variant: field.variant || settings.value.variant,
 }));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings.value));
+const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));
 </script>
 
 <style lang="scss" scoped></style>

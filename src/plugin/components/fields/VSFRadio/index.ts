@@ -1,9 +1,9 @@
-import type { VRadio, VRadioGroup } from 'vuetify/components';
+import type VSFRadio from './VSFRadio.vue';
 import type {
 	Field,
 	SharedProps,
 } from '@/plugin/types';
-import type VSFRadio from './VSFRadio.vue';
+import type { VRadio, VRadioGroup } from 'vuetify/components';
 
 
 export interface RadioGroupProps {
@@ -34,11 +34,10 @@ interface InternalField extends Field, RadioGroupProps {
 }
 
 
-
 export interface VSFRadioProps extends SharedProps {
 	field: InternalField;
 }
 
-export type VSFRadio = InstanceType<typeof VSFRadio>;
+// export type VSFRadio = InstanceType<typeof VSFRadio>;
 
 export default VSFRadio;

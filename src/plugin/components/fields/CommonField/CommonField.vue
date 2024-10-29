@@ -31,12 +31,12 @@
 
 
 <script lang="ts" setup>
+import { Field } from 'vee-validate';
 import type { CommonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
-import { Field } from 'vee-validate';
 
 
 const emit = defineEmits(['validate']);
@@ -46,9 +46,8 @@ const props = defineProps<CommonFieldProps>();
 const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldRequired = computed(() => {
-	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
-	return field.required || hasRequiredRule as FieldLabelProps['required'];
+const fieldRequired = computed<FieldLabelProps['required']>(() => {
+	return field.required || false;
 });
 const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
@@ -62,7 +61,7 @@ onUnmounted(() => {
 
 // ------------------------- Validate On Actions //
 async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
-	useOnActions({
+	await useOnActions({
 		action,
 		emit,
 		field,
@@ -71,7 +70,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 	});
 }
 
-const fieldItems = computed(() => field?.items ? field.items as any : undefined);
+const fieldItems = computed(() => field?.items ? field.items as unknown : undefined);
 const fieldType = computed(() => {
 	if (field.type === 'color') {
 		return 'text';
@@ -97,7 +96,7 @@ const bindSettings = computed(() => ({
 	variant: field.variant || settings.value.variant,
 }));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings.value));
+const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));
 </script>
 
 <style lang="scss" scoped></style>

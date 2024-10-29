@@ -1,21 +1,20 @@
+import { watchDebounced } from '@vueuse/core';
 import {
-	ResponsiveColumns,
 	UseAutoPage,
 	UseBuildSettings,
 	UseColumnErrorCheck,
 	UseMergeProps,
 } from '@/plugin/types';
-import { watchDebounced } from '@vueuse/core';
 
 
 /**
 * Merges props from three objects.
 */
 export const useMergeProps: UseMergeProps = (A, B, C) => {
-	const res = {};
+	const res: Record<string, any> = {};
 
 	Object.keys({ ...A, ...B, ...C }).map(key => {
-		res[key] = C[key] || B[key] || A[key];
+		res[key] = (C[key] ?? B[key] ?? A[key]) as any;
 	});
 
 	return res;
@@ -93,7 +92,7 @@ export const useColumnErrorCheck: UseColumnErrorCheck = (options) => {
 		return;
 	}
 
-	Object.values(columns as ResponsiveColumns).forEach((column) => {
+	Object.values(columns).forEach((column) => {
 		if (column < 1 || column > 12) {
 			err = true;
 		}

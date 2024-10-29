@@ -50,17 +50,10 @@
 						@validate="onValidate"
 					/>
 
-					<Fields.VSFFancyRadio
-						v-if="field.type === 'fancyRadio'"
-						v-model="modelValue[field.name]"
-						:field="field"
-						@validate="onValidate"
-					/>
-
 					<Fields.VSFButtonField
 						v-if="field.type === 'buttons'"
 						v-model="modelValue[field.name]"
-						:field="field"
+						:field="(field as any)"
 						@validate="onValidate"
 					/>
 
@@ -119,23 +112,23 @@
 </template>
 
 <script setup lang="ts">
-import * as Fields from '../fields/index';
+import VColorField from '@wdns/vuetify-color-field';
+import {
+	VAutocomplete,
+	VCombobox,
+	VFileInput,
+	VSelect,
+	VTextField,
+	VTextarea,
+} from 'vuetify/components';
 import type {
 	ComputedClasses,
 	Field,
 	Page,
 	ResponsiveColumns,
 } from '../../types/index';
-import {
-	VAutocomplete,
-	VCombobox,
-	VFileInput,
-	VSelect,
-	VTextarea,
-	VTextField,
-} from 'vuetify/components';
 import { useColumnClasses } from '../../composables/classes';
-import VColorField from '@wdns/vuetify-color-field';
+import * as Fields from '../fields/index';
 
 
 export interface PageContainerProps {

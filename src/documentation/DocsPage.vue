@@ -106,8 +106,8 @@
 </template>
 
 <script setup lang="ts">
-import packageInfo from '../../package.json';
 import * as Section from '@/documentation/sections';
+import packageInfo from '../../package.json';
 
 
 const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;

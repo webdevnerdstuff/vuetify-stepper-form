@@ -1,11 +1,20 @@
+import type VSFButtonField from './VSFButtonField.vue';
 import type {
 	Field,
 	GlobalDensity,
 	SharedProps,
 } from '@/plugin/types';
 import type { VBtn } from 'vuetify/components';
-import type VSFButtonField from './VSFButtonField.vue';
 
+
+export interface Option {
+	appendIcon?: VBtn['appendIcon'];
+	icon?: VBtn['icon'];
+	id?: Field['id'];
+	label: Field['label'];
+	prependIcon?: VBtn['prependIcon'];
+	value: string | number;
+}
 
 interface InternalField extends Field, Partial<Pick<VBtn,
 	'activeColor' |
@@ -28,6 +37,7 @@ interface InternalField extends Field, Partial<Pick<VBtn,
 	hint?: string;
 	messages?: string | string[];
 	multiple?: boolean;
+	options?: Option[];
 	persistentHint?: boolean;
 }
 
@@ -36,6 +46,6 @@ export interface VSFButtonFieldProps extends SharedProps {
 	field: InternalField;
 }
 
-export type VSFButtonField = InstanceType<typeof VSFButtonField>;
+// export type VSFButtonField = InstanceType<typeof VSFButtonField>;
 
 export default VSFButtonField;

@@ -3,19 +3,23 @@ declare module 'vee-validate' {
 		ErrorMessage,
 		Field,
 		FieldValidator,
+		FlattenAndMapPathsValidationResult,
 		Form,
 		FormValidationResult,
 		GenericObject,
 		PrivateFormContext,
+		validate,
 	} from 'vee-validate';
 
 	export {
 		ErrorMessage,
 		Field,
 		FieldValidator,
+		FlattenAndMapPathsValidationResult,
 		Form,
 		FormValidationResult,
 		GenericObject,
-		PrivateFormContext
+		PrivateFormContext,
+		validate,
 	};
 }

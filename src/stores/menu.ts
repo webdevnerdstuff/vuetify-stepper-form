@@ -43,7 +43,7 @@ export const useMenuStore = defineStore('menu', () => {
 			href: '#components-v-fancy-radio',
 			icon: 'mdi:mdi-star-box',
 			key: 'v-fancy-radio',
-			link: ``,
+			link: '',
 			title: 'VFancyRadio',
 			topTitle: 'VFancyRadio',
 		},

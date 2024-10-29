@@ -1,9 +1,9 @@
-import type { VFileInput } from 'vuetify/components';
+import type VSFFileInput from './VSFFileInput.vue';
 import type {
 	Field,
 	SharedProps,
 } from '@/plugin/types';
-import type VSFFileInput from './VSFFileInput.vue';
+import type { VFileInput } from 'vuetify/components';
 
 
 interface InternalField extends Omit<Field,
@@ -20,6 +20,6 @@ export interface VFileInputProps extends SharedProps {
 	field: InternalField;
 }
 
-export type VSFFileInput = InstanceType<typeof VSFFileInput>;
+// export type VSFFileInput = InstanceType<typeof VSFFileInput>;
 
 export default VSFFileInput;

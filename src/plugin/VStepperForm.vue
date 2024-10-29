@@ -62,8 +62,8 @@
 								<v-stepper-window-item
 									v-for="page, i in pages"
 									:key="`${getIndex(i)}-content`"
-									:reverse-transition="transition"
-									:transition="transition"
+									:reverse-transition="transitionComputed"
+									:transition="transitionComputed"
 									:value="getIndex(i)"
 								>
 									<v-container>
@@ -145,30 +145,30 @@
 <script setup lang="ts">
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
-import { AllProps } from './utils/props';
-import { useDisplay } from 'vuetify';
+import { watchDeep } from '@vueuse/core';
 import { Form } from 'vee-validate';
-import type { PrivateFormContext } from 'vee-validate';
+import { useDisplay } from 'vuetify';
 import type {
 	ComputedClasses,
 	Field,
 	Page,
 	Props,
 } from '@/plugin/types';
+import type { PrivateFormContext } from 'vee-validate';
+import PageContainer from './components/shared/PageContainer.vue';
+import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import {
 	useContainerClasses,
 	useStepperContainerClasses,
 } from './composables/classes';
-import componentEmits from './utils/emits';
-import { globalOptions } from './';
-import PageContainer from './components/shared/PageContainer.vue';
-import PageReviewContainer from './components/shared/PageReviewContainer.vue';
 import {
 	useBuildSettings,
 	useColumnErrorCheck,
 	useMergeProps,
 } from './composables/helpers';
-import { watchDeep } from '@vueuse/core';
+import componentEmits from './utils/emits';
+import { AllProps } from './utils/props';
+import { globalOptions } from './';
 
 
 const attrs = useAttrs();
@@ -199,7 +199,7 @@ const allFieldsArray: Ref<Field[]> = ref<Field[]>([]);
 Object.values(pages).forEach((p: Page) => {
 	if (p.fields) {
 		Object.values(p.fields).forEach((field: Field) => {
-			allFieldsArray.value.push(field as Field);
+			allFieldsArray.value.push(field);
 		});
 	}
 });
@@ -236,11 +236,10 @@ const stepperModel = ref(1);
 
 
 const { sm } = useDisplay();
-const transition: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
+const transitionComputed: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
 const parentForm = useTemplateRef<PrivateFormContext>('stepperFormRef');
 
 provide('parentForm', parentForm);
-
 
 
 // -------------------------------------------------- Stepper Action //
@@ -289,7 +288,7 @@ function headerItemDisabled(page: Page): boolean {
 
 
 // & ------------------------------------------------ Validation //
-const validationSchema = computed(() => props.validationSchema as Props['validationSchema']);
+const validationSchema = computed(() => props.validationSchema);
 const currentPageHasErrors = ref(false);
 const errorPageIndexes: Ref<number[]> = ref<number[]>([]);
 
@@ -303,7 +302,11 @@ function runValidation(
 ): void {
 	validate()
 		.then((response: ValidateResult) => {
-			checkForPageErrors(response.errors, source, next);
+			const errors = response.errors as unknown as ValidateResult['errors'];
+			checkForPageErrors(errors, source, next);
+		})
+		.catch((error: Error) => {
+			console.error('Error', error);
 		});
 }
 
@@ -320,6 +323,7 @@ function removePageError(pageIndex: number): void {
 	currentPageHasErrors.value = false;
 }
 
+
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
 	const currentPage = stepperModel.value - 1;
@@ -332,7 +336,7 @@ function checkForPageErrors(errors: ValidateResult['errors'], source: string, ne
 
 	const pageIndex = pages.findIndex((p) => p === page);
 	const pageFields = page?.fields ?? [];
-	const hasErrorInField = Object.keys(errors).some(errorKey => pageFields.some(field => field.name === errorKey));
+	const hasErrorInField = Object.keys(Array(errors)).some(errorKey => pageFields.some(field => field.name === errorKey));
 
 	if (hasErrorInField) {
 		currentPageHasErrors.value = true;
@@ -401,7 +405,7 @@ function callbacks() {
 function whenCallback(): void {
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
-			Object.values(page.fields as Field[]).forEach((field: Field, fieldIdx) => {
+			Object.values(page.fields).forEach((field: Field, fieldIdx) => {
 				if (field.when) {
 					const enabledField: boolean = field.when(modelValue.value);
 					const indexPage = pages[pageIdx];
@@ -429,7 +433,7 @@ const stepperContainerClasses = computed<ComputedClasses>(() => useStepperContai
 // ------------------------ Styles //
 const containerStyle = computed<CSSProperties>(() => {
 	const styles = {
-		width: '100%'
+		width: '100%',
 	};
 
 	return styles;
@@ -437,7 +441,7 @@ const containerStyle = computed<CSSProperties>(() => {
 
 const formContainerStyle = computed<CSSProperties>(() => {
 	const styles = {
-		width: width.value
+		width: width.value,
 	};
 
 	return styles;

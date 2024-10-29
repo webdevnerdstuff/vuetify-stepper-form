@@ -223,9 +223,6 @@ export const usePropsStore = defineStore('props', () => {
 			name: 'prevText',
 			type: 'string',
 		},
-
-
-
 		{
 			default: 'v-stepper-item--selected',
 			desc: vStepperPropDesc,

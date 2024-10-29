@@ -25,7 +25,10 @@ export default defineConfig({
 	},
 	plugins: [
 		eslint({
+			failOnError: false,
 			fix: true,
+			exclude: ['node_modules/**', 'vendor/**'],
+			include: ['src/**/*.{js,ts,mts,vue}'],
 		}),
 		stylelint({
 			cache: false,

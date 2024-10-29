@@ -28,13 +28,13 @@
 </template>
 
 <script lang="ts" setup>
+import { Field } from 'vee-validate';
 import type {
 	VSFCustomProps,
 } from './index';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
-import { Field } from 'vee-validate';
 
 
 const slots = useSlots();
@@ -50,7 +50,7 @@ const FieldLabelComponent = toRaw(FieldLabel);
 
 // ------------------------- Validate On Actions //
 async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
-	useOnActions({
+	await useOnActions({
 		action,
 		emit,
 		field,
@@ -69,7 +69,7 @@ const bindSettings = computed(() => ({
 
 const boundSettings = computed(() => {
 	return {
-		...useBindingSettings(bindSettings.value),
+		...useBindingSettings(bindSettings.value as Partial<Settings>),
 		options: field.options,
 	};
 });

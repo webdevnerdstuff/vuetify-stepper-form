@@ -30,7 +30,7 @@
 
 				<v-item
 					v-for="option, key in field?.options"
-					:key="option"
+					:key="option.value"
 					:class="{
 						'vsf-button-field__stacked': field?.stacked,
 					}"
@@ -96,13 +96,13 @@
 
 
 <script lang="ts" setup>
-import type { VSFButtonFieldProps } from './index';
+import { Field } from 'vee-validate';
 import { VMessages } from 'vuetify/components';
+import type { Option, VSFButtonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
-import { Field } from 'vee-validate';
 
 const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
@@ -111,9 +111,8 @@ const props = defineProps<VSFButtonFieldProps>();
 const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldRequired = computed(() => {
-	const hasRequiredRule = field.rules?.find((rule) => rule.type === 'required');
-	return field.required || hasRequiredRule as FieldLabelProps['required'];
+const fieldRequired = computed<FieldLabelProps['required']>(() => {
+	return field.required || false;
 });
 const fieldValidateOn = computed(() => field?.validateOn ?? settings.value?.validateOn);
 const originalValue = modelValue.value;
@@ -139,12 +138,12 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 
 	if (!field?.disabled && value) {
 		if (field?.multiple) {
-			if (modelValue.value.includes(value)) {
-				const index = modelValue.value.indexOf(value);
-				modelValue.value.splice(index, 1);
+			if (Array(modelValue.value).includes(value)) {
+				const index = Array(modelValue.value).indexOf(value);
+				Array(modelValue.value).splice(index, 1);
 			}
 			else {
-				modelValue.value.push(value);
+				Array(modelValue.value).push(value);
 			}
 		}
 		else {
@@ -152,7 +151,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		}
 	}
 
-	useOnActions({
+	await useOnActions({
 		action,
 		emit,
 		field,
@@ -160,7 +159,10 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		validate,
 	}).then(() => {
 		currentValue.value = modelValue.value;
-	});
+	})
+		.catch((error: Error) => {
+			console.error(error);
+		});
 }
 
 
@@ -174,7 +176,7 @@ const bindSettings = computed(() => ({
 	multiple: undefined,
 }));
 
-const boundSettings = computed(() => useBindingSettings(bindSettings.value, [
+const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>, [
 	'href',
 	'maxErrors',
 	'multiple',
@@ -183,15 +185,22 @@ const boundSettings = computed(() => useBindingSettings(bindSettings.value, [
 
 
 // -------------------------------------------------- Properties //
-const getIcon = (option: any, prop: string) => option[prop] ?? field?.[prop] ?? undefined;
+const getIcon = (option: Option, prop: string): string => {
+	const optionValue = option[prop] as string;
+	const fieldValue = field?.[prop];
 
-function getId(option: Field['option'], key: string | number) {
-	if (option.id) {
+	return optionValue ?? fieldValue;
+};
+
+
+function getId(option: { id?: string; }, key: string | number) {
+	if (option.id != null) {
 		return option.id;
 	}
 
 	return field?.id ? `${field?.id}-${key}` : undefined;
 }
+
 
 // -------------------------------------------------- Properties //
 const densityHeight = {
@@ -213,17 +222,17 @@ const fieldHeight = computed(() => {
 	return fieldDensity.value ? densityHeight[fieldDensity.value] : densityHeight['default'];
 });
 
-const isActive = (val: string): boolean | undefined => {
+const isActive = (val: string | number): boolean | undefined => {
 	if (!modelValue.value) {
 		return undefined;
 	}
 
-	return modelValue.value === val || modelValue.value.includes(val);
+	return modelValue.value === val || Array(modelValue.value).includes(val);
 };
 
 const fieldVariant = ref<VSFButtonFieldProps['field']['variant']>(field?.variant);
 
-function getVariant(val: string): VSFButtonFieldProps['field']['variant'] {
+function getVariant(val: string | number): VSFButtonFieldProps['field']['variant'] {
 	if (isActive(val)) {
 		return 'flat' as const;
 	}

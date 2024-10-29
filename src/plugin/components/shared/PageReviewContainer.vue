@@ -100,7 +100,7 @@ const allFieldsArray = ref<Field[]>([]);
 Object.values(pages).forEach((p) => {
 	if (p.fields) {
 		Object.values(p.fields).forEach((field: Field) => {
-			allFieldsArray.value.push(field as Field);
+			allFieldsArray.value.push(field);
 		});
 	}
 });

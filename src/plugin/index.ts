@@ -1,9 +1,9 @@
-import type { App, Plugin } from 'vue';
 import type { PluginOptions } from './types';
+import type { App, Plugin } from 'vue';
 import './styles/main.scss';
-import VStepperForm from './VStepperForm.vue';
 import FieldLabel from './components/shared/FieldLabel.vue';
 import { AllProps } from './utils/props';
+import VStepperForm from './VStepperForm.vue';
 
 
 const defaultOptions = AllProps;

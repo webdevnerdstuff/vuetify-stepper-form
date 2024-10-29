@@ -29,16 +29,17 @@
 </template>
 
 <script setup lang="ts">
+import Prism from 'prismjs';
 import { useDisplay } from 'vuetify';
-import AppBar from './documentation/layout/AppBar.vue';
 import MenuComponent from './documentation/components/MenuComponent.vue';
 import DocsPage from './documentation/DocsPage.vue';
+import AppBar from './documentation/layout/AppBar.vue';
 import { useCoreStore } from './stores/index';
-import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript.js';
 
 
 onMounted(() => {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	Prism.highlightAll();
 });
 

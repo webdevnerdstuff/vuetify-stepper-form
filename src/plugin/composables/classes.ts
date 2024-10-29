@@ -3,8 +3,8 @@ import {
 	UseContainerClasses,
 	UseStepperContainerClasses,
 } from '@/plugin/types';
-import { useColumnErrorCheck } from './helpers';
 import { componentName } from '../utils/globals';
+import { useColumnErrorCheck } from './helpers';
 
 
 /**
