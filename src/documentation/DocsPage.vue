@@ -69,16 +69,16 @@
 	</v-row>
 
 	<!-- Description -->
-	<Section.Description />
+	<Section.DescriptionSection />
 
 	<!-- Usage -->
-	<Section.Usage :codeBlockOptions="codeBlockOptions" />
+	<Section.UsageSection />
 
 	<!-- Components -->
 	<!-- <Section.Components :codeBlockOptions="codeBlockOptions" /> -->
 
 	<!-- Props -->
-	<Section.Props :codeBlockOptions="codeBlockOptions" />
+	<Section.PropsSection />
 
 	<!-- Validation -->
 	<Section.Validation />
@@ -87,51 +87,42 @@
 	<Section.Example :codeBlockOptions="codeBlockOptions" />
 
 	<!-- Events -->
-	<Section.Events :codeBlockOptions="codeBlockOptions" />
+	<Section.EventsSection />
 
 	<!-- Slots -->
-	<Section.Slots :codeBlockOptions="codeBlockOptions" />
+	<Section.SlotsSection />
 
 	<!-- Playground -->
-	<Section.Playground :codeBlockOptions="codeBlockOptions" />
+	<Section.PlaygroundSection />
 
 	<!-- Dependencies -->
-	<Section.Dependencies />
+	<Section.DependenciesSection />
 
 	<!-- License -->
-	<Section.License />
+	<Section.LicenseSection />
 
 	<!-- Legal -->
-	<Section.Legal />
+	<Section.LegalSection />
 </template>
 
-<script setup>
-import { inject, provide, reactive, ref } from 'vue';
+<script setup lang="ts">
 import packageInfo from '../../package.json';
 import * as Section from '@/documentation/sections';
 
 
-const props = defineProps({
-	codeBlockOptions: {
-		required: true,
-		type: Object,
-	},
-});
+const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
+const links = inject<Docs.Links>('links')!;
 
-const codeBlockSettings = computed(() => props.codeBlockOptions);
-const links = inject('links');
-
-const classes = reactive({
+const classes = reactive<Docs.GlobalClasses>({
 	appLink: 'app-link text-decoration-none primary--text font-weight-medium d-inline-block font-weight-bold',
 	h2: 'text-primary v-heading text-h4 text-sm-h4 mb-2',
 	h3: 'text-blue-darken-2 v-heading text-h5 text-sm-h5 mb-0',
 	h4: 'text-secondary v-heading text-h6 text-sm-h6 mb-0',
 	headerA: 'text-decoration-none text-right text-md-left d-none d-sm-flex',
 });
-const componentVersion = ref(packageInfo.version);
+const componentVersion = ref<string | number>(packageInfo.version);
 
-provide('classes', classes);
-provide('codeBlockSettings', codeBlockSettings);
+provide<Docs.GlobalClasses>('classes', classes);
 </script>
 
 <style lang="scss" scoped>

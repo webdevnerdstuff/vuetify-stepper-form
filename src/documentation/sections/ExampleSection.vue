@@ -16,7 +16,7 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('SimpleExampleRef')"
-			:codeBlockOptions="codeBlockOptions"
+			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('SimpleExampleRef');"
 		>
 			<Example.SimpleExample
@@ -27,7 +27,7 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('ColumnsExampleRef')"
-			:codeBlockOptions="codeBlockOptions"
+			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ColumnsExampleRef');"
 		>
 			<Example.ColumnsExample
@@ -38,7 +38,7 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('FieldSlotExampleRef')"
-			:codeBlockOptions="codeBlockOptions"
+			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('FieldSlotExampleRef');"
 		>
 			<Example.FieldSlotExample
@@ -50,7 +50,7 @@
 		<ExampleContainer
 			id="validation-example"
 			:code="getTemplateCode('ValidationExampleRef')"
-			:codeBlockOptions="codeBlockOptions"
+			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ValidationExampleRef');"
 		>
 			<Example.ValidationExample
@@ -61,7 +61,7 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('ConditionalExampleRef')"
-			:codeBlockOptions="codeBlockOptions"
+			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ConditionalExampleRef');"
 		>
 			<Example.ConditionalExample
@@ -72,7 +72,7 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('SummaryPageExampleRef')"
-			:codeBlockOptions="codeBlockOptions"
+			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('SummaryPageExampleRef');"
 		>
 			<Example.SummaryPageExample
@@ -83,21 +83,13 @@
 	</v-row>
 </template>
 
-<script setup>
-import { inject } from 'vue';
+<script setup lang="ts">
 import ExampleContainer from '../components/ExampleContainer.vue';
 import * as Example from '../components/examples';
 
 
-defineProps({
-	codeBlockOptions: {
-		required: true,
-		type: Object,
-	},
-});
-
-
-const classes = inject('classes');
+const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
+const classes = inject<Docs.GlobalClasses>('classes')!;
 
 
 const SimpleExampleRef = ref(null);

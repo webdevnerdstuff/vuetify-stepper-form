@@ -28,40 +28,41 @@
 	</v-app>
 </template>
 
-<script setup>
-import { computed, provide, ref } from 'vue';
+<script setup lang="ts">
 import { useDisplay } from 'vuetify';
 import AppBar from './documentation/layout/AppBar.vue';
 import MenuComponent from './documentation/components/MenuComponent.vue';
 import DocsPage from './documentation/DocsPage.vue';
 import { useCoreStore } from './stores/index';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript.js';
 
 
-const { smAndUp } = useDisplay();
+onMounted(() => {
+	Prism.highlightAll();
+});
 
-const isSmAndUp = computed(() => smAndUp.value);
+
+const { smAndUp } = useDisplay();
+const isSmAndUp = computed<boolean>(() => smAndUp.value);
 const store = useCoreStore();
-const drawer = ref(isSmAndUp.value);
-const drawerOptions = ref({
+const drawer = ref<boolean>(isSmAndUp.value);
+const drawerOptions: Ref<Docs.DrawerOptions> = ref<Docs.DrawerOptions>({
 	absolute: false,
 	color: '',
 	elevation: 10,
 });
 
+const codeBlockPlugin: string = 'prismjs';
+const codeBlockLightTheme: string = 'tomorrow';
+const codeBlockDarkTheme: string = 'tomorrow';
 
-const codeBlockPlugin = 'prismjs';
-const codeBlockLightTheme = 'tomorrow';
-const codeBlockDarkTheme = 'tomorrow';
-
-const codeBlockSettings = ref({
+const codeBlockSettings: Ref<Docs.CodeBlockSettings> = ref<Docs.CodeBlockSettings>({
 	plugin: codeBlockPlugin,
 	theme: codeBlockDarkTheme,
 });
 
-function updateCodeBlockTheme(val) {
+function updateCodeBlockTheme(val: string): void {
 	codeBlockSettings.value.theme = codeBlockLightTheme;
 
 	if (val === 'dark') {
@@ -69,25 +70,14 @@ function updateCodeBlockTheme(val) {
 	}
 }
 
-provide('drawerOptions', drawerOptions);
-provide('links', store.links);
+provide<Docs.CodeBlockSettings>('codeBlockSettings', codeBlockSettings.value);
+provide<Docs.DrawerOptions>('drawerOptions', drawerOptions.value);
+provide<Docs.Links>('links', store.links);
 
-function toggleDrawer() {
+function toggleDrawer(): void {
 	drawer.value = !drawer.value;
 }
 </script>
-
-<style lang="scss" scoped>
-:deep(code) {
-	&.ic {
-		background-color: rgb(255 255 255 / 10%) !important;
-		border-radius: 3px;
-		font-size: 85%;
-		font-weight: normal;
-		padding: 0.2em 0.4em;
-	}
-}
-</style>
 
 <style lang="scss">
 html {

@@ -62,18 +62,9 @@
 	</v-row>
 </template>
 
-<script setup>
-import { inject } from 'vue';
-
-const props = defineProps({
-	codeBlockOptions: {
-		required: true,
-		type: Object,
-	},
-});
-
-const codeBlockSettings = computed(() => props.codeBlockOptions);
-const classes = inject('classes');
+<script setup lang="ts">
+const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
+const classes = inject<Docs.GlobalClasses>('classes')!;
 const theme = useTheme();
 const isDark = ref(true);
 
