@@ -71,6 +71,7 @@
 						<v-window-item value="template">
 							<v-theme-provider>
 								<VCodeBlock
+									:key="codeKey"
 									:code="code.template"
 									:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
 									lang="html"
@@ -83,6 +84,7 @@
 						<v-window-item value="script">
 							<v-theme-provider>
 								<VCodeBlock
+									:key="codeKey"
 									:code="code.script"
 									:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
 									lang="html"
@@ -111,18 +113,25 @@
 </template>
 
 <script setup lang="ts">
-
 const emit = defineEmits(['closePicker']);
 
 export interface ExampleCode {
 	desc?: string;
 	name?: string;
 	script?: string;
-	template: string;
+	template?: string;
 }
 
 const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
-const { code } = defineProps<{ code: ExampleCode; }>();
+const props = defineProps<{ code: ExampleCode; codeUpdatedAt?: string; updatedCode?: ExampleCode; }>();
+
+const { code, updatedCode } = toRefs(props);
+const codeKey = ref('scriptKey');
+
+watch(() => props.codeUpdatedAt, () => {
+	code.value.script = updatedCode.value?.script;
+	code.value.template = updatedCode.value?.template;
+}, { deep: true });
 
 const hasRendered = ref(true);
 const showCode = ref(false);
@@ -134,7 +143,7 @@ function showCodeBlocks() {
 }
 
 const getHrefId = computed(() => {
-	const id = code.name?.toLowerCase().replace(/\s+/g, '-');
+	const id = code.value.name?.toLowerCase().replace(/\s+/g, '-');
 
 	return `examples-${id}`;
 });

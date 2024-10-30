@@ -6,15 +6,8 @@
 			@updated-drawer="toggleDrawer"
 		/>
 
-		<!-- ====================================================== Navigation Drawer -->
-		<v-navigation-drawer
-			v-model="drawer"
-			:absolute="drawerOptions.absolute"
-			:color="drawerOptions.color"
-			:elevation="drawerOptions.elevation"
-		>
-			<MenuComponent :drawerOptions="drawerOptions" />
-		</v-navigation-drawer>
+		<!-- ====================================================== Menu -->
+		<MenuComponent v-model="drawer" />
 
 		<!-- ====================================================== Main Container -->
 		<v-main class="pb-10">
@@ -81,6 +74,11 @@ function toggleDrawer(): void {
 </script>
 
 <style lang="scss">
+:root {
+	--list-item-padding-left: 50px;
+	--list-item-level-3-padding-left: 26px;
+}
+
 html {
 	scroll-behavior: smooth;
 	scroll-padding-top: 70px;

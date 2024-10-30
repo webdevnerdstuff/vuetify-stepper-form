@@ -2,7 +2,6 @@
 	<VStepperForm
 		v-model="answers"
 		:pages="pages"
-		title="Simple Form"
 		@submit="submitForm"
 	/>
 
@@ -100,6 +99,7 @@ function submitForm() {
 defineExpose({
 	exampleCode: {
 		desc: 'A simple example of the <code class="ic">VStepperForm</code> component.',
+		name: 'Simple Form',
 		script: scriptCode,
 		template: templateCode,
 	},

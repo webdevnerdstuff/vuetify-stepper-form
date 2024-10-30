@@ -2,7 +2,6 @@
 	<VStepperForm
 		v-model="answers"
 		:pages="pages"
-		title="Field Slots"
 		@submit="submitForm"
 	>
 		<template #[`field.foo`]="{ errorMessage, field, blur, change, input, FieldLabel }">

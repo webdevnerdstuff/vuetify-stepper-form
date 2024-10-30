@@ -80,6 +80,20 @@
 				:open="refElementsOpen.SummaryPageExampleRef"
 			/>
 		</ExampleContainer>
+
+		<ExampleContainer
+			:code="getTemplateCode('ButtonsFieldExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			:codeUpdatedAt="ButtonsFieldExampleCode?.updatedAt"
+			:updatedCode="ButtonsFieldExampleCode?.updatedCode"
+			@closePicker="closePicker('ButtonsFieldExampleRef');"
+		>
+			<Example.ButtonsFieldExample
+				ref="ButtonsFieldExampleRef"
+				:open="refElementsOpen.ButtonsFieldExampleRef"
+				@codeUpdated="ButtonsFieldExampleCode = $event"
+			/>
+		</ExampleContainer>
 	</v-row>
 </template>
 
@@ -99,7 +113,11 @@ const ValidationExampleRef = ref(null);
 const ConditionalExampleRef = ref(null);
 const SummaryPageExampleRef = ref(null);
 
+const ButtonsFieldExampleRef = ref(null);
+const ButtonsFieldExampleCode = ref();
+
 const refElements = ref({
+	ButtonsFieldExampleRef,
 	ColumnsExampleRef,
 	ConditionalExampleRef,
 	FieldSlotExampleRef,
@@ -109,6 +127,7 @@ const refElements = ref({
 });
 
 const refElementsOpen = ref({
+	ButtonsFieldExampleRef: null,
 	ColumnsExampleRef: null,
 	ConditionalExampleRef: null,
 	FieldSlotExampleRef: null,

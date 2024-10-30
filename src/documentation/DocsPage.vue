@@ -83,14 +83,14 @@
 	<!-- Validation -->
 	<Section.ValidationSection />
 
-	<!-- Examples -->
-	<Section.ExampleSection />
-
 	<!-- Events -->
 	<Section.EventsSection />
 
 	<!-- Slots -->
 	<Section.SlotsSection />
+
+	<!-- Examples -->
+	<Section.ExampleSection />
 
 	<!-- Playground -->
 	<Section.PlaygroundSection />

@@ -2,7 +2,6 @@
 	<VStepperForm
 		v-model="answers"
 		:pages="pages"
-		title="Validation"
 		validate-on="blur"
 		:validationSchema="validationSchema"
 		@submit="submitForm"

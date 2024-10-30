@@ -8,7 +8,6 @@
 			xl: 6,
 		}"
 		:pages="pages"
-		title="Responsive Columns"
 		@submit="submitForm"
 	/>
 
@@ -161,7 +160,7 @@ function submitForm() {
 defineExpose({
 	exampleCode: {
 		desc: `This example leverages the Vuetify <a href="${links.vuetify}en/components/grids/" target="_blank" nofollow>Grid System.</a> to create a flexible layout. The <code class="ic">field-columns</code> prop lets you set how many columns each field should occupy across various breakpoints. You can also define <code class="ic">pageFieldColumns</code> specific to each page, while the <code class="ic">columns</code> prop on individual fields enables overrides for the default settings. The hierarchy of column settings is as follows: individual fields take precedence, followed by page-specific settings, and finally, the default field columns.`,
-		name: 'Columns',
+		name: 'Responsive Columns',
 		script: scriptCode,
 		template: templateCode,
 	},
