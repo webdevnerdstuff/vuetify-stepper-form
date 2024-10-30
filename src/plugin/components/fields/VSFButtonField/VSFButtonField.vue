@@ -1,5 +1,4 @@
 <template>
-	{{ fieldWidth }}
 	<Field
 		v-slot="{ errorMessage, validate }"
 		v-model="modelValue"
@@ -44,6 +43,7 @@
 							:appendIcon="getIcon(option, 'appendIcon')"
 							class="text-none"
 							:class="{
+								[`${option?.class}`]: true,
 								...buttonClass,
 								[`${field.selectedClass}`]: isActive(option.value),
 							}"

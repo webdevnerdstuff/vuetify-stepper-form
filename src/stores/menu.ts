@@ -7,42 +7,10 @@ export const useMenuStore = defineStore('menu', () => {
 	const links = coreStore.links;
 
 	const componentItems = [
-		// {
-		// 	href: '#components-v-autocomplete',
-		// 	icon: 'mdi:mdi-playlist-edit',
-		// 	key: 'v-autocomplete',
-		// 	link: `${links.vuetify}en/api/v-autocomplete/`,
-		// 	title: 'VAutocomplete',
-		// 	topTitle: 'VAutocomplete',
-		// },
-		// {
-		// 	href: '#components-v-checkbox',
-		// 	icon: 'mdi:mdi-checkbox-outline',
-		// 	key: 'v-checkbox',
-		// 	link: `${links.vuetify}en/api/v-checkbox/`,
-		// 	title: 'VCheckbox',
-		// 	topTitle: 'VCheckbox',
-		// },
-		// {
-		// 	href: '#components-v-combobox',
-		// 	icon: 'mdi:mdi-playlist-edit',
-		// 	key: 'v-combobox',
-		// 	link: `${links.vuetify}en/api/v-combobox/`,
-		// 	title: 'VCombobox',
-		// 	topTitle: 'VCombobox',
-		// },
-		// {
-		// 	href: '#components-v-color-field',
-		// 	icon: 'mdi:mdi-palette',
-		// 	key: 'v-color-field',
-		// 	link: `${links.vColorField}`,
-		// 	title: 'VColorField',
-		// 	topTitle: 'VColorField',
-		// },
 		{
-			href: '#components-buttons-field',
+			href: '#components',
 			icon: '$vuetify',
-			key: 'buttons-field',
+			key: 'components',
 			link: '',
 			title: 'Vuetify',
 		},
@@ -53,60 +21,12 @@ export const useMenuStore = defineStore('menu', () => {
 			link: '',
 			title: 'Buttons Field',
 		},
-		{
-			href: '#components-field-label',
-			icon: 'mdi:mdi-label',
-			key: 'field-label',
-			link: '',
-			title: 'Field Label',
-		},
 		// {
-		// 	href: '#components-v-file-input',
-		// 	icon: 'mdi:mdi-paperclip',
-		// 	key: 'v-file-input',
-		// 	link: `${links.vuetify}en/api/v-file-input/`,
-		// 	title: 'VFileInput',
-		// 	topTitle: 'VFileInput',
-		// },
-		// {
-		// 	href: '#components-v-radio',
-		// 	icon: 'mdi:mdi-circle-slice-8',
-		// 	key: 'v-radio',
-		// 	link: `${links.vuetify}en/api/v-radio/`,
-		// 	title: 'VRadio',
-		// 	topTitle: 'VRadio',
-		// },
-		// {
-		// 	href: '#components-v-select',
-		// 	icon: 'mdi:mdi-format-list-bulleted',
-		// 	key: 'v-select',
-		// 	link: `${links.vuetify}en/api/v-select/`,
-		// 	title: 'VSelect',
-		// 	topTitle: 'VSelect',
-		// },
-		// {
-		// 	href: '#components-v-switch',
-		// 	icon: 'mdi:mdi-toggle-switch-off-outline',
-		// 	key: 'v-switch',
-		// 	link: `${links.vuetify}en/api/v-switch/`,
-		// 	title: 'VSwitch',
-		// 	topTitle: 'VSwitch',
-		// },
-		// {
-		// 	href: '#components-v-textarea',
-		// 	icon: 'mdi:mdi-text-long',
-		// 	key: 'v-textarea',
-		// 	link: `${links.vuetify}en/api/v-textarea/`,
-		// 	title: 'VTextarea',
-		// 	topTitle: 'VTextarea',
-		// },
-		// {
-		// 	href: '#components-v-text-field',
-		// 	icon: 'mdi:mdi-minus',
-		// 	key: 'v-text-field',
-		// 	link: `${links.vuetify}en/api/v-text-field/`,
-		// 	title: 'VTextField',
-		// 	topTitle: 'VTextField',
+		// 	href: '#components-field-label',
+		// 	icon: 'mdi:mdi-label',
+		// 	key: 'field-label',
+		// 	link: '',
+		// 	title: 'Field Label',
 		// },
 	];
 
@@ -146,15 +66,6 @@ export const useMenuStore = defineStore('menu', () => {
 			title: 'Usage',
 		},
 		{
-			href: '#components',
-			icon: '$vuetify',
-			items: [
-				...componentItems,
-			],
-			key: 'components',
-			title: 'Components',
-		},
-		{
 			href: '#props',
 			icon: 'mdi:mdi-cog',
 			items: [
@@ -178,6 +89,15 @@ export const useMenuStore = defineStore('menu', () => {
 				},
 			],
 			title: 'Props',
+		},
+		{
+			href: '#components',
+			icon: '$vuetify',
+			items: [
+				...componentItems,
+			],
+			key: 'components',
+			title: 'Components',
 		},
 		{
 			href: '#validation',

@@ -130,11 +130,14 @@ export interface Field {
 	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
 	errorMessages?: string | string[];
-	hideDetails?: GlobalHideDetails;
 	hidden?: boolean;
+	hideDetails?: GlobalHideDetails;
 	id?: string;
+	inline?: boolean; 															// ? Checkboxes //
+	inlineSpacing?: string; 												// ? Checkboxes //
 	items?: readonly any[] | undefined;
 	label?: string;
+	labelPositionLeft?: boolean; 										// ? Checkboxes //
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean | undefined;
@@ -147,11 +150,6 @@ export interface Field {
 	// ? Date Field //
 	// dateFormat?: string;
 	// dateSeparator?: string;
-
-	// ? Checkboxes //
-	inline?: boolean;
-	inlineSpacing?: string;
-	labelPositionLeft?: boolean;
 }
 
 

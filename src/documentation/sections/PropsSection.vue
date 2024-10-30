@@ -114,11 +114,14 @@
 			/>
 		</v-col>
 
-		<v-col cols="12">
+		<v-col
+			id="props-field-interface"
+			cols="12"
+		>
 			<VCodeBlock
 				:code="fieldTypings"
 				:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
-				label="Field typings"
+				label="Field Interface"
 				lang="typescript"
 				:prismjs="codeBlockSettings.plugin === 'prismjs'"
 				:theme="codeBlockSettings.theme"
@@ -208,6 +211,7 @@ const fieldTypings = `interface Field {
   autoPage?: Props['autoPage'];
   autoPageDelay?: Props['autoPageDelay'];
   canReview?: Props['canReview'];
+  class?: string;
   color?: Props['color'];
   columns?: Props['fieldColumns'];
   density?: Props['density'];
@@ -240,7 +244,7 @@ interface KeyStringAny<T = any> {
 const fieldTypes = `type FieldTypes =
     'autocomplete'  // VAutocomplete
   | 'checkbox'      // VCheckbox
-	| 'buttons' 		 	// VButtonField is a custom component with this plugin
+  | 'buttons'       // Buttons Field is a custom component with this plugin
   | 'color'         // VColorField (from @wdns/vuetify-color-field)
   | 'combobox'      // VCombobox
   | 'date'          // VDateInput (current not supported as the component is in labs)

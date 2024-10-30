@@ -104,12 +104,6 @@ a {
 			}
 		}
 	}
-
-	code {
-		&.ic {
-			background-color: rgb(0 0 0 / 10%) !important;
-		}
-	}
 }
 
 .top-app-bar {
@@ -155,5 +149,27 @@ a {
 
 .v-divider {
 	margin: 0;
+}
+</style>
+
+<style lang="scss" scoped>
+:deep(pre),
+:deep(code) {
+	&.ic {
+		background-color: rgb(255 255 255 / 10%) !important;
+		border-radius: 3px;
+		font-size: 85%;
+		font-weight: normal;
+		padding: 0.2em 0.4em;
+	}
+}
+
+.v-theme--light {
+	:deep(pre),
+	:deep(code) {
+		&.ic {
+			background-color: rgb(0 0 0 / 10%) !important;
+		}
+	}
 }
 </style>
