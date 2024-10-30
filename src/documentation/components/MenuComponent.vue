@@ -74,27 +74,43 @@ onMounted(() => {
 	active.value = window.location.hash || '#home';
 });
 
+function scrollToHash(hash: string): void {
+	const id: string = hash.replace('#', '');
+	const yOffset: number = -55;
+	const element: HTMLElement | null = document.getElementById(id);
+
+	if (element) {
+		const y: number = element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+		active.value = hash;
+
+		window.location.hash = hash;
+		window.scrollTo({ behavior: 'smooth', top: y });
+	}
+}
+
 function smoothScroll(): void {
 	document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
 		anchor.addEventListener('click', (e: MouseEvent) => {
 			e.preventDefault();
 
 			const hash: string = anchor.hash;
-			const id: string = hash.replace('#', '');
-			const yOffset: number = -55;
-			const element: HTMLElement | null = document.getElementById(id);
 
-			if (element) {
-				const y: number = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-				active.value = hash;
-
-				window.location.hash = hash;
-				window.scrollTo({ behavior: 'smooth', top: y });
+			if (hash) {
+				scrollToHash(hash);
 			}
 		});
 	});
+
+	window.addEventListener('load', () => {
+		const hash = window.location.hash;
+		if (hash) {
+			scrollToHash(hash);
+		}
+	});
 }
+
+
 </script>
 
 <style lang="scss">
