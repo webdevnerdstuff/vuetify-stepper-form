@@ -60,6 +60,7 @@
 							<v-radio
 								v-bind="boundSettings"
 								:id="undefined"
+								:density="fieldDensity"
 								:error="errorMessage ? errorMessage?.length > 0 : false"
 								:error-messages="errorMessage"
 								:label="option.label"
@@ -82,6 +83,7 @@
 import { Field } from 'vee-validate';
 import type { VSFRadioProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
+import type { VRadio } from 'vuetify/components';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
@@ -94,7 +96,7 @@ const props = defineProps<VSFRadioProps>();
 const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldDensity = computed(() => field?.density ?? settings.value.density);
+const fieldDensity = computed<VRadio['density']>(() => (field?.density ?? settings.value?.density) as VRadio['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
 	return field.required || false;
 });

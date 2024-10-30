@@ -11,6 +11,7 @@
 		<v-switch
 			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
 			v-model="modelValue"
+			:density="fieldDensity"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
 			@blur="onActions((validate as ValidateFieldResult), 'blur')"
@@ -32,6 +33,7 @@
 import { Field } from 'vee-validate';
 import type { VSFSwitchProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
+import type { VSwitch } from 'vuetify/components';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
@@ -44,6 +46,7 @@ const props = defineProps<VSFSwitchProps>();
 const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
+const fieldDensity = computed<VSwitch['density']>(() => (field?.density ?? settings.value?.density) as VSwitch['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
 	return field.required || false;
 });

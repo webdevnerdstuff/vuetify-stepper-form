@@ -48,7 +48,7 @@
 								[`${field.selectedClass}`]: isActive(option.value),
 							}"
 							:color="option?.color || field?.color || settings?.color"
-							:density="(buttonDensity as VBtn['density'])"
+							:density="fieldDensity"
 							:height="fieldHeight"
 							:icon="getIcon(option, 'icon')"
 							:minWidth="fieldMinWidth || (option?.icon ? 'auto' : '100px')"
@@ -172,15 +172,6 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		});
 }
 
-const buttonDensity = computed<VSFButtonFieldProps['field']['density']>(() => {
-	const density = field?.density ?? settings.value?.density;
-
-	if (['comfortable', 'compact', 'default'].includes(density as string)) {
-		return density;
-	}
-
-	return;
-});
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
@@ -227,7 +218,7 @@ const densityValues = {
 	oversized: '72px',
 };
 
-const fieldDensity = computed(() => field?.density ?? settings.value?.density);
+const fieldDensity = computed<VBtn['density']>(() => (field?.density ?? settings.value?.density) as VBtn['density']);
 
 function useSize(val: string) {
 
@@ -342,9 +333,11 @@ const buttonFieldContainerClass = computed(() => {
 });
 
 const buttonClass = computed(() => {
-	if (fieldDensity.value === 'expanded' || fieldDensity.value === 'oversized') {
+	const localDensity = fieldDensity.value as string;
+
+	if (localDensity === 'expanded' || localDensity === 'oversized') {
 		return {
-			[`v-btn--density-${fieldDensity.value}`]: true,
+			[`v-btn--density-${localDensity}`]: true,
 		};
 	}
 
