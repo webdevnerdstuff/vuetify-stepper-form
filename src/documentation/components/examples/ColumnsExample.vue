@@ -8,7 +8,6 @@
 			xl: 6,
 		}"
 		:pages="pages"
-		title="Responsive Columns"
 		@submit="submitForm"
 	/>
 
@@ -18,12 +17,11 @@
 	/>
 </template>
 
-<script setup>
-import { inject, ref } from 'vue';
+<script setup lang="ts">
 import AnswersDialog from '../AnswersDialog.vue';
 
 
-const links = inject('links');
+const links = inject<Docs.Links>('links')!;
 const dialog = ref(false);
 
 const answers = ref({
@@ -43,7 +41,7 @@ const pages = [
 				},
 				label: 'Foo',
 				name: 'foo',
-				type: 'text',
+				type: 'text' as const,
 			},
 			{
 				columns: {
@@ -52,7 +50,7 @@ const pages = [
 				},
 				label: 'Bar',
 				name: 'bar',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 	},
@@ -61,12 +59,12 @@ const pages = [
 			{
 				label: 'Biz',
 				name: 'biz',
-				type: 'text',
+				type: 'text' as const,
 			},
 			{
 				label: 'Baz',
 				name: 'baz',
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		pageFieldColumns: {
@@ -76,7 +74,7 @@ const pages = [
 	},
 ];
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -162,10 +160,10 @@ function submitForm() {
 defineExpose({
 	exampleCode: {
 		desc: `This example leverages the Vuetify <a href="${links.vuetify}en/components/grids/" target="_blank" nofollow>Grid System.</a> to create a flexible layout. The <code class="ic">field-columns</code> prop lets you set how many columns each field should occupy across various breakpoints. You can also define <code class="ic">pageFieldColumns</code> specific to each page, while the <code class="ic">columns</code> prop on individual fields enables overrides for the default settings. The hierarchy of column settings is as follows: individual fields take precedence, followed by page-specific settings, and finally, the default field columns.`,
-		name: 'Columns',
+		name: 'Responsive Columns',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

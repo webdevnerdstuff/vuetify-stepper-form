@@ -1,3 +1,4 @@
+import ButtonsFieldExample from './ButtonsFieldExample.vue';
 import ColumnsExample from './ColumnsExample.vue';
 import ConditionalExample from './ConditionalExample.vue';
 import FieldSlotExample from './FieldSlotExample.vue';
@@ -7,6 +8,7 @@ import ValidationExample from './ValidationExample.vue';
 
 
 export {
+	ButtonsFieldExample,
 	ColumnsExample,
 	ConditionalExample,
 	FieldSlotExample,

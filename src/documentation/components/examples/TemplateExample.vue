@@ -2,6 +2,7 @@
 	<VStepperForm
 		v-model="answers"
 		v-bind="formSettings"
+		:validationSchema="validationSchema"
 		@submit="submitForm"
 	/>
 </template>
@@ -9,8 +10,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import {
-	string as yupString,
 	object as yupObject,
+	string as yupString,
 } from 'yup';
 
 const answers = ref({
@@ -25,7 +26,7 @@ const pages = [
 				label: 'Foo',
 				name: 'foo',
 				required: true,
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 1',
@@ -36,11 +37,11 @@ const pages = [
 				label: 'Bar',
 				name: 'bar',
 				required: true,
-				type: 'text',
+				type: 'text' as const,
 			},
 		],
 		title: 'Page 2',
-	}
+	},
 ];
 
 const validationSchema = yupObject({
@@ -50,16 +51,17 @@ const validationSchema = yupObject({
 
 
 const formSettings = ref({
+	// altLabels: true,
 	// autoPage: true,
 	// autoPageDelay: 2000,
-	// altLabels: true,
 	// bgColor: 'secondary',
 	// border: 'lg',
 	// canReview: false,
 	// color: 'yellow',
-	// density: 'default',
+	// density: 'default' as const,
 	// disabled: true,
 	// editable: false,
+	// elevation: 10,
 	// errorIcon: 'fas fa-cog',
 	// fieldColumns: {
 	// 	lg: 12,
@@ -68,11 +70,9 @@ const formSettings = ref({
 	// 	xl: 12,
 	// },
 	// flat: true,
-	// elevation: 10,
 	// height: '900px',
 	// hideActions: true,
 	// hideDetails: true,
-
 	// maxHeight: '50px',
 	// maxWidth: '50px',
 	// minHeight: '900px',
@@ -87,14 +87,13 @@ const formSettings = ref({
 	// theme: 'light',
 	// tile: true,
 	title: 'Basic Form',
-	validateOn: 'blur',
+	validateOn: 'blur' as const,
 	// validateOnMount: true,
-	validationSchema: validationSchema,
 	// variant: 'outlined',
 	// width: '50px',
 });
 
-function submitForm() {
+function submitForm(): void {
 	console.log('submitForm');
 }
 
@@ -112,7 +111,7 @@ defineExpose({
 		desc: 'A simple example of a color picker field using the <code class="ic">VTextField</code> component. Clicking on the icon will open the color picker.',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

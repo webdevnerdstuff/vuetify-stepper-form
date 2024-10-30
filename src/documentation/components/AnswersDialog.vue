@@ -27,9 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
-
-
 const modelValue = defineModel<boolean>();
 const { answers } = defineProps<{ answers: any; }>();
 

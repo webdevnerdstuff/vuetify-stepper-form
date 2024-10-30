@@ -36,8 +36,6 @@
 					}"
 				>
 					<template #default>
-						<!-- {{ fieldVariant }} -->
-						<!-- {{ modelValue === option.value ? 'solo' : fieldVariant }} -->
 						<v-btn
 							v-bind="boundSettings"
 							:id="getId(option, key)"
@@ -45,15 +43,19 @@
 							:appendIcon="getIcon(option, 'appendIcon')"
 							class="text-none"
 							:class="{
+								[`${option?.class}`]: true,
+								...buttonClass,
 								[`${field.selectedClass}`]: isActive(option.value),
 							}"
+							:color="option?.color || field?.color || settings?.color"
+							:density="(buttonDensity as VBtn['density'])"
 							:height="fieldHeight"
 							:icon="getIcon(option, 'icon')"
-							:minWidth="field?.minWidth || '100px'"
+							:minWidth="fieldMinWidth || (option?.icon ? 'auto' : '100px')"
 							:prependIcon="getIcon(option, 'prependIcon')"
 							:variant="getVariant(option.value)"
-							:width="field?.width || '100px'"
-							@click="onActions(validate, 'click', option.value);"
+							:width="fieldWidth"
+							@click.prevent="onActions(validate, 'click', option.value);"
 							@keydown.space.prevent="onActions(validate, 'click', option.value)"
 							@mousedown="onFocus(option.value)"
 							@mouseleave="onFocus(null)"
@@ -100,12 +102,13 @@ import { Field } from 'vee-validate';
 import { VMessages } from 'vuetify/components';
 import type { Option, VSFButtonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
+import type { VBtn } from 'vuetify/components';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
 
 const emit = defineEmits(['validate']);
-const modelValue = defineModel<any>();
+const modelValue = defineModel<unknown>();
 const props = defineProps<VSFButtonFieldProps>();
 
 const { field } = props;
@@ -131,20 +134,24 @@ if (modelValue?.value == null) {
 const currentValue = ref(modelValue.value);
 
 // ------------------------- Validate On Actions //
-async function onActions(validate: FieldValidateResult, action: ValidateAction, value?: unknown): Promise<void> {
+async function onActions(validate: FieldValidateResult, action: ValidateAction, value?: string | number): Promise<void> {
 	if (currentValue.value === value && (fieldValidateOn.value === 'change' || fieldValidateOn.value === 'input')) {
 		return;
 	}
 
 	if (!field?.disabled && value) {
 		if (field?.multiple) {
-			if (Array(modelValue.value).includes(value)) {
-				const index = Array(modelValue.value).indexOf(value);
-				Array(modelValue.value).splice(index, 1);
+			const localModelValue = modelValue.value as string[];
+
+			if (localModelValue != null && localModelValue.includes(String(value))) {
+				const index = localModelValue.indexOf(String(value));
+				localModelValue.splice(index, 1);
 			}
 			else {
-				Array(modelValue.value).push(value);
+				localModelValue.push(String(value));
 			}
+
+			modelValue.value = localModelValue;
 		}
 		else {
 			modelValue.value = value;
@@ -165,13 +172,22 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		});
 }
 
+const buttonDensity = computed<VSFButtonFieldProps['field']['density']>(() => {
+	const density = field?.density ?? settings.value?.density;
+
+	if (['comfortable', 'compact', 'default'].includes(density as string)) {
+		return density;
+	}
+
+	return;
+});
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
 	border: field?.border ? `${field?.color} ${field?.border}` : undefined,
 	color: field.color || settings.value?.color,
-	density: field.density || settings.value?.density,
+	density: field?.density ?? settings.value?.density as VBtn['density'],
 	hideDetails: field.hideDetails || settings.value?.hideDetails,
 	multiple: undefined,
 }));
@@ -203,7 +219,7 @@ function getId(option: { id?: string; }, key: string | number) {
 
 
 // -------------------------------------------------- Properties //
-const densityHeight = {
+const densityValues = {
 	comfortable: '48px',
 	compact: '40px',
 	default: '56px',
@@ -213,21 +229,28 @@ const densityHeight = {
 
 const fieldDensity = computed(() => field?.density ?? settings.value?.density);
 
-const fieldHeight = computed(() => {
-	if (field?.height) {
-		return field?.height;
+function useSize(val: string) {
+
+	if (field?.[val]) {
+		return field[val] as string;
+	}
+	else if (val === 'minWidth') {
+		return field[val] || undefined;
 	}
 
+	return fieldDensity.value ? densityValues[fieldDensity.value] : densityValues['default'];
+}
 
-	return fieldDensity.value ? densityHeight[fieldDensity.value] : densityHeight['default'];
-});
+const fieldHeight = computed(() => useSize('height'));
+const fieldWidth = computed(() => useSize('width'));
+const fieldMinWidth = computed(() => useSize('minWidth'));
 
 const isActive = (val: string | number): boolean | undefined => {
 	if (!modelValue.value) {
 		return undefined;
 	}
 
-	return modelValue.value === val || Array(modelValue.value).includes(val);
+	return modelValue.value === val || (modelValue.value as string[]).includes(val as string);
 };
 
 const fieldVariant = ref<VSFButtonFieldProps['field']['variant']>(field?.variant);
@@ -316,6 +339,16 @@ const buttonFieldContainerClass = computed(() => {
 		'vsf-button-field__container': true,
 		[`align-${field?.align}`]: field?.align,
 	};
+});
+
+const buttonClass = computed(() => {
+	if (fieldDensity.value === 'expanded' || fieldDensity.value === 'oversized') {
+		return {
+			[`v-btn--density-${fieldDensity.value}`]: true,
+		};
+	}
+
+	return {};
 });
 
 // -------------------------------------------------- Focused //

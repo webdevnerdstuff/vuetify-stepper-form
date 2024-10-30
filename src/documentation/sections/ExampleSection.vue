@@ -80,17 +80,31 @@
 				:open="refElementsOpen.SummaryPageExampleRef"
 			/>
 		</ExampleContainer>
+
+		<ExampleContainer
+			:code="getTemplateCode('ButtonsFieldExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			:codeUpdatedAt="ButtonsFieldExampleCode?.updatedAt"
+			:updatedCode="ButtonsFieldExampleCode?.updatedCode"
+			@closePicker="closePicker('ButtonsFieldExampleRef');"
+		>
+			<Example.ButtonsFieldExample
+				ref="ButtonsFieldExampleRef"
+				:open="refElementsOpen.ButtonsFieldExampleRef"
+				@codeUpdated="ButtonsFieldExampleCode = $event"
+			/>
+		</ExampleContainer>
 	</v-row>
 </template>
 
 <script setup lang="ts">
+import type { ExampleCode } from '../components/ExampleContainer.vue';
 import ExampleContainer from '../components/ExampleContainer.vue';
 import * as Example from '../components/examples';
 
 
 const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
 const classes = inject<Docs.GlobalClasses>('classes')!;
-
 
 const SimpleExampleRef = ref(null);
 const ColumnsExampleRef = ref(null);
@@ -99,7 +113,11 @@ const ValidationExampleRef = ref(null);
 const ConditionalExampleRef = ref(null);
 const SummaryPageExampleRef = ref(null);
 
+const ButtonsFieldExampleRef = ref(null);
+const ButtonsFieldExampleCode = ref();
+
 const refElements = ref({
+	ButtonsFieldExampleRef,
 	ColumnsExampleRef,
 	ConditionalExampleRef,
 	FieldSlotExampleRef,
@@ -109,6 +127,7 @@ const refElements = ref({
 });
 
 const refElementsOpen = ref({
+	ButtonsFieldExampleRef: null,
 	ColumnsExampleRef: null,
 	ConditionalExampleRef: null,
 	FieldSlotExampleRef: null,
@@ -117,14 +136,14 @@ const refElementsOpen = ref({
 	ValidationExampleRef: null,
 });
 
-function getTemplateCode(exampleName) {
+function getTemplateCode(exampleName: string): ExampleCode {
 	const el = refElements.value[exampleName];
 	const example = el?.exampleCode ?? { code: '', desc: undefined, name: undefined, template: '' };
 
 	return example;
 }
 
-function closePicker(key) {
+function closePicker(key: string) {
 	refElementsOpen.value[key] = new Date().getTime().toString();
 }
 </script>

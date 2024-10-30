@@ -74,23 +74,23 @@
 	<!-- Usage -->
 	<Section.UsageSection />
 
-	<!-- Components -->
-	<!-- <Section.Components /> -->
-
 	<!-- Props -->
 	<Section.PropsSection />
 
+	<!-- Components -->
+	<Section.ComponentsSection />
+
 	<!-- Validation -->
 	<Section.ValidationSection />
-
-	<!-- Examples -->
-	<Section.ExampleSection />
 
 	<!-- Events -->
 	<Section.EventsSection />
 
 	<!-- Slots -->
 	<Section.SlotsSection />
+
+	<!-- Examples -->
+	<Section.ExampleSection />
 
 	<!-- Playground -->
 	<Section.PlaygroundSection />
@@ -125,26 +125,4 @@ const componentVersion = ref<string | number>(packageInfo.version);
 provide<Docs.GlobalClasses>('classes', classes);
 </script>
 
-<style lang="scss" scoped>
-:deep(pre),
-:deep(code) {
-	&.ic {
-		background-color: rgb(255 255 255 / 10%) !important;
-		border-radius: 3px;
-		font-size: 85%;
-		font-weight: normal;
-		padding: 0.2em 0.4em;
-	}
-}
-</style>
-
-<style lang="scss">
-.v-theme--light {
-	pre,
-	code {
-		&.ic {
-			background-color: rgb(0 0 0 / 10%) !important;
-		}
-	}
-}
-</style>
+<style lang="scss" scoped></style>

@@ -2,7 +2,6 @@
 	<VStepperForm
 		v-model="answers"
 		:pages="pages"
-		title="Field Slots"
 		@submit="submitForm"
 	>
 		<template #[`field.foo`]="{ errorMessage, field, blur, change, input, FieldLabel }">
@@ -70,18 +69,18 @@ const pages = [
 			{
 				label: 'Foo',
 				name: 'foo',
-				type: 'field',
+				type: 'field' as const,
 			},
 			{
 				label: 'Bar',
 				name: 'bar',
-				type: 'field',
+				type: 'field' as const,
 			},
 		],
 	},
 ];
 
-function submitForm() {
+function submitForm(): void {
 	dialog.value = true;
 }
 
@@ -172,7 +171,7 @@ defineExpose({
 		name: 'Field Slots',
 		script: scriptCode,
 		template: templateCode,
-	}
+	},
 });
 </script>
 

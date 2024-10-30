@@ -103,7 +103,6 @@
 							</v-stepper-window>
 
 							<v-stepper-actions v-if="!settings.hideActions">
-
 								<template #next>
 									<v-btn
 										v-if="!lastPage"
@@ -129,11 +128,6 @@
 									/>
 								</template>
 							</v-stepper-actions>
-
-							<v-row>
-								<v-col>
-								</v-col>
-							</v-row>
 						</Form>
 					</template>
 				</v-stepper>

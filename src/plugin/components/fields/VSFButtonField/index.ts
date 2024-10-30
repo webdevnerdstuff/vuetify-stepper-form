@@ -9,6 +9,8 @@ import type { VBtn } from 'vuetify/components';
 
 export interface Option {
 	appendIcon?: VBtn['appendIcon'];
+	class?: string;
+	color?: VBtn['color'];
 	icon?: VBtn['icon'];
 	id?: Field['id'];
 	label: Field['label'];

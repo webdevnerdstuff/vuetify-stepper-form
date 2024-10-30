@@ -53,7 +53,7 @@ declare global {
 	* VTextField
 	* VTextarea
 */
-export type GlobalDensity = null | 'default' | 'comfortable' | 'compact';
+export type GlobalDensity = null | 'default' | 'comfortable' | 'compact' | 'expanded' | 'oversized';
 export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'solo' | 'solo-inverted' | 'solo-filled';
 
 
@@ -126,15 +126,18 @@ export interface Field {
 	class?: string;
 	color?: Props['color'];
 	columns?: Props['fieldColumns'];
-	density?: Props['density'];
+	density?: GlobalDensity;
 	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
 	errorMessages?: string | string[];
-	hideDetails?: GlobalHideDetails;
 	hidden?: boolean;
+	hideDetails?: GlobalHideDetails;
 	id?: string;
+	inline?: boolean; 															// ? Checkboxes //
+	inlineSpacing?: string; 												// ? Checkboxes //
 	items?: readonly any[] | undefined;
 	label?: string;
+	labelPositionLeft?: boolean; 										// ? Checkboxes //
 	name: string;
 	options?: KeyStringAny;
 	required?: boolean | undefined;
@@ -147,11 +150,6 @@ export interface Field {
 	// ? Date Field //
 	// dateFormat?: string;
 	// dateSeparator?: string;
-
-	// ? Checkboxes //
-	inline?: boolean;
-	inlineSpacing?: string;
-	labelPositionLeft?: boolean;
 }
 
 
@@ -173,7 +171,7 @@ export interface Page {
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
-	validationSchema: Schema<any> | ZodSchema;
+	validationSchema?: Schema<any> | ZodSchema;
 
 	// Optional //
 	autoPage?: boolean;

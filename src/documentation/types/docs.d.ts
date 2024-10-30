@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 declare namespace Docs {
 	export interface KeyStringAny<T = any> {
 		[key: string]: T;
@@ -17,6 +17,7 @@ declare namespace Docs {
 		license: string;
 		npm: string;
 		pnpm: string;
+		vColorField: string;
 		vue: string;
 		vuetify: string;
 		vuetifyGithub: string;
