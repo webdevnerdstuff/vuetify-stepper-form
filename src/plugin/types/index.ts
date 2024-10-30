@@ -53,7 +53,7 @@ declare global {
 	* VTextField
 	* VTextarea
 */
-export type GlobalDensity = null | 'default' | 'comfortable' | 'compact';
+export type GlobalDensity = null | 'default' | 'comfortable' | 'compact' | 'expanded' | 'oversized';
 export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'solo' | 'solo-inverted' | 'solo-filled';
 
 
@@ -126,7 +126,7 @@ export interface Field {
 	class?: string;
 	color?: Props['color'];
 	columns?: Props['fieldColumns'];
-	density?: Props['density'];
+	density?: GlobalDensity;
 	disabled?: boolean | ((value: any) => boolean);
 	error?: boolean;
 	errorMessages?: string | string[];
