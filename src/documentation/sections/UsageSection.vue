@@ -23,8 +23,6 @@
 			>
 				<template #label>
 					Global Plugin Registration
-					<!-- <br>
-					<i>Global options have a higher precedence and will override local props</i> -->
 				</template>
 			</VCodeBlock>
 		</v-col>
