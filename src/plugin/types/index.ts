@@ -13,6 +13,7 @@ import type {
 	VStepperItem,
 	// VStepperActions,
 	VStepperWindowItem,
+	VTooltip,
 } from 'vuetify/components';
 import type { ValidationRule } from 'vuetify/composables/validation';
 import type { Schema } from 'yup';
@@ -182,11 +183,15 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	direction?: 'horizontal' | 'vertical';
 	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
+	headerTooltips?: boolean;
 	hideDetails?: GlobalHideDetails;
 	keepValuesOnUnmount?: boolean,
 	navButtonSize?: VBtn['size'];
 	summaryColumns?: ResponsiveColumns;
 	title?: string;
+	tooltipLocation?: VTooltip['location'];
+	tooltipOffset?: VTooltip['offset'];
+	tooltipTransition?: VTooltip['transition'];
 	validateOn?: Field['validateOn'];
 	validateOnMount?: boolean;
 	variant?: string;

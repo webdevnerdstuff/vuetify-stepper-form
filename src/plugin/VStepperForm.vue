@@ -34,6 +34,7 @@
 								:key="`${getIndex(i)}-step`"
 							>
 								<v-stepper-item
+									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
 									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
 									:editable="headerItemDisabled(page)"
@@ -41,7 +42,22 @@
 									:error="page.error"
 									:title="page.title"
 									:value="getIndex(i)"
-								></v-stepper-item>
+								>
+									<v-tooltip
+										v-if="!mobile && settings.headerTooltips && page?.fields && (page?.fields as Field[]).length > 0"
+										:activator="page.title ? 'parent' : `.vsf-activator-${componentId}-${i + 1}`"
+										:location="settings.tooltipLocation"
+										:offset="page.title ? settings.tooltipOffset : Number(settings.tooltipOffset) - 28"
+										:transition="settings.tooltipTransition"
+									>
+										<div
+											v-for="(field, idx) in page.fields"
+											:key="idx"
+										>
+											{{ field.label }}
+										</div>
+									</v-tooltip>
+								</v-stepper-item>
 								<v-divider
 									v-if="getIndex(i) !== Object.keys(computedPages).length"
 									:key="getIndex(i)"
@@ -166,6 +182,7 @@ import { globalOptions } from './';
 
 
 const attrs = useAttrs();
+const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject(globalOptions, {});
@@ -239,7 +256,7 @@ watchDeep(modelValue, () => {
 const stepperModel = ref(1);
 
 
-const { sm } = useDisplay();
+const { mobile, sm } = useDisplay();
 const transitionComputed: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
 const parentForm = useTemplateRef<PrivateFormContext>('stepperFormRef');
 

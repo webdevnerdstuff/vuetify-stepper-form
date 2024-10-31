@@ -60,6 +60,42 @@
 		</ExampleContainer>
 
 		<ExampleContainer
+			:code="getTemplateCode('ButtonsFieldExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			:codeUpdatedAt="ButtonsFieldExampleCode?.updatedAt"
+			:updatedCode="ButtonsFieldExampleCode?.updatedCode"
+			@closePicker="closePicker('ButtonsFieldExampleRef');"
+		>
+			<Example.ButtonsFieldExample
+				ref="ButtonsFieldExampleRef"
+				:open="refElementsOpen.ButtonsFieldExampleRef"
+				@codeUpdated="ButtonsFieldExampleCode = $event"
+			/>
+		</ExampleContainer>
+
+		<ExampleContainer
+			:code="getTemplateCode('SummaryPageExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			@closePicker="closePicker('SummaryPageExampleRef');"
+		>
+			<Example.SummaryPageExample
+				ref="SummaryPageExampleRef"
+				:open="refElementsOpen.SummaryPageExampleRef"
+			/>
+		</ExampleContainer>
+
+		<ExampleContainer
+			:code="getTemplateCode('TooltipExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			@closePicker="closePicker('TooltipExampleRef');"
+		>
+			<Example.TooltipExample
+				ref="TooltipExampleRef"
+				:open="refElementsOpen.TooltipExampleRef"
+			/>
+		</ExampleContainer>
+
+		<ExampleContainer
 			:code="getTemplateCode('ConditionalPageExampleRef')"
 			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ConditionalPageExampleRef');"
@@ -78,31 +114,6 @@
 			<Example.ConditionalFieldExample
 				ref="ConditionalFieldExampleRef"
 				:open="refElementsOpen.ConditionalFieldExampleRef"
-			/>
-		</ExampleContainer>
-
-		<ExampleContainer
-			:code="getTemplateCode('SummaryPageExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
-			@closePicker="closePicker('SummaryPageExampleRef');"
-		>
-			<Example.SummaryPageExample
-				ref="SummaryPageExampleRef"
-				:open="refElementsOpen.SummaryPageExampleRef"
-			/>
-		</ExampleContainer>
-
-		<ExampleContainer
-			:code="getTemplateCode('ButtonsFieldExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
-			:codeUpdatedAt="ButtonsFieldExampleCode?.updatedAt"
-			:updatedCode="ButtonsFieldExampleCode?.updatedCode"
-			@closePicker="closePicker('ButtonsFieldExampleRef');"
-		>
-			<Example.ButtonsFieldExample
-				ref="ButtonsFieldExampleRef"
-				:open="refElementsOpen.ButtonsFieldExampleRef"
-				@codeUpdated="ButtonsFieldExampleCode = $event"
 			/>
 		</ExampleContainer>
 	</v-row>
@@ -124,6 +135,7 @@ const ValidationExampleRef = ref(null);
 const ConditionalFieldExampleRef = ref(null);
 const ConditionalPageExampleRef = ref(null);
 const SummaryPageExampleRef = ref(null);
+const TooltipExampleRef = ref(null);
 
 const ButtonsFieldExampleRef = ref(null);
 const ButtonsFieldExampleCode = ref();
@@ -136,6 +148,7 @@ const refElements = ref({
 	FieldSlotExampleRef,
 	SimpleExampleRef,
 	SummaryPageExampleRef,
+	TooltipExampleRef,
 	ValidationExampleRef,
 });
 
@@ -147,6 +160,7 @@ const refElementsOpen = ref({
 	FieldSlotExampleRef: null,
 	SimpleExampleRef: null,
 	SummaryPageExampleRef: null,
+	TooltipExampleRef: null,
 	ValidationExampleRef: null,
 });
 

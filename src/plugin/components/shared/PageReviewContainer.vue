@@ -1,16 +1,6 @@
 <template>
-	<v-row v-if="page.title">
-		<v-col>
-			<h3>
-				{{ page.title }}
-			</h3>
-		</v-col>
-	</v-row>
-
 	<v-row v-if="page.text">
-		<v-col>
-			{{ page.text }}
-		</v-col>
+		<v-col v-html="page.text"></v-col>
 	</v-row>
 
 	<v-row>

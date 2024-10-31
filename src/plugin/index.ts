@@ -13,6 +13,9 @@ export function createVStepperForm(options: PluginOptions = defaultOptions): Plu
 	const install = (app: App) => {
 		app.provide(globalOptions, options);
 
+		// eslint-disable-next-line no-param-reassign
+		app.config.idPrefix = 'vsf';
+
 		app.component('VStepperForm', defineAsyncComponent(() => import('./VStepperForm.vue')));
 		app.component('FieldLabel', defineAsyncComponent(() => import('./components/shared/FieldLabel.vue')));
 	};

@@ -5,6 +5,9 @@ export const AllProps = {
 	editable: true,
 	keepValuesOnUnmount: false,
 	navButtonSize: 'large' as const,
+	tooltipLocation: 'bottom' as const,
+	tooltipOffset: 10,
+	tooltipTransition: 'fade-transition',
 	transition: 'fade-transition',
 	width: '100%',
 };
