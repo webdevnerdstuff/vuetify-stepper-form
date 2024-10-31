@@ -191,11 +191,15 @@ const buttonsFieldOptions = `interface Option {
   appendIcon?: VBtn['appendIcon'];
   class?: string;
   color?: VBtn['color'];
+  height?: VBtn['height'];
   icon?: VBtn['icon'];
   id?: Field['id'];
   label: Field['label'];
+  maxWidth?: VBtn['maxWidth'];
+  minWidth?: VBtn['minWidth'];
   prependIcon?: VBtn['prependIcon'];
   value: string | number;
+  width?: VBtn['width'];
 }`;
 </script>
 
