@@ -186,6 +186,8 @@ const bindSettings = computed(() => ({
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>, [
+	'autoPage',
+	'hideDetails',
 	'href',
 	'maxErrors',
 	'multiple',

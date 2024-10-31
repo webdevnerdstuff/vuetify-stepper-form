@@ -57,7 +57,7 @@ const classes = inject<Docs.GlobalClasses>('classes')!;
 
 const usageGlobalPlugin = `import { createApp } from 'vue';
 import App from './App.vue';
-import { createVStepperForm } from '@wdns/vuetify-stepper-form';
+im${''}port { createVStepperForm } from '@wdns/vuetify-stepper-form';
 
 const app = createApp(App);
 
@@ -70,7 +70,7 @@ app.mount('#app');`;
 // Needed to add ${''} to prevent console thinking it's actually trying to import the plugin //
 const usageGlobalComponent = `import { createApp } from 'vue';
 import App from './App.vue';
-import { VStepperForm } from  '@wdns/vuetify-stepper-form';
+im${''}port { VStepperForm } from  '@wdns/vuetify-stepper-form';
 
 const app = createApp(App);
 

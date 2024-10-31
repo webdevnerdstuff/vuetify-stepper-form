@@ -23,28 +23,43 @@
 			>
 				<v-stepper
 					v-model="stepperModel"
-					v-bind="settings"
+					v-bind="stepperSettings"
 					:mobile="sm"
 					width="100%"
 				>
 					<template #default="{ prev, next }">
 						<v-stepper-header>
 							<template
-								v-for="(page, i) in pages"
+								v-for="(page, i) in computedPages"
 								:key="`${getIndex(i)}-step`"
 							>
 								<v-stepper-item
+									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
-									:disabled="headerItemDisabled(page)"
 									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
-									:editable="page.editable"
+									:editable="headerItemDisabled(page)"
 									elevation="0"
 									:error="page.error"
 									:title="page.title"
 									:value="getIndex(i)"
-								></v-stepper-item>
+								>
+									<v-tooltip
+										v-if="!mobile && settings.headerTooltips && page?.fields && (page?.fields as Field[]).length > 0"
+										:activator="page.title ? 'parent' : `.vsf-activator-${componentId}-${i + 1}`"
+										:location="settings.tooltipLocation"
+										:offset="page.title ? settings.tooltipOffset : Number(settings.tooltipOffset) - 28"
+										:transition="settings.tooltipTransition"
+									>
+										<div
+											v-for="(field, idx) in page.fields"
+											:key="idx"
+										>
+											{{ field.label }}
+										</div>
+									</v-tooltip>
+								</v-stepper-item>
 								<v-divider
-									v-if="getIndex(i) !== Object.keys(pages).length"
+									v-if="getIndex(i) !== Object.keys(computedPages).length"
 									:key="getIndex(i)"
 								></v-divider>
 							</template>
@@ -60,7 +75,7 @@
 						>
 							<v-stepper-window>
 								<v-stepper-window-item
-									v-for="page, i in pages"
+									v-for="page, i in computedPages"
 									:key="`${getIndex(i)}-content`"
 									:reverse-transition="transitionComputed"
 									:transition="transitionComputed"
@@ -92,7 +107,7 @@
 											v-else
 											v-model="modelValue"
 											:page="page"
-											:pages="pages"
+											:pages="computedPages"
 											:settings="settings"
 											:summary-columns="summaryColumns"
 											@goToQuestion="stepperModel = $event"
@@ -151,6 +166,7 @@ import type {
 import type { PrivateFormContext } from 'vee-validate';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
+import { useBindingSettings } from './composables/bindings';
 import {
 	useContainerClasses,
 	useStepperContainerClasses,
@@ -166,6 +182,7 @@ import { globalOptions } from './';
 
 
 const attrs = useAttrs();
+const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject(globalOptions, {});
@@ -179,6 +196,16 @@ const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
 const settings: Ref<Settings> = ref<Settings>(useBuildSettings(stepperProps));
+
+const stepperSettings = computed(() => useBindingSettings(settings.value as Partial<Settings>, [
+	'autoPage',
+	'autoPageDelay',
+	'hideDetails',
+	'keepValuesOnUnmount',
+	'transition',
+	'validateOn',
+	'validateOnMount',
+]));
 
 watch(props, () => {
 	stepperProps = useMergeProps(attrs, injectedOptions, props);
@@ -229,7 +256,7 @@ watchDeep(modelValue, () => {
 const stepperModel = ref(1);
 
 
-const { sm } = useDisplay();
+const { mobile, sm } = useDisplay();
 const transitionComputed: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
 const parentForm = useTemplateRef<PrivateFormContext>('stepperFormRef');
 
@@ -247,9 +274,14 @@ const nextButtonDisabled = computed(() => {
 	return fieldsHaveErrors.value || isDisabled;
 });
 
-// TODO: Make this disabled if the previous page is not editable //
 const canReviewPreviousButtonDisabled = computed<boolean>(() => {
-	return stepperModel.value === pages.length && !props.canReview;
+	const previousPage = computedPages.value[stepperModel.value - 2];
+
+	if (previousPage) {
+		return previousPage.editable === false;
+	}
+
+	return stepperModel.value === computedPages.value.length && !props.editable;
 });
 
 
@@ -263,18 +295,29 @@ function previousPage(prev: () => void): void {
 }
 
 const lastPage = computed<boolean>(() => {
-	return stepperModel.value === Object.keys(pages).length;
+	return stepperModel.value === Object.keys(computedPages.value).length;
 });
 
 
 // TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
 function headerItemDisabled(page: Page): boolean {
-	const totalSteps = Object.keys(pages).length;
+	const totalSteps = Object.keys(computedPages.value).length;
 	const lastStep = totalSteps - 1;
 
-	// If you're on the last page
+	if (page.editable === false && currentPageHasErrors.value) {
+		return true;
+	}
+
+	const currentPageIdx = stepperModel.value - 1;
+	const pageIdx = computedPages.value.findIndex((p) => p === page);
+
+	if (page.editable !== false && pageIdx < currentPageIdx) {
+		return true;
+	}
+
+	// If you're on the last step (not review page) //
 	if (stepperModel.value === lastStep) {
-		return !page.isReview && (!settings.value.canReview) && (!page.editable && settings.value?.editable !== false);
+		return !page.isReview && (!settings.value.editable) && (!page.editable && settings.value?.editable !== false);
 	}
 
 	return false;
@@ -297,6 +340,8 @@ function runValidation(
 	validate()
 		.then((response: ValidateResult) => {
 			const errors = response.errors as unknown as ValidateResult['errors'];
+
+
 			checkForPageErrors(errors, source, next);
 		})
 		.catch((error: Error) => {
@@ -321,13 +366,13 @@ function removePageError(pageIndex: number): void {
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
 	const currentPage = stepperModel.value - 1;
-	const page = pages[currentPage];
+	const page = computedPages.value[currentPage];
 
 	if (!page) {
 		return;
 	}
 
-	const pageIndex = pages.findIndex((p) => p === page);
+	const pageIndex = computedPages.value.findIndex((p) => p === page);
 	const pageFields = page?.fields ?? [];
 	const hasErrorInField = Object.keys(errors as object[]).some(errorKey => pageFields.some(field => field.name === errorKey));
 
@@ -364,16 +409,36 @@ function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void
 let debounceTimer: ReturnType<typeof setTimeout>;
 
 function onFieldValidate(field: Field, next: () => void): void {
-	const errors = parentForm.value?.errors as unknown as ValidateResult['errors'];
+	const errors = parentForm.value?.errors as ValidateResult['errors'];
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
-	// If autoPage debounce next //
+	// If autoPage //
 	if (field?.autoPage || settings.value?.autoPage) {
-		clearTimeout(debounceTimer);
 
-		debounceTimer = setTimeout(() => {
-			checkForPageErrors(errors, 'field', shouldAutoPage);
-		}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
+		if (parentForm.value) {
+			// First validate the page before proceeding to the next page //
+			(parentForm.value as { validate: () => Promise<ValidateResult>; }).validate()
+				.then((res: ValidateResult) => {
+					if (res.valid) {
+						// debounce next //
+						clearTimeout(debounceTimer);
+						debounceTimer = setTimeout(() => {
+							checkForPageErrors(errors, 'field', shouldAutoPage);
+						}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
+
+						return;
+					}
+
+					const currentPage = stepperModel.value - 1;
+					const page = computedPages.value[currentPage];
+					const pageIndex = computedPages.value.findIndex((p) => p === page);
+
+					setPageToError(pageIndex, page, 'validating');
+				})
+				.catch((error: Error) => {
+					console.error('Error', error);
+				});
+		}
 
 		return;
 	}
@@ -384,7 +449,6 @@ function onFieldValidate(field: Field, next: () => void): void {
 
 // -------------------------------------------------- Submit //
 function onSubmit(values: any): void {
-	console.log('%c%s', 'color: #00ff00; font-weight: bold;', 'onSubmit SUBMIT FORM \n', values);
 	emit('submit', values);
 }
 
@@ -394,14 +458,32 @@ function callbacks() {
 	whenCallback();
 }
 
-// ------------------------ Conditional "when" callback //
-function whenCallback(): void {
+// ------------------------ Conditional "when" callbacks //
+const computedPages = computed<Page[]>(() => {
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+		const localPage = page;
+		localPage.visible = true;
+
+		if (localPage.when) {
+			// eslint-disable-next-line no-unused-vars
+			const enabledPage: boolean = (localPage.when as (value: any) => boolean)(modelValue.value);
+
+			if (pages[pageIdx]) {
+				pages[pageIdx].visible = enabledPage;
+			}
+		}
+	});
+
+	return pages.filter((p: Page) => p.visible);
+});
+
+function whenCallback(): void {
+	Object.values(computedPages.value).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
 			Object.values(page.fields).forEach((field: Field, fieldIdx) => {
 				if (field.when) {
 					const enabledField: boolean = field.when(modelValue.value);
-					const indexPage = pages[pageIdx];
+					const indexPage = computedPages.value[pageIdx];
 
 					if (indexPage?.fields && indexPage?.fields[fieldIdx]) {
 						indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';

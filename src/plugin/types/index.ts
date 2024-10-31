@@ -13,6 +13,7 @@ import type {
 	VStepperItem,
 	// VStepperActions,
 	VStepperWindowItem,
+	VTooltip,
 } from 'vuetify/components';
 import type { ValidationRule } from 'vuetify/composables/validation';
 import type { Schema } from 'yup';
@@ -102,6 +103,7 @@ export interface VStepperProps extends Partial<Pick<VStepper,
 	'prevText' |
 	'rounded' |
 	'selectedClass' |
+	'tag' |
 	'theme' |
 	'tile' |
 	'width'
@@ -122,7 +124,6 @@ export interface ResponsiveColumns {
 export interface Field {
 	autoPage?: Props['autoPage'];
 	autoPageDelay?: Props['autoPageDelay'];
-	canReview?: Props['canReview'];
 	class?: string;
 	color?: Props['color'];
 	columns?: Props['fieldColumns'];
@@ -163,11 +164,12 @@ export interface Page {
 	pageFieldColumns?: ResponsiveColumns;
 	text?: string;
 	title?: string;
+	visible?: boolean;
+	when?: (value: any) => boolean;
 }
 
 
 // -------------------------------------------------- Props //
-// TODO: Revert this back to the stupid way //
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
@@ -176,17 +178,20 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	// Optional //
 	autoPage?: boolean;
 	autoPageDelay?: number;
-	canReview?: boolean; 													// TODO: Determine a better prop name for canReview //
 	color?: string | undefined;
 	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';
 	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
+	headerTooltips?: boolean;
 	hideDetails?: GlobalHideDetails;
 	keepValuesOnUnmount?: boolean,
 	navButtonSize?: VBtn['size'];
 	summaryColumns?: ResponsiveColumns;
 	title?: string;
+	tooltipLocation?: VTooltip['location'];
+	tooltipOffset?: VTooltip['offset'];
+	tooltipTransition?: VTooltip['transition'];
 	validateOn?: Field['validateOn'];
 	validateOnMount?: boolean;
 	variant?: string;

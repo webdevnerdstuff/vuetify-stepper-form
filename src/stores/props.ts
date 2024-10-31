@@ -53,6 +53,7 @@ export const usePropsStore = defineStore('props', () => {
 
 	const vStepperPropDesc = 'See <a href="https://vuetifyjs.com/en/api/v-stepper/" target="_blank" nofollow>VStepper documentation</a> for more information.';
 	const vStepperWindowItemPropDesc = 'See <a href="https://vuetifyjs.com/en/api/v-stepper-window-item/" target="_blank" nofollow>VStepperWindowItem documentation</a> for more information.';
+	const transitionsText = 'Can be one of the <a href="https://vuetifyjs.com/en/styles/transitions/" target="_blank" nofollow> built in</a> transitions.';
 
 	const componentProps = [
 		{
@@ -84,12 +85,6 @@ export const usePropsStore = defineStore('props', () => {
 			desc: vStepperPropDesc,
 			name: 'border',
 			type: 'string | number | boolean',
-		},
-		{
-			default: 'true',
-			desc: 'Determines if the user can review the form after completion.',
-			name: 'canReview',
-			type: 'boolean',
 		},
 		{
 			default: 'undefined',
@@ -149,6 +144,12 @@ export const usePropsStore = defineStore('props', () => {
 			default: 'false',
 			desc: vStepperPropDesc,
 			name: 'flat',
+			type: 'boolean',
+		},
+		{
+			default: 'false',
+			desc: 'Display each page\'s questions in tooltips on the respective headers.',
+			name: 'headerTooltips',
 			type: 'boolean',
 		},
 		{
@@ -254,8 +255,26 @@ export const usePropsStore = defineStore('props', () => {
 			type: 'string',
 		},
 		{
+			default: 'end',
+			desc: 'Specifies the anchor point for positioning the tooltip, using directional cues to align it either horizontally, vertically, or both…',
+			name: 'tooltipLocation',
+			type: "VTooltip['location']",
+		},
+		{
+			default: '10',
+			desc: 'A single value that offsets content away from the target based upon what side it is on.',
+			name: 'tooltipOffset',
+			type: "VTooltip['offset']",
+		},
+		{
+			default: 'false',
+			desc: `Sets the tooltip transition. ${transitionsText}`,
+			name: 'tooltipTransition',
+			type: "VTooltip['transition']",
+		},
+		{
 			default: 'fade-transition',
-			desc: `The transition used when the component progressing through pages. Can be one of the <a href="https://vuetifyjs.com/en/styles/transitions/" target="_blank" nofollow> built in</a> transitions. ${vStepperWindowItemPropDesc}`,
+			desc: `The transition used when the component progressing through pages.<br /> ${transitionsText}. ${vStepperWindowItemPropDesc}`,
 			name: 'transition',
 			type: 'string',
 		},

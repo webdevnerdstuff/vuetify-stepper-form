@@ -13,6 +13,7 @@
 			v-model="modelValue"
 			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
 			:density="fieldDensity"
+			:disabled="isValidating"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
 			@blur="onActions(validate, 'blur')"
@@ -80,6 +81,7 @@
 								:id="option.id"
 								v-model="modelValue"
 								:density="fieldDensity"
+								:disabled="isValidating"
 								:error="errorMessage ? errorMessage?.length > 0 : false"
 								:error-messages="errorMessage"
 								:hide-details="true"
@@ -144,14 +146,22 @@ onUnmounted(() => {
 
 
 // ------------------------- Validate On Actions //
+const isValidating = ref<boolean>(field?.disabled as boolean);
+
 async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
-	await useOnActions({
-		action,
-		emit,
-		field,
-		settingsValidateOn: settings.value.validateOn,
-		validate,
-	});
+	if (!isValidating.value) {
+		isValidating.value = true;
+
+		await useOnActions({
+			action: field?.autoPage ? 'click' : action,
+			emit,
+			field,
+			settingsValidateOn: settings.value.validateOn,
+			validate,
+		}).then(() => {
+			isValidating.value = false;
+		});
+	}
 }
 
 
