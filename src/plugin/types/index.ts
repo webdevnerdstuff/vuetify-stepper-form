@@ -163,6 +163,8 @@ export interface Page {
 	pageFieldColumns?: ResponsiveColumns;
 	text?: string;
 	title?: string;
+	visible?: boolean;
+	when?: (value: any) => boolean;
 }
 
 

@@ -30,7 +30,7 @@
 					<template #default="{ prev, next }">
 						<v-stepper-header>
 							<template
-								v-for="(page, i) in pages"
+								v-for="(page, i) in computedPages"
 								:key="`${getIndex(i)}-step`"
 							>
 								<v-stepper-item
@@ -60,7 +60,7 @@
 						>
 							<v-stepper-window>
 								<v-stepper-window-item
-									v-for="page, i in pages"
+									v-for="page, i in computedPages"
 									:key="`${getIndex(i)}-content`"
 									:reverse-transition="transitionComputed"
 									:transition="transitionComputed"
@@ -92,7 +92,7 @@
 											v-else
 											v-model="modelValue"
 											:page="page"
-											:pages="pages"
+											:pages="computedPages"
 											:settings="settings"
 											:summary-columns="summaryColumns"
 											@goToQuestion="stepperModel = $event"
@@ -263,7 +263,7 @@ function previousPage(prev: () => void): void {
 }
 
 const lastPage = computed<boolean>(() => {
-	return stepperModel.value === Object.keys(pages).length;
+	return stepperModel.value === Object.keys(computedPages.value).length;
 });
 
 
@@ -394,7 +394,25 @@ function callbacks() {
 	whenCallback();
 }
 
-// ------------------------ Conditional "when" callback //
+// ------------------------ Conditional "when" callbacks //
+const computedPages = computed<Page[]>(() => {
+	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+		const localPage = page;
+		localPage.visible = true;
+
+		if (localPage.when) {
+			// eslint-disable-next-line no-unused-vars
+			const enabledPage: boolean = (localPage.when as (value: any) => boolean)(modelValue.value);
+
+			if (pages[pageIdx]) {
+				pages[pageIdx].visible = enabledPage;
+			}
+		}
+	});
+
+	return pages.filter((p: Page) => p.visible);
+});
+
 function whenCallback(): void {
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
