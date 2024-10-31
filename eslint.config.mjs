@@ -307,8 +307,8 @@ export default tseslint.config(
 		settings: {
 			'import/resolver': {
 				typescript: {
-					alwaysTryTypes: true, // Always try to resolve types
-					project: './tsconfig.json', // Specify the path to your tsconfig.json
+					alwaysTryTypes: true,
+					project: './tsconfig.json',
 				},
 			},
 		},
