@@ -1,1 +1,0 @@
-import{d as n,y as r,I as s,E as o,a2 as t,R as l}from"./index-DSH_WzoX.js";const d=["innerHTML"],p={key:0,class:"text-error ms-1"},u=n({__name:"FieldLabel",props:{label:{},required:{type:Boolean,default:!1}},setup(i){return(e,a)=>(r(),s("div",null,[o("span",{innerHTML:e.label},null,8,d),a[0]||(a[0]=t()),e.required?(r(),s("span",p,"*")):l("",!0)]))}});export{u as _};
