@@ -22,8 +22,8 @@
 		v-model="drawer"
 		fixed
 		location="right"
-		:scrim="false"
-		temporary
+		:scrim="!mobile ? false : 'transparent'"
+		:temporary="!mobile"
 	>
 		<v-container>
 			<div class="d-flex justify-space-between align-center mb-2">
@@ -146,6 +146,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify';
 import {
 	array as yupArray,
 	object as yupObject,
@@ -163,6 +164,7 @@ const optionsSettings = {
 	density: 'comfortable' as const,
 	hideDetails: true,
 };
+const { mobile } = useDisplay();
 
 const buttonVariantOptions = [
 	{

@@ -412,6 +412,10 @@ function containsSizeUnit(value: string | number): boolean {
 </script>
 
 <style lang="scss" scoped>
+.v-item-group {
+	flex-wrap: wrap;
+}
+
 .vsf-button-field {
 	&__btn-label {
 		color: v-bind(buttontextcolor);
