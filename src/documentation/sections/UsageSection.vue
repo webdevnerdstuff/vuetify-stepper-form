@@ -67,6 +67,7 @@ app.use(createVStepperForm({
 
 app.mount('#app');`;
 
+// Needed to add ${''} to prevent console thinking it's actually trying to import the plugin //
 const usageGlobalComponent = `import { createApp } from 'vue';
 import App from './App.vue';
 import { VStepperForm } from  '@wdns/vuetify-stepper-form';
@@ -84,7 +85,7 @@ const usageIndividual = `<template>
 </template>
 
 \<script setup\>
-  import { VStepperForm } from  '@wdns/vuetify-stepper-form';
+  im${''}port { VStepperForm } from  '@wdns/vuetify-stepper-form';
 
   const foo = ref(null);
 \</script\>`;
