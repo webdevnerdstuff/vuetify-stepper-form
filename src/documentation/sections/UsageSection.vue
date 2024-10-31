@@ -84,7 +84,7 @@ const usageIndividual = `<template>
 </template>
 
 \<script setup\>
-  import VStepperForm from  '@wdns/vuetify-stepper-form';
+  import { VStepperForm } from  '@wdns/vuetify-stepper-form';
 
   const foo = ref(null);
 \</script\>`;
