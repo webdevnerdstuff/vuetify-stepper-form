@@ -11,11 +11,15 @@ export interface Option {
 	appendIcon?: VBtn['appendIcon'];
 	class?: string;
 	color?: VBtn['color'];
+	height?: VBtn['height'];
 	icon?: VBtn['icon'];
 	id?: Field['id'];
 	label: Field['label'];
+	maxWidth?: VBtn['maxWidth'];
+	minWidth?: VBtn['minWidth'];
 	prependIcon?: VBtn['prependIcon'];
 	value: string | number;
+	width?: VBtn['width'];
 }
 
 interface InternalField extends Field, Partial<Pick<VBtn,
@@ -25,6 +29,7 @@ interface InternalField extends Field, Partial<Pick<VBtn,
 	'border' |
 	'height' |
 	'icon' |
+	'maxWidth' |
 	'minWidth' |
 	'prependIcon' |
 	'selectedClass' |
