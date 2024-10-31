@@ -60,13 +60,24 @@
 		</ExampleContainer>
 
 		<ExampleContainer
-			:code="getTemplateCode('ConditionalExampleRef')"
+			:code="getTemplateCode('ConditionalPageExampleRef')"
 			:codeBlockSettings="codeBlockSettings"
-			@closePicker="closePicker('ConditionalExampleRef');"
+			@closePicker="closePicker('ConditionalPageExampleRef');"
 		>
-			<Example.ConditionalExample
-				ref="ConditionalExampleRef"
-				:open="refElementsOpen.ConditionalExampleRef"
+			<Example.ConditionalPageExample
+				ref="ConditionalPageExampleRef"
+				:open="refElementsOpen.ConditionalPageExampleRef"
+			/>
+		</ExampleContainer>
+
+		<ExampleContainer
+			:code="getTemplateCode('ConditionalFieldExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			@closePicker="closePicker('ConditionalFieldExampleRef');"
+		>
+			<Example.ConditionalFieldExample
+				ref="ConditionalFieldExampleRef"
+				:open="refElementsOpen.ConditionalFieldExampleRef"
 			/>
 		</ExampleContainer>
 
@@ -110,7 +121,8 @@ const SimpleExampleRef = ref(null);
 const ColumnsExampleRef = ref(null);
 const FieldSlotExampleRef = ref(null);
 const ValidationExampleRef = ref(null);
-const ConditionalExampleRef = ref(null);
+const ConditionalFieldExampleRef = ref(null);
+const ConditionalPageExampleRef = ref(null);
 const SummaryPageExampleRef = ref(null);
 
 const ButtonsFieldExampleRef = ref(null);
@@ -119,7 +131,8 @@ const ButtonsFieldExampleCode = ref();
 const refElements = ref({
 	ButtonsFieldExampleRef,
 	ColumnsExampleRef,
-	ConditionalExampleRef,
+	ConditionalFieldExampleRef,
+	ConditionalPageExampleRef,
 	FieldSlotExampleRef,
 	SimpleExampleRef,
 	SummaryPageExampleRef,
@@ -129,7 +142,8 @@ const refElements = ref({
 const refElementsOpen = ref({
 	ButtonsFieldExampleRef: null,
 	ColumnsExampleRef: null,
-	ConditionalExampleRef: null,
+	ConditionalFieldExampleRef: null,
+	ConditionalPageExampleRef: null,
 	FieldSlotExampleRef: null,
 	SimpleExampleRef: null,
 	SummaryPageExampleRef: null,
