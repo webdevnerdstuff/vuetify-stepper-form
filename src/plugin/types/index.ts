@@ -122,7 +122,6 @@ export interface ResponsiveColumns {
 export interface Field {
 	autoPage?: Props['autoPage'];
 	autoPageDelay?: Props['autoPageDelay'];
-	canReview?: Props['canReview'];
 	class?: string;
 	color?: Props['color'];
 	columns?: Props['fieldColumns'];
@@ -169,7 +168,6 @@ export interface Page {
 
 
 // -------------------------------------------------- Props //
-// TODO: Revert this back to the stupid way //
 export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
 	// Required //
 	pages: Page[];
@@ -178,7 +176,6 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	// Optional //
 	autoPage?: boolean;
 	autoPageDelay?: number;
-	canReview?: boolean; 													// TODO: Determine a better prop name for canReview //
 	color?: string | undefined;
 	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';

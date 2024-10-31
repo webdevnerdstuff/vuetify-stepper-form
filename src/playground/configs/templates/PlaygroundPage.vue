@@ -913,7 +913,6 @@ const formSettings = ref({
 	// altLabels: true,																	// * VStepper
 	// bgColor: 'secondary',														// * VStepper
 	// border: 'lg',																		// * VStepper
-	// canReview: false,																// ! VStepper - Needs more testing and refining
 	// color: 'yellow',																	// * Global, VStepper, VStepperItem
 	// completeIcon: 'fas fa-check',										// ? VStepper Not sure how this works yet
 	// density: 'default',															// * Global

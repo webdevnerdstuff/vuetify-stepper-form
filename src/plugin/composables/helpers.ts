@@ -31,7 +31,6 @@ export const useBuildSettings: UseBuildSettings = (stepperProps: Settings) => {
 		autoPageDelay: stepperProps.autoPageDelay,
 		bgColor: stepperProps.bgColor,
 		border: stepperProps.border,
-		canReview: stepperProps.canReview,
 		color: stepperProps.color,
 		density: stepperProps.density,
 		disabled: stepperProps.disabled,

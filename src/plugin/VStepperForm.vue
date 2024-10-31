@@ -35,16 +35,15 @@
 							>
 								<v-stepper-item
 									:color="settings.color"
-									:disabled="headerItemDisabled(page)"
 									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
-									:editable="page.editable"
+									:editable="headerItemDisabled(page)"
 									elevation="0"
 									:error="page.error"
 									:title="page.title"
 									:value="getIndex(i)"
 								></v-stepper-item>
 								<v-divider
-									v-if="getIndex(i) !== Object.keys(pages).length"
+									v-if="getIndex(i) !== Object.keys(computedPages).length"
 									:key="getIndex(i)"
 								></v-divider>
 							</template>
@@ -247,9 +246,14 @@ const nextButtonDisabled = computed(() => {
 	return fieldsHaveErrors.value || isDisabled;
 });
 
-// TODO: Make this disabled if the previous page is not editable //
 const canReviewPreviousButtonDisabled = computed<boolean>(() => {
-	return stepperModel.value === pages.length && !props.canReview;
+	const previousPage = computedPages.value[stepperModel.value - 2];
+
+	if (previousPage) {
+		return previousPage.editable === false;
+	}
+
+	return stepperModel.value === computedPages.value.length && !props.editable;
 });
 
 
@@ -269,12 +273,23 @@ const lastPage = computed<boolean>(() => {
 
 // TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
 function headerItemDisabled(page: Page): boolean {
-	const totalSteps = Object.keys(pages).length;
+	const totalSteps = Object.keys(computedPages.value).length;
 	const lastStep = totalSteps - 1;
 
-	// If you're on the last page
+	if (page.editable === false && currentPageHasErrors.value) {
+		return true;
+	}
+
+	const currentPageIdx = stepperModel.value - 1;
+	const pageIdx = computedPages.value.findIndex((p) => p === page);
+
+	if (page.editable !== false && pageIdx < currentPageIdx) {
+		return true;
+	}
+
+	// If you're on the last step (not review page) //
 	if (stepperModel.value === lastStep) {
-		return !page.isReview && (!settings.value.canReview) && (!page.editable && settings.value?.editable !== false);
+		return !page.isReview && (!settings.value.editable) && (!page.editable && settings.value?.editable !== false);
 	}
 
 	return false;
@@ -297,6 +312,8 @@ function runValidation(
 	validate()
 		.then((response: ValidateResult) => {
 			const errors = response.errors as unknown as ValidateResult['errors'];
+
+
 			checkForPageErrors(errors, source, next);
 		})
 		.catch((error: Error) => {
@@ -321,13 +338,13 @@ function removePageError(pageIndex: number): void {
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
 	const currentPage = stepperModel.value - 1;
-	const page = pages[currentPage];
+	const page = computedPages.value[currentPage];
 
 	if (!page) {
 		return;
 	}
 
-	const pageIndex = pages.findIndex((p) => p === page);
+	const pageIndex = computedPages.value.findIndex((p) => p === page);
 	const pageFields = page?.fields ?? [];
 	const hasErrorInField = Object.keys(errors as object[]).some(errorKey => pageFields.some(field => field.name === errorKey));
 
@@ -364,16 +381,36 @@ function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void
 let debounceTimer: ReturnType<typeof setTimeout>;
 
 function onFieldValidate(field: Field, next: () => void): void {
-	const errors = parentForm.value?.errors as unknown as ValidateResult['errors'];
+	const errors = parentForm.value?.errors as ValidateResult['errors'];
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
-	// If autoPage debounce next //
+	// If autoPage //
 	if (field?.autoPage || settings.value?.autoPage) {
-		clearTimeout(debounceTimer);
 
-		debounceTimer = setTimeout(() => {
-			checkForPageErrors(errors, 'field', shouldAutoPage);
-		}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
+		if (parentForm.value) {
+			// First validate the page before proceeding to the next page //
+			(parentForm.value as { validate: () => Promise<ValidateResult>; }).validate()
+				.then((res: ValidateResult) => {
+					if (res.valid) {
+						// debounce next //
+						clearTimeout(debounceTimer);
+						debounceTimer = setTimeout(() => {
+							checkForPageErrors(errors, 'field', shouldAutoPage);
+						}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
+
+						return;
+					}
+
+					const currentPage = stepperModel.value - 1;
+					const page = computedPages.value[currentPage];
+					const pageIndex = computedPages.value.findIndex((p) => p === page);
+
+					setPageToError(pageIndex, page, 'validating');
+				})
+				.catch((error: Error) => {
+					console.error('Error', error);
+				});
+		}
 
 		return;
 	}
@@ -384,7 +421,6 @@ function onFieldValidate(field: Field, next: () => void): void {
 
 // -------------------------------------------------- Submit //
 function onSubmit(values: any): void {
-	console.log('%c%s', 'color: #00ff00; font-weight: bold;', 'onSubmit SUBMIT FORM \n', values);
 	emit('submit', values);
 }
 
@@ -414,12 +450,12 @@ const computedPages = computed<Page[]>(() => {
 });
 
 function whenCallback(): void {
-	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+	Object.values(computedPages.value).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
 			Object.values(page.fields).forEach((field: Field, fieldIdx) => {
 				if (field.when) {
 					const enabledField: boolean = field.when(modelValue.value);
-					const indexPage = pages[pageIdx];
+					const indexPage = computedPages.value[pageIdx];
 
 					if (indexPage?.fields && indexPage?.fields[fieldIdx]) {
 						indexPage.fields[fieldIdx].type = enabledField ? originalPages[pageIdx].fields[fieldIdx].type : 'hidden';

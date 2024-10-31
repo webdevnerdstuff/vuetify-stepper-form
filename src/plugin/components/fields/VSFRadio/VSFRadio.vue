@@ -38,6 +38,7 @@
 						:append-icon="field?.appendIcon"
 						:density="fieldDensity"
 						:direction="field?.direction"
+						:disabled="isValidating"
 						:error="hasErrors"
 						:error-messages="errorMessage || field?.errorMessages"
 						:hideDetails="field?.hideDetails || settings?.hideDetails"
@@ -67,7 +68,9 @@
 								:name="field.name"
 								:style="radioStyle"
 								:value="option.value"
-								@click="onActions(validate, 'click')"
+								@blur="onActions(validate, 'blur')"
+								@change="onActions(validate, 'change')"
+								@input="onActions(validate, 'input')"
 							>
 							</v-radio>
 						</div>
@@ -111,14 +114,22 @@ onUnmounted(() => {
 
 
 // ------------------------- Validate On Actions //
+const isValidating = ref<boolean>(field?.disabled as boolean);
+
 async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
-	await useOnActions({
-		action,
-		emit,
-		field,
-		settingsValidateOn: settings.value.validateOn,
-		validate,
-	});
+	if (!isValidating.value) {
+		isValidating.value = true;
+
+		await useOnActions({
+			action: field?.autoPage ? 'click' : action,
+			emit,
+			field,
+			settingsValidateOn: settings.value.validateOn,
+			validate,
+		}).then(() => {
+			isValidating.value = false;
+		});
+	}
 }
 
 

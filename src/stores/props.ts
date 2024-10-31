@@ -86,12 +86,6 @@ export const usePropsStore = defineStore('props', () => {
 			type: 'string | number | boolean',
 		},
 		{
-			default: 'true',
-			desc: 'Determines if the user can review the form after completion.',
-			name: 'canReview',
-			type: 'boolean',
-		},
-		{
 			default: 'undefined',
 			desc: 'Applies specified color to the control and fields - supports utility colors (for example success or purple) or css color (#033 or rgba(255, 0, 0, 0.5)).',
 			name: 'color',

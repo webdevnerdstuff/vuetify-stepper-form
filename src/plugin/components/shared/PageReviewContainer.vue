@@ -25,8 +25,8 @@
 					color="background"
 				>
 					<v-list-item
-						v-if="settings.canReview && checkIfEditable(field)"
-						@click="settings.canReview ? goToQuestion(field) : null"
+						v-if="checkIfEditable(field)"
+						@click="settings.editable ? goToQuestion(field) : null"
 					>
 						<v-list-item-title>
 							{{ field.label }}
