@@ -23,7 +23,7 @@
 			>
 				<v-stepper
 					v-model="stepperModel"
-					v-bind="settings"
+					v-bind="stepperSettings"
 					:mobile="sm"
 					width="100%"
 				>
@@ -150,6 +150,7 @@ import type {
 import type { PrivateFormContext } from 'vee-validate';
 import PageContainer from './components/shared/PageContainer.vue';
 import PageReviewContainer from './components/shared/PageReviewContainer.vue';
+import { useBindingSettings } from './composables/bindings';
 import {
 	useContainerClasses,
 	useStepperContainerClasses,
@@ -178,6 +179,16 @@ const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
 const settings: Ref<Settings> = ref<Settings>(useBuildSettings(stepperProps));
+
+const stepperSettings = computed(() => useBindingSettings(settings.value as Partial<Settings>, [
+	'autoPage',
+	'autoPageDelay',
+	'hideDetails',
+	'keepValuesOnUnmount',
+	'transition',
+	'validateOn',
+	'validateOnMount',
+]));
 
 watch(props, () => {
 	stepperProps = useMergeProps(attrs, injectedOptions, props);

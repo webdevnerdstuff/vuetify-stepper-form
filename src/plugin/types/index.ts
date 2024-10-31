@@ -102,6 +102,7 @@ export interface VStepperProps extends Partial<Pick<VStepper,
 	'prevText' |
 	'rounded' |
 	'selectedClass' |
+	'tag' |
 	'theme' |
 	'tile' |
 	'width'
