@@ -11,9 +11,9 @@ import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+
 const scopedPackageName = pkg.name;
 const packageName = scopedPackageName.split('/')[1];
-
 
 const banner = `/**
  * @name ${scopedPackageName}

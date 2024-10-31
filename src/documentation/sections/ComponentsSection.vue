@@ -22,7 +22,7 @@
 				v-for="component in componentList"
 				:key="component.title"
 			>
-				<code class="ic mr-2">{{ component.title }}</code>
+				<span><code class="ic mr-2 d-inline-flex">{{ component.title }}</code></span>
 			</template>
 		</v-col>
 
@@ -98,19 +98,6 @@
 			An example of its usage can be found in the <a href="#examples-buttons-field">Buttons Field</a> example within the
 			Examples section below.
 		</v-col>
-
-		<!-- <v-col
-			id="components-field-label"
-			cols="12"
-		>
-			<h3 :class="classes.h3">
-				<a
-					:class="classes.headerA"
-					href="#components-field-label"
-				>#</a>
-				Field Label
-			</h3>
-		</v-col> -->
 	</v-row>
 </template>
 
@@ -191,11 +178,15 @@ const buttonsFieldOptions = `interface Option {
   appendIcon?: VBtn['appendIcon'];
   class?: string;
   color?: VBtn['color'];
+  height?: VBtn['height'];
   icon?: VBtn['icon'];
   id?: Field['id'];
   label: Field['label'];
+  maxWidth?: VBtn['maxWidth'];
+  minWidth?: VBtn['minWidth'];
   prependIcon?: VBtn['prependIcon'];
   value: string | number;
+  width?: VBtn['width'];
 }`;
 </script>
 

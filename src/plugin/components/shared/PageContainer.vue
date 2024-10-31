@@ -38,7 +38,7 @@
 					<Fields.VSFCheckbox
 						v-if="field.type === 'checkbox'"
 						v-model="modelValue[field.name]"
-						:field="field"
+						:field="(field as any)"
 						@validate="onValidate"
 					/>
 
@@ -46,7 +46,7 @@
 					<Fields.VSFRadio
 						v-if="field.type === 'radio'"
 						v-model="modelValue[field.name]"
-						:field="field"
+						:field="(field as any)"
 						@validate="onValidate"
 					/>
 
@@ -61,7 +61,7 @@
 					<Fields.VSFSwitch
 						v-if="field.type === 'switch'"
 						v-model="modelValue[field.name]"
-						:field="field"
+						:field="(field as any)"
 						@validate="onValidate"
 					/>
 

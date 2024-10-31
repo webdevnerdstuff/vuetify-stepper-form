@@ -12,6 +12,7 @@
 		<v-checkbox
 			v-model="modelValue"
 			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
+			:density="fieldDensity"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
 			@blur="onActions(validate, 'blur')"
@@ -78,6 +79,7 @@
 								v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
 								:id="option.id"
 								v-model="modelValue"
+								:density="fieldDensity"
 								:error="errorMessage ? errorMessage?.length > 0 : false"
 								:error-messages="errorMessage"
 								:hide-details="true"
@@ -114,6 +116,7 @@ import { Field } from 'vee-validate';
 import { VMessages } from 'vuetify/components';
 import type { VSFCheckboxProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
+import type { VCheckbox } from 'vuetify/components';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
@@ -126,7 +129,7 @@ const props = defineProps<VSFCheckboxProps>();
 const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
-
+const fieldDensity = computed<VCheckbox['density']>(() => (field?.density ?? settings.value?.density) as VCheckbox['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
 	return field.required || false;
 });
@@ -241,14 +244,6 @@ const checkboxStyle = computed<CSSProperties>(() => {
 
 	return styles as CSSProperties;
 });
-
-// function getMessageRole(errorMessage) {
-// 	if (errorMessage) {
-// 		return 'alert';
-// 	}
-
-// 	return 'info';
-// }
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,6 +1,6 @@
 <template>
 	<Field
-		v-slot="{ errorMessage, validate }"
+		v-slot="{ errorMessage, validate, handleInput }"
 		v-model="modelValue"
 		:name="field.name"
 		type="text"
@@ -48,15 +48,16 @@
 								[`${field.selectedClass}`]: isActive(option.value),
 							}"
 							:color="option?.color || field?.color || settings?.color"
-							:density="(buttonDensity as VBtn['density'])"
-							:height="fieldHeight"
+							:density="fieldDensity"
+							:height="getHeight(option)"
 							:icon="getIcon(option, 'icon')"
-							:minWidth="fieldMinWidth || (option?.icon ? 'auto' : '100px')"
+							:maxWidth="getMaxWidth(option)"
+							:minWidth="getMinWidth(option)"
 							:prependIcon="getIcon(option, 'prependIcon')"
 							:variant="getVariant(option.value)"
-							:width="fieldWidth"
-							@click.prevent="onActions(validate, 'click', option.value);"
-							@keydown.space.prevent="onActions(validate, 'click', option.value)"
+							:width="getWidth(option)"
+							@click.prevent="onActions(validate, 'click', option.value); handleInput(modelValue)"
+							@keydown.space.prevent="onActions(validate, 'click', option.value); handleInput(modelValue)"
 							@mousedown="onFocus(option.value)"
 							@mouseleave="onFocus(null)"
 							@mouseup="onFocus(null)"
@@ -67,6 +68,7 @@
 							>
 								<span
 									class="vsf-button-field__btn-label"
+									:class="getLabelClass(option)"
 									v-html="option.label"
 								></span>
 							</template>
@@ -141,7 +143,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 
 	if (!field?.disabled && value) {
 		if (field?.multiple) {
-			const localModelValue = modelValue.value as string[];
+			const localModelValue = modelValue.value == null ? [] : modelValue.value as string[];
 
 			if (localModelValue != null && localModelValue.includes(String(value))) {
 				const index = localModelValue.indexOf(String(value));
@@ -172,15 +174,6 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		});
 }
 
-const buttonDensity = computed<VSFButtonFieldProps['field']['density']>(() => {
-	const density = field?.density ?? settings.value?.density;
-
-	if (['comfortable', 'compact', 'default'].includes(density as string)) {
-		return density;
-	}
-
-	return;
-});
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
@@ -219,6 +212,8 @@ function getId(option: { id?: string; }, key: string | number) {
 
 
 // -------------------------------------------------- Properties //
+
+// ------------------------- Density & Sizes //
 const densityValues = {
 	comfortable: '48px',
 	compact: '40px',
@@ -227,23 +222,59 @@ const densityValues = {
 	oversized: '72px',
 };
 
-const fieldDensity = computed(() => field?.density ?? settings.value?.density);
+const fieldDensity = computed<VBtn['density']>(() => (field?.density ?? settings.value?.density) as VBtn['density']);
 
-function useSize(val: string) {
-
-	if (field?.[val]) {
-		return field[val] as string;
-	}
-	else if (val === 'minWidth') {
-		return field[val] || undefined;
-	}
-
+function getDensityValue(): string {
 	return fieldDensity.value ? densityValues[fieldDensity.value] : densityValues['default'];
 }
 
-const fieldHeight = computed(() => useSize('height'));
-const fieldWidth = computed(() => useSize('width'));
-const fieldMinWidth = computed(() => useSize('minWidth'));
+function getMinWidth(option: Option): string | number | undefined {
+	const minWidth = option?.minWidth ?? field?.minWidth;
+
+	if (minWidth != null) {
+		return minWidth as string;
+	}
+
+	if (option?.icon) {
+		return getDensityValue();
+	}
+
+	return '100px';
+}
+
+function getMaxWidth(option: Option): string | number | undefined {
+	const maxWidth = option?.maxWidth ?? field?.maxWidth;
+
+	if (maxWidth != null) {
+		return maxWidth as string;
+	}
+
+	return undefined;
+}
+
+function getWidth(option: Option): string | number | undefined {
+	const width = option?.width ?? field?.width;
+
+	if (width != null) {
+		return width as string;
+	}
+
+	if (option?.icon) {
+		return getDensityValue();
+	}
+
+	return 'fit-content';
+}
+
+function getHeight(option: Option): string | number | undefined {
+	const height = option?.height ?? field?.height;
+
+	if (height != null) {
+		return height as string;
+	}
+
+	return getDensityValue();
+}
 
 const isActive = (val: string | number): boolean | undefined => {
 	if (!modelValue.value) {
@@ -253,6 +284,7 @@ const isActive = (val: string | number): boolean | undefined => {
 	return modelValue.value === val || (modelValue.value as string[]).includes(val as string);
 };
 
+// ------------------------- Variants //
 const fieldVariant = ref<VSFButtonFieldProps['field']['variant']>(field?.variant);
 
 function getVariant(val: string | number): VSFButtonFieldProps['field']['variant'] {
@@ -326,6 +358,7 @@ const buttontextcolor = ref('rgb(var(--v-theme-on-surface))');
 // -------------------------------------------------- Classes //
 const itemGroupClass = computed(() => {
 	return {
+		[`align-${field?.align}`]: field?.align != null,
 		'd-flex': true,
 		'flex-column': field?.block,
 		[`ga-${gap.value}`]: !containsSizeUnit(gap.value),
@@ -342,14 +375,26 @@ const buttonFieldContainerClass = computed(() => {
 });
 
 const buttonClass = computed(() => {
-	if (fieldDensity.value === 'expanded' || fieldDensity.value === 'oversized') {
+	const localDensity = fieldDensity.value as string;
+
+	if (localDensity === 'expanded' || localDensity === 'oversized') {
 		return {
-			[`v-btn--density-${fieldDensity.value}`]: true,
+			[`v-btn--density-${localDensity}`]: true,
 		};
 	}
 
 	return {};
 });
+
+const getLabelClass = (option: Option): object => {
+	const isActiveOption = isActive(option.value);
+	const optionVariant = getVariant(option.value);
+	const useBgColor = isActiveOption || optionVariant === 'flat' || optionVariant === 'elevated';
+
+	return {
+		[`bg-${option?.color}`]: useBgColor,
+	};
+};
 
 // -------------------------------------------------- Focused //
 const isFocused = shallowRef(null);
@@ -367,6 +412,10 @@ function containsSizeUnit(value: string | number): boolean {
 </script>
 
 <style lang="scss" scoped>
+.v-item-group {
+	flex-wrap: wrap;
+}
+
 .vsf-button-field {
 	&__btn-label {
 		color: v-bind(buttontextcolor);

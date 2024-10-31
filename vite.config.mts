@@ -5,6 +5,7 @@ import stylelint from 'vite-plugin-stylelint';
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import AutoImport from 'unplugin-auto-import/vite';
+import vueDevTools from 'vite-plugin-vue-devtools';
 
 const baseUrl = '/vuetify-stepper-form/';
 const playgroundUrl = baseUrl + 'playground/';
@@ -18,7 +19,7 @@ export default defineConfig({
 	css: {
 		preprocessorOptions: {
 			scss: {
-				api: 'modern-compiler', // or "modern", "legacy"
+				api: 'modern-compiler',
 				importers: [],
 			},
 		},
@@ -53,6 +54,7 @@ export default defineConfig({
 		vue({
 			template: { transformAssetUrls }
 		}),
+		vueDevTools(),
 		vuetify({
 			autoImport: true,
 		}),

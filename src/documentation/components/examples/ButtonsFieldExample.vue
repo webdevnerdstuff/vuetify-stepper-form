@@ -13,6 +13,7 @@
 		color="primary"
 		:density="buttonDensityModel"
 		:pages="pages"
+		:validationSchema="validationSchema"
 		:variant="buttonVariantModel"
 		@submit="submitForm"
 	/>
@@ -21,8 +22,8 @@
 		v-model="drawer"
 		fixed
 		location="right"
-		:scrim="false"
-		temporary
+		:scrim="!mobile ? false : 'transparent'"
+		:temporary="!mobile"
 	>
 		<v-container>
 			<div class="d-flex justify-space-between align-center mb-2">
@@ -80,17 +81,6 @@
 						v-model="buttonBlock"
 						v-bind="optionsSettings"
 						label="Block"
-						:true-value="true"
-					/>
-				</v-col>
-				<v-col
-					class="py-0"
-					cols="12"
-				>
-					<v-checkbox
-						v-model="multipleModel"
-						v-bind="optionsSettings"
-						label="Multiple"
 						:true-value="true"
 					/>
 				</v-col>
@@ -156,6 +146,12 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify';
+import {
+	array as yupArray,
+	object as yupObject,
+	string as yupString,
+} from 'yup';
 import AnswersDialog from '../AnswersDialog.vue';
 
 
@@ -168,6 +164,7 @@ const optionsSettings = {
 	density: 'comfortable' as const,
 	hideDetails: true,
 };
+const { mobile } = useDisplay();
 
 const buttonVariantOptions = [
 	{
@@ -239,21 +236,28 @@ const buttonDensityOptions = [
 		value: 'oversized',
 	},
 ];
-const multipleModel = ref(false);
 const useIcon = ref(false);
 
 
-const answers = ref<{ iLikeButtons: string | string[] | null | undefined; }>({
+const answers = ref<{
+	animalsILike: string[] | null | undefined;
+	iLikeButtons: string | null | undefined;
+}>({
+	animalsILike: null,
 	iLikeButtons: null,
-});
-
-watch(() => multipleModel.value, () => {
-	answers.value.iLikeButtons = multipleModel.value ? [] as string[] : null;
 });
 
 const appendIcon = ref(false);
 const prependIcon = ref(false);
 const useColors = ref(false);
+
+
+watch(() => [useIcon.value, useColors.value, appendIcon.value, prependIcon.value], () => {
+	answers.value = {
+		animalsILike: null,
+		iLikeButtons: null,
+	};
+});
 
 
 const pages = computed(() => [
@@ -263,7 +267,6 @@ const pages = computed(() => [
 				align: buttonAlignModel,
 				block: buttonBlock,
 				label: 'I like buttons',
-				multiple: multipleModel,
 				name: 'iLikeButtons',
 				options: [
 					{
@@ -290,6 +293,42 @@ const pages = computed(() => [
 						value: 'maybe',
 					},
 				],
+				required: true,
+				type: 'buttons' as const,
+			},
+			{
+				align: buttonAlignModel,
+				block: buttonBlock,
+				label: 'I like...',
+				multiple: true,
+				name: 'animalsILike',
+				options: [
+					{
+						appendIcon: appendIcon.value ? 'mdi:mdi-rabbit' : undefined,
+						color: useColors.value ? 'white' : undefined,
+						icon: useIcon.value ? 'mdi:mdi-rabbit' : undefined,
+						label: 'Bunnies',
+						prependIcon: prependIcon.value ? 'mdi:mdi-rabbit' : undefined,
+						value: 'bunnies',
+					},
+					{
+						appendIcon: appendIcon.value ? 'mdi:mdi-tortoise' : undefined,
+						color: useColors.value ? 'success' : undefined,
+						icon: useIcon.value ? 'mdi:mdi-tortoise' : undefined,
+						label: 'Turtles',
+						prependIcon: prependIcon.value ? 'mdi:mdi-tortoise' : undefined,
+						value: 'turtles',
+					},
+					{
+						appendIcon: appendIcon.value ? 'mdi:mdi-duck' : undefined,
+						color: useColors.value ? 'yellow' : undefined,
+						icon: useIcon.value ? 'mdi:mdi-duck' : undefined,
+						label: 'duck',
+						prependIcon: prependIcon.value ? 'mdi:mdi-duck' : undefined,
+						value: 'duck',
+					},
+				],
+				required: true,
 				type: 'buttons' as const,
 			},
 		],
@@ -301,6 +340,12 @@ const exampleKey = ref(String(Math.random()));
 
 watch(() => pages.value, () => {
 	exampleKey.value = String(Math.random());
+});
+
+const validationSchema = yupObject({
+	animalsILike: yupArray().required('This field is required.')
+		.min(1, 'Must select at least ${min} option.'),
+	iLikeButtons: yupString().required('This field is required.'),
 });
 
 function submitForm(): void {
@@ -373,16 +418,34 @@ const maybeOption = computed(() => buildOption({
 	value: 'maybe',
 }));
 
+const bunniesOption = computed(() => buildOption({
+	color: 'white',
+	icon: 'mdi:mdi-rabbit',
+	label: 'Bunnies',
+	value: 'bunnies',
+}));
+
+const turtlesOption = computed(() => buildOption({
+	color: 'success',
+	icon: 'mdi:mdi-tortoise',
+	label: 'Turtles',
+	value: 'turtles',
+}));
+
+const duckOption = computed(() => buildOption({
+	color: 'yellow',
+	icon: 'mdi:mdi-duck',
+	label: 'duck',
+	value: 'duck',
+}));
+
+
 const exampleAnswer = computed<string>(() => {
-	if (!answers.value.iLikeButtons || (answers.value.iLikeButtons as string[]).length === 0) {
+	if (!answers.value.iLikeButtons) {
 		return 'null';
 	}
 
-	if (multipleModel.value) {
-		return `${JSON.stringify(answers.value.iLikeButtons)}`;
-	}
-
-	return `'${answers.value.iLikeButtons as string}'`;
+	return `'${answers.value.iLikeButtons}'`;
 });
 
 const scriptCode = computed(() => (
@@ -398,8 +461,7 @@ const pages = computed(() => [
         align: '${buttonAlignModel.value}',
         block: ${buttonBlock.value},
         label: 'I like buttons',
-        multiple: ${multipleModel.value},
-        name: 'foo',
+        name: 'iLikeButtons',
         options: [
           {${yesOption.value}
           }
@@ -407,6 +469,22 @@ const pages = computed(() => [
           }
           {${maybeOption.value}
           },
+        ],
+        type: 'buttons',
+      },
+      {
+        align: '${buttonAlignModel.value}',
+        block: ${buttonBlock.value},
+        label: 'Animals I Like',
+        multiple: true,
+        name: 'animalsILike',
+        options: [
+          {${bunniesOption.value}
+          }
+          {${turtlesOption.value}
+          },
+          {${duckOption.value}
+          }
         ],
         type: 'buttons',
       },
@@ -425,7 +503,7 @@ watch(() => [scriptCode.value, templateCode.value], () => {
 });
 
 const exampleCode = computed(() => ({
-	desc: multipleModel.value,
+	desc: 'This example utilizes a custom-built component designed for this form, allowing users to select a value through buttons.',
 	name: 'Buttons Field',
 	script: scriptCode.value,
 	template: templateCode.value,

@@ -321,7 +321,6 @@ function removePageError(pageIndex: number): void {
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
 	const currentPage = stepperModel.value - 1;
-
 	const page = pages[currentPage];
 
 	if (!page) {
@@ -330,7 +329,7 @@ function checkForPageErrors(errors: ValidateResult['errors'], source: string, ne
 
 	const pageIndex = pages.findIndex((p) => p === page);
 	const pageFields = page?.fields ?? [];
-	const hasErrorInField = Object.keys(Array(errors)).some(errorKey => pageFields.some(field => field.name === errorKey));
+	const hasErrorInField = Object.keys(errors as object[]).some(errorKey => pageFields.some(field => field.name === errorKey));
 
 	if (hasErrorInField) {
 		currentPageHasErrors.value = true;
