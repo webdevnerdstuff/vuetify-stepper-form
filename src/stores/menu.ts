@@ -143,10 +143,10 @@ export const useMenuStore = defineStore('menu', () => {
 					title: 'Validation',
 				},
 				{
-					href: '#examples-conditional-fields',
+					href: '#examples-conditional-when',
 					icon: 'mdi:mdi-code-json',
-					key: 'examples-conditional-fields',
-					title: 'Conditional Fields',
+					key: 'examples-conditional-when',
+					title: 'Conditional When',
 				},
 				{
 					href: '#examples-summary-page',

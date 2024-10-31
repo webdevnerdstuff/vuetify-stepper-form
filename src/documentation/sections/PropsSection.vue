@@ -60,20 +60,9 @@
 
 		<v-col cols="12">
 			<VCodeBlock
-				:code="pagesObject"
-				:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
-				label="Example Page Object"
-				lang="javascript"
-				:prismjs="codeBlockSettings.plugin === 'prismjs'"
-				:theme="codeBlockSettings.theme"
-			/>
-		</v-col>
-
-		<v-col cols="12">
-			<VCodeBlock
 				:code="pageTypings"
 				:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
-				label="Page typings"
+				label="Page Interface"
 				lang="typescript"
 				:prismjs="codeBlockSettings.plugin === 'prismjs'"
 				:theme="codeBlockSettings.theme"
@@ -101,17 +90,6 @@
 				also supports the majority of its props, allowing for flexible and customizable form inputs tailored to your
 				needs.
 			</p>
-		</v-col>
-
-		<v-col cols="12">
-			<VCodeBlock
-				:code="fieldObject"
-				:highlightjs="codeBlockSettings.plugin === 'highlightjs'"
-				label="Example Field Object"
-				lang="javascript"
-				:prismjs="codeBlockSettings.plugin === 'prismjs'"
-				:theme="codeBlockSettings.theme"
-			/>
 		</v-col>
 
 		<v-col
@@ -173,20 +151,6 @@ const classes = inject<Docs.GlobalClasses>('classes')!;
 const store = useCoreStore();
 const propsStore = usePropsStore();
 
-const pagesObject = `const pages = [
-  {
-    title: 'Page 1'
-    text: 'This is the page one text',
-    fields: [
-      // ...field objects
-    ],
-    autoPage: true,
-    editable: true,
-    error: false,
-  }
-]
-`;
-
 const pageTypings = `interface Page {
   autoPage?: boolean;
   editable?: VStepperItem['editable'];
@@ -195,22 +159,13 @@ const pageTypings = `interface Page {
   isReview?: boolean;
   text?: string;
   title?: string;
-}`;
-
-const fieldObject = `{
-  color: 'primary',
-  label: 'First Name',
-  name: 'firstName',
-  text: 'Enter your first name only',
-  type: 'text',
-  validateOn: 'blur',
-  variant: 'outlined',
+  visible?: boolean; // Internal use only
+  when?: (value: any) => boolean;
 }`;
 
 const fieldTypings = `interface Field {
   autoPage?: Props['autoPage'];
   autoPageDelay?: Props['autoPageDelay'];
-  canReview?: Props['canReview'];
   class?: string;
   color?: Props['color'];
   columns?: Props['fieldColumns'];

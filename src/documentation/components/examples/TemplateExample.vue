@@ -56,7 +56,6 @@ const formSettings = ref({
 	// autoPageDelay: 2000,
 	// bgColor: 'secondary',
 	// border: 'lg',
-	// canReview: false,
 	// color: 'yellow',
 	// density: 'default' as const,
 	// disabled: true,

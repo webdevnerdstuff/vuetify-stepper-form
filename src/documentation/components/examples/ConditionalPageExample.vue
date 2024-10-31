@@ -198,7 +198,7 @@ function submitForm() {
 defineExpose({
 	exampleCode: {
 		desc: 'The <code class="ic">when</code> prop in both Page and Field components enables dynamic visibility based on specific conditions. For Page, the <code class="ic">when</code> prop controls page visibility by evaluating a condition, displaying the page only when the condition is met. Similarly, for Field, the <code class="ic">when</code> prop manages field visibility, showing the field only when its condition is satisfied.',
-		name: 'Conditional Fields',
+		name: 'Conditional When',
 		script: scriptCode,
 		template: templateCode,
 	},
