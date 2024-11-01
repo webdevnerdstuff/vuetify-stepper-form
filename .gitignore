@@ -28,5 +28,3 @@ dist-ssr
 src/plugin/**/*.bk.*
 
 
-# Remove this later
-dist/
