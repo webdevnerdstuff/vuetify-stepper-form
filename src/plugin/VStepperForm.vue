@@ -174,7 +174,7 @@ import {
 import {
 	useBuildSettings,
 	useColumnErrorCheck,
-	useMergeProps,
+	useDeepMerge,
 } from './composables/helpers';
 import componentEmits from './utils/emits';
 import { AllProps } from './utils/props';
@@ -190,7 +190,7 @@ const injectedOptions = inject(globalOptions, {});
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
-let stepperProps: Settings = reactive<Settings>(useMergeProps(attrs, injectedOptions, props));
+let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
 const { direction, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
@@ -208,7 +208,7 @@ const stepperSettings = computed(() => useBindingSettings(settings.value as Part
 ]));
 
 watch(props, () => {
-	stepperProps = useMergeProps(attrs, injectedOptions, props);
+	stepperProps = useDeepMerge(attrs, injectedOptions, props);
 	settings.value = useBuildSettings(stepperProps);
 }, { deep: true });
 

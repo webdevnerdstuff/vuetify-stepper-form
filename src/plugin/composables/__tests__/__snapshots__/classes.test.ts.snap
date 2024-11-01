@@ -1,10 +1,46 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Classes Composable > useContainerClasses > should return class object 1`] = `
+exports[`Classes Composable > useColumnClasses > should return column classes with fieldColumns being the higher priority 1`] = `
+{
+  "v-col-12": true,
+  "v-col-lg-6": true,
+  "v-col-md-6": true,
+  "v-col-sm-10": true,
+  "v-col-xl-9": true,
+  "v-cols": true,
+}
+`;
+
+exports[`Classes Composable > useContainerClasses > should return class object with direction horizontal 1`] = `
+{
+  "d-flex flex-column justify-center align-center": true,
+  "v-stepper-form": true,
+  "v-stepper-form--container": true,
+  "v-stepper-form--container-horizontal": true,
+}
+`;
+
+exports[`Classes Composable > useContainerClasses > should return class object with direction vertical 1`] = `
 {
   "d-flex flex-column justify-center align-center": false,
   "v-stepper-form": true,
   "v-stepper-form--container": true,
-  "v-stepper-form--container-undefined": true,
+  "v-stepper-form--container-vertical": true,
+}
+`;
+
+exports[`Classes Composable > useStepperContainerClasses > should return class object with direction horizontal 1`] = `
+{
+  "d-flex flex-column justify-center align-center": true,
+  "v-stepper-form--container-stepper": true,
+  "v-stepper-form--container-stepper-horizontal": true,
+}
+`;
+
+exports[`Classes Composable > useStepperContainerClasses > should return class object with direction vertical 1`] = `
+{
+  "d-flex flex-column justify-center align-center": false,
+  "v-stepper-form--container-stepper": true,
+  "v-stepper-form--container-stepper-vertical": true,
 }
 `;

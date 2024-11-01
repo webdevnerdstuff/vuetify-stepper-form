@@ -257,11 +257,11 @@ export interface UseBuildSettings {
 	): Settings;
 }
 // ------------------------- Helpers //
-export interface UseMergeProps {
+export interface UseDeepMerge {
 	(
 		A: Record<string, any>,
-		B: PluginOptions,
-		C: Props
+		B: Record<string, any>,
+		C: Record<string, any>
 	): Record<string, any>;
 }
 
