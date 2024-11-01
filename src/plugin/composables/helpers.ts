@@ -1,23 +1,38 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { watchDebounced } from '@vueuse/core';
 import {
 	UseAutoPage,
 	UseBuildSettings,
 	UseColumnErrorCheck,
-	UseMergeProps,
+	UseDeepMerge,
 } from '@/plugin/types';
 
 
 /**
 * Merges props from three objects.
 */
-export const useMergeProps: UseMergeProps = (A, B, C) => {
-	const res: Record<string, any> = {};
+type AnyObject = Record<string, any>;
 
-	Object.keys({ ...A, ...B, ...C }).map(key => {
-		res[key] = (C[key] ?? B[key] ?? A[key]) as any;
-	});
+export const useDeepMerge: UseDeepMerge = (A, B, C) => {
+	const deepMerge = (obj1: AnyObject, obj2: AnyObject): AnyObject => {
+		const result: AnyObject = { ...obj1 };
+		for (const key in obj2) {
+			if (
+				obj2[key] &&
+				typeof obj2[key] === 'object' &&
+				!Array.isArray(obj2[key])
+			) {
+				result[key] = deepMerge(result[key] ?? {}, obj2[key]);
+			}
+			else {
+				result[key] = obj2[key];
+			}
+		}
+		return result;
+	};
 
-	return res;
+	// Merge A, B, and C with priority order C > B > A
+	return deepMerge(deepMerge(A, B), C);
 };
 
 
