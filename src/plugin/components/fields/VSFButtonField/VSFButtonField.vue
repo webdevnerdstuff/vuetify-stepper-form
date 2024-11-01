@@ -358,7 +358,8 @@ const buttontextcolor = ref('rgb(var(--v-theme-on-surface))');
 // -------------------------------------------------- Classes //
 const itemGroupClass = computed(() => {
 	return {
-		[`align-${field?.align}`]: field?.align != null,
+		[`align-${field?.align}`]: field?.align != null && field?.block,
+		[`justify-${field?.align}`]: field?.align != null && !field?.block,
 		'd-flex': true,
 		'flex-column': field?.block,
 		[`ga-${gap.value}`]: !containsSizeUnit(gap.value),

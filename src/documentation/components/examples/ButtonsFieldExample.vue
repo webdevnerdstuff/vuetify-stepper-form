@@ -211,6 +211,18 @@ const buttonAlignOptions = [
 		title: 'End',
 		value: 'end',
 	},
+	{
+		title: 'Space Between',
+		value: 'space-between',
+	},
+	{
+		title: 'Space Around',
+		value: 'space-around',
+	},
+	{
+		title: 'Space Evenly',
+		value: 'space-evenly',
+	},
 ];
 const buttonBlock = ref(false);
 const buttonDensityModel = ref('default' as const);
