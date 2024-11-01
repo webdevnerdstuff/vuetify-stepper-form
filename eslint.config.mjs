@@ -14,11 +14,6 @@ export default tseslint.config(
 	...tseslint.configs.recommended,
 	...pluginVue.configs['flat/essential'],
 	{
-		name: 'app/files-to-lint',
-		files: ['**/*.{ts,mts,tsx,vue}'],
-	},
-	{
-		files: ['**/*.{js,ts,vue}'],
 		ignores: [
 			'.eslintrc.js',
 			'stylelint.config.js',
@@ -26,9 +21,17 @@ export default tseslint.config(
 			'vite.config.mts',
 			'*.bk.vue',
 			'*.spec.ts',
+			'src/playground/configs/templates/PlaygroundPage.vue',
 			'src/**/*.spec.ts',
 			'src/**/*.test.ts',
 		],
+	},
+	{
+		name: 'app/files-to-lint',
+		files: ['**/*.{ts,mts,tsx,vue}'],
+	},
+	{
+		files: ['**/*.{js,ts,vue}'],
 		languageOptions: {
 			...AutoImportJson,
 			ecmaVersion: 'latest',

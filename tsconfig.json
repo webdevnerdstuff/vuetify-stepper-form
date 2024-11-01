@@ -61,6 +61,7 @@
 		"playground",
 		"src/**/*.spec.ts",
 		"src/**/*.test.ts",
+		"src/playground/configs/templates/PlaygroundPage.vue",
 		"src/plugins/**/*.ts",
 		"src/stores/**/*.ts",
 		"node_modules",
