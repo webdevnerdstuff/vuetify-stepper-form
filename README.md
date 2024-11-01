@@ -7,10 +7,10 @@
 </p>
 
 <p align="center">
-  <!-- <a href="https://www.npmjs.com/package/vuetify-stepper-form">
-    <img src="https://img.shields.io/npm/v/vuetify-stepper-form?color=1867c0&logo=npm" alt="NPM Package">
+  <a href="https://www.npmjs.com/package/vuetify-stepper-form">
+    <img src="https://img.shields.io/npm/v/@wdns/vuetify-stepper-form?color=1867c0&logo=npm" alt="NPM Package">
   </a>
-  &nbsp; -->
+  &nbsp;
   <a href="https://github.com/webdevnerdstuff/vuetify-stepper-form">
     <img src="https://img.shields.io/badge/GitHub-WebDevNerdStuff-brightgreen.svg?logo=github" alt="@WebDevNerdStuff">
   </a>
