@@ -78,7 +78,7 @@ export default defineConfig({
 		hmr: {
 			protocol: 'ws',
 		},
-		open: true,
+		open: process?.env?.NODE_ENV === 'playground' ? playgroundUrl : true,
 	},
 });
 
