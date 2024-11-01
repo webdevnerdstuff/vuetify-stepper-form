@@ -31,9 +31,6 @@
 				<v-item
 					v-for="option, key in field?.options"
 					:key="option.value"
-					:class="{
-						'vsf-button-field__stacked': field?.stacked,
-					}"
 				>
 					<template #default>
 						<v-btn
@@ -48,6 +45,7 @@
 								[`${field.selectedClass}`]: isActive(option.value),
 							}"
 							:color="option?.color || field?.color || settings?.color"
+							data-test-id="vsf-button-field"
 							:density="fieldDensity"
 							:height="getHeight(option)"
 							:icon="getIcon(option, 'icon')"
