@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/vuetify-stepper-form">
+  <a href="https://www.npmjs.com/package/@wdns/vuetify-stepper-form">
     <img src="https://img.shields.io/npm/v/@wdns/vuetify-stepper-form?color=1867c0&logo=npm" alt="NPM Package">
   </a>
   &nbsp;
