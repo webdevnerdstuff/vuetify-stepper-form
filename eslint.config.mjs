@@ -1,17 +1,13 @@
 // eslint.config.js
 import eslint from '@eslint/js';
 import wdnsConfig from '@wdns/eslint-config-wdns';
-import pluginVue from 'eslint-plugin-vue';
 import tseslint from 'typescript-eslint';
 import AutoImportJson from './.eslintrc-auto-import.json' with { type: 'json' };
-import vueTsEslintConfig from '@vue/eslint-config-typescript';
 
 
 export default tseslint.config(
 	eslint.configs.recommended,
 	...tseslint.configs.recommended,
-	...pluginVue.configs['flat/essential'],
-	...vueTsEslintConfig(),
 	...wdnsConfig,
 	{
 		ignores: [
