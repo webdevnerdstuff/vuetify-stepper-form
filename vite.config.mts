@@ -1,6 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
-import eslint from 'vite-plugin-eslint';
+import eslint from 'vite-plugin-eslint2';
 import stylelint from 'vite-plugin-stylelint';
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
@@ -26,10 +26,9 @@ export default defineConfig({
 	},
 	plugins: [
 		eslint({
-			failOnError: false,
 			fix: true,
 			exclude: ['node_modules/**', 'vendor/**'],
-			include: ['src/**/*.{js,ts,mts,vue}'],
+			include: ['src/**/*.{ts,mts,tsx,vue}'],
 		}),
 		stylelint({
 			cache: false,
