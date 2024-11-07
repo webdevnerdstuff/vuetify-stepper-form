@@ -2699,7 +2699,7 @@ const rr = Me({ name: "Form", inheritAttrs: !1, props: { as: { type: null, defau
       te.value || _e();
     }(ee) }, null, 8, ["disabled", "size", "onClick"])]), _: 2 }, 1024))]), _: 2 }, 1032, ["keep-values-on-unmount", "validate-on-mount", "validation-schema"])];
   }), _: 3 }, 16, ["modelValue", "mobile"])]), _: 3 }, 8, ["class"])], 4)], 6));
-} }), Ar = Qa(Cr, [["__scopeId", "data-v-fc272bda"]]), jr = Object.freeze(Object.defineProperty({ __proto__: null, default: Ar }, Symbol.toStringTag, { value: "Module" })), Pr = ua, el = Symbol();
+} }), Ar = Qa(Cr, [["__scopeId", "data-v-0b2a2388"]]), jr = Object.freeze(Object.defineProperty({ __proto__: null, default: Ar }, Symbol.toStringTag, { value: "Module" })), Pr = ua, el = Symbol();
 function Xr(e = Pr) {
   return { install: (t) => {
     t.provide(el, e), t.config.idPrefix = "vsf", t.component("VStepperForm", eo(() => Promise.resolve().then(() => jr))), t.component("FieldLabel", eo(() => import("./FieldLabel-BBHgsT56.mjs")));
@@ -2712,4 +2712,4 @@ export {
   Ar as default,
   el as globalOptions
 };
-(function(){"use strict";try{if(typeof document<"u"){var e=document.createElement("style");e.appendChild(document.createTextNode(".v-item-group[data-v-905803b2]{flex-wrap:wrap}.vsf-button-field__btn-label[data-v-905803b2]{color:var(--9a9a527e)}.v-stepper-item--error[data-v-fc272bda] .v-icon{color:#fff}")),document.head.appendChild(e)}}catch(t){console.error("vite-plugin-css-injected-by-js",t)}})();
+(function(){"use strict";try{if(typeof document<"u"){var e=document.createElement("style");e.appendChild(document.createTextNode(".v-item-group[data-v-905803b2]{flex-wrap:wrap}.vsf-button-field__btn-label[data-v-905803b2]{color:var(--9a9a527e)}.v-stepper-item--error[data-v-0b2a2388] .v-icon{color:#fff}")),document.head.appendChild(e)}}catch(t){console.error("vite-plugin-css-injected-by-js",t)}})();

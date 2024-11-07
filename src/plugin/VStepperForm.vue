@@ -465,7 +465,6 @@ const computedPages = computed<Page[]>(() => {
 		localPage.visible = true;
 
 		if (localPage.when) {
-			// eslint-disable-next-line no-unused-vars
 			const enabledPage: boolean = (localPage.when as (value: any) => boolean)(modelValue.value);
 
 			if (pages[pageIdx]) {
