@@ -192,9 +192,6 @@ importers:
       vite-plugin-dts:
         specifier: ^4.3.0
         version: 4.3.0(@types/node@22.9.0)(rollup@4.24.4)(typescript@5.6.3)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0))
-      vite-plugin-eslint:
-        specifier: ^1.8.1
-        version: 1.8.1(eslint@9.14.0)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0))
       vite-plugin-eslint2:
         specifier: ^5.0.1
         version: 5.0.1(@types/eslint@9.6.1)(eslint@9.14.0)(rollup@4.24.4)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0))
@@ -995,9 +992,6 @@ packages:
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
-
-  '@types/eslint@8.56.12':
-    resolution: {integrity: sha512-03ruubjWyOHlmljCVoxSuNDdmfZDzsrrz0P2LeJsOXr+ZwFQ+0yQIwNCwt/GYhV7Z31fgtXJTAEs+FYlEL851g==}
 
   '@types/eslint@9.6.1':
     resolution: {integrity: sha512-FXx2pKgId/WyYo2jXw63kk7/+TY7u7AziEJxJAnSFzHlqTAS3Ync6SvgYAN/k4/PQpnnVuzoMuVnByKK2qp0ag==}
@@ -4494,11 +4488,6 @@ packages:
   rollup-pluginutils@2.8.2:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
 
-  rollup@2.79.2:
-    resolution: {integrity: sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-
   rollup@4.24.4:
     resolution: {integrity: sha512-vGorVWIsWfX3xbcyAS+I047kFKapHYivmkaT63Smj77XwvLSJos6M1xGqZnBPFQFBRZDOcG1QnYEIxAvTr/HjA==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -5215,12 +5204,6 @@ packages:
         optional: true
       rollup:
         optional: true
-
-  vite-plugin-eslint@1.8.1:
-    resolution: {integrity: sha512-PqdMf3Y2fLO9FsNPmMX+//2BF5SF8nEWspZdgl4kSt7UvHDRHVVfHvxsD7ULYzZrJDGRxR81Nq7TOFgwMnUang==}
-    peerDependencies:
-      eslint: '>=7'
-      vite: '>=2'
 
   vite-plugin-inspect@0.8.7:
     resolution: {integrity: sha512-/XXou3MVc13A5O9/2Nd6xczjrUwt7ZyI9h8pTnUMkr5SshLcb0PJUOVq2V+XVkdeU4njsqAtmK87THZuO2coGA==}
@@ -6374,11 +6357,6 @@ snapshots:
   '@types/connect@3.4.38':
     dependencies:
       '@types/node': 22.9.0
-
-  '@types/eslint@8.56.12':
-    dependencies:
-      '@types/estree': 1.0.6
-      '@types/json-schema': 7.0.15
 
   '@types/eslint@9.6.1':
     dependencies:
@@ -10213,10 +10191,6 @@ snapshots:
     dependencies:
       estree-walker: 0.6.1
 
-  rollup@2.79.2:
-    optionalDependencies:
-      fsevents: 2.3.3
-
   rollup@4.24.4:
     dependencies:
       '@types/estree': 1.0.6
@@ -11045,14 +11019,6 @@ snapshots:
       rollup: 4.24.4
     transitivePeerDependencies:
       - supports-color
-
-  vite-plugin-eslint@1.8.1(eslint@9.14.0)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0)):
-    dependencies:
-      '@rollup/pluginutils': 4.2.1
-      '@types/eslint': 8.56.12
-      eslint: 9.14.0
-      rollup: 2.79.2
-      vite: 5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0)
 
   vite-plugin-inspect@0.8.7(rollup@4.24.4)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0)):
     dependencies:
