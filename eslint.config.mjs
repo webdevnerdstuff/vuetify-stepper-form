@@ -25,7 +25,7 @@ export default tseslint.config(
 			sourceType: 'module',
 			parserOptions: {
 				parser: tseslint.parser,
-				project: './tsconfig.json',
+				project: ['./tsconfig.json', './tsconfig.node.json'],
 				extraFileExtensions: ['.vue'],
 				sourceType: 'module',
 			},
