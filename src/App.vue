@@ -32,7 +32,6 @@ import 'prismjs/components/prism-typescript.js';
 
 
 onMounted(() => {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	Prism.highlightAll();
 });
 
