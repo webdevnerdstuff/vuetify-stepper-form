@@ -11,6 +11,9 @@ export default tseslint.config(
 	...wdnsConfig,
 	{
 		ignores: [
+			'**/cypress/**',
+			'**/*.cy.ts',
+			'cypress.config.ts',
 			'vite.build.config.mts',
 			'vite.config.mts',
 			'src/playground/configs/templates/PlaygroundPage.vue',

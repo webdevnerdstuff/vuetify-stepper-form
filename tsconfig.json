@@ -53,18 +53,20 @@
 			"./node_modules/vuetify"
 		],
 		"types": [
+			"jest",
 			"node"
 		],
 		"useDefineForClassFields": true
 	},
 	"exclude": [
+		"cypress.config.ts",
+		"node_modules",
 		"playground",
 		"src/**/*.spec.ts",
 		"src/**/*.test.ts",
 		"src/playground/configs/templates/PlaygroundPage.vue",
 		"src/plugins/**/*.ts",
 		"src/stores/**/*.ts",
-		"node_modules",
 	],
 	"include": [
 		"eslint.config.mjs",

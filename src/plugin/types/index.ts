@@ -1,5 +1,4 @@
 
-/* eslint-disable no-unused-vars */
 import { App } from 'vue';
 import type {
 	FieldValidator,
