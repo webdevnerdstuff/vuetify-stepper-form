@@ -1,6 +1,13 @@
 import { AllProps } from '../../../../utils/props';
 import VSFButtonField from '../VSFButtonField.vue';
 
+import {
+	VBtn,
+	VIcon,
+} from 'vuetify/components';
+
+
+
 const field = {
 	// active: false, // ? Not supported
 	// activeColor: 'primary-darken-1', // **
@@ -17,7 +24,7 @@ const field = {
 	// errorMessage: ['Error 1', 'Error 2'], // * Works via the Field validation
 	// exact: true,
 	// flat: true,
-	// gap: '2', // **
+	// gap: '6', // **
 	// height: '400px', // **
 	// hideDetails: true, // **
 	// hint: 'yo', // *
@@ -82,7 +89,6 @@ const field = {
 	// text: 'foo',
 	// theme: 'light', // **
 	// tile: true, // **
-	// to: 'https://google.com', // ** Not allowed
 	type: 'buttons' as const,
 	// value: 'yes',
 	// validateOn: 'change',
@@ -90,18 +96,71 @@ const field = {
 	// width: '500px', // **
 };
 
+const global = {
+	provide: {
+		settings: {},
+		// settings: AllProps,
+	},
+};
+
 
 describe('<VSFButtonField />', () => {
+	// it('mounts', () => {
+	// 	cy.mount(VSFButtonField, {
+	// 		props: {
+	// 			field,
+	// 		},
+	// 		global,
+	// 	});
+	// });
+
 	it('mounts', () => {
 		cy.mount(VSFButtonField, {
 			props: {
 				field,
+				// modelValue: 'yes',
 			},
-			global: {
-				provide: {
-					settings: AllProps,
-				},
-			},
+			global,
 		});
 	});
 });
+
+
+// describe('<VBtn />', () => {
+// it('mounts', () => {
+// 	cy.mount(VBtn, {
+// 		props: {
+// 			color: 'primary',
+// 		},
+// 		slots: {
+// 			default: () => 'default slot',
+// 			append: () => 'appended slot',
+// 			prepend: () => 'prepended slot',
+// 		}
+// 	});
+// });
+
+// it('mounts', () => {
+// 	cy.mount(VBtn, {
+// 		props: {
+// 			color: 'primary',
+// 		},
+// 		slots: {
+// 			default: 'default slot',
+// 			append: 'appended slot',
+// 			prepend: 'prepended slot',
+// 		}
+// 	});
+// });
+
+// it('mounts', () => {
+// 	cy.mount(() => {
+// 		return h(VBtn, {
+// 			color: 'primary',
+// 		}, {
+// 			default: () => h(VIcon, { icon: 'mdi:mdi-cog' }),
+// 			prepend: () => h(VIcon, { icon: 'mdi:mdi-cog' }),
+// 		});
+// 	});
+// });
+// });

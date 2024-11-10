@@ -53,7 +53,7 @@ export default defineConfig({
 		vue({
 			template: { transformAssetUrls }
 		}),
-		vueDevTools(),
+		// vueDevTools(),
 		vuetify({
 			autoImport: true,
 		}),

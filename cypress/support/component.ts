@@ -1,34 +1,10 @@
-// ***********************************************************
-// This example support/component.ts is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
-
-// Import commands.js using ES2015 syntax:
 import './commands';
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-
-import { mount } from 'cypress/vue';
-import { createApp } from "vue";
-
+import AppTemplate from '../templates/App.vue';
 import vuetify from "../../src/plugins/vuetify";
-import App from "../../src/App.vue";
+import { h } from "vue";
+import { mount } from 'cypress/vue';
 
-// Augment the Cypress namespace to include type definitions for
-// your custom command.
-// Alternatively, can be defined in cypress/support/component.d.ts
-// with a <reference path="./component" /> at the top of your spec.
+
 declare global {
 	namespace Cypress {
 		interface Chainable {
@@ -37,30 +13,33 @@ declare global {
 	}
 }
 
-// Cypress.Commands.add('mount', mount)
-
-const app = createApp(App);
-// Use plugins
-app.use(vuetify);
-
-
-Cypress.Commands.add("mount", (component, options = {}) => {
-	// Setup options object
+Cypress.Commands.add('mount', (component, options = {}) => {
+	// Ensure global settings are defined
 	options.global = options.global || {};
 	options.global.stubs = options.global.stubs || {};
 	options.global.stubs['transition'] = false;
 	options.global.components = options.global.components || {};
-	options.global.plugins = options.global.plugins || [];
+	options.global.plugins = options.global.plugins || [vuetify];
 
-	/* Add any global plugins */
-	options.global.plugins.push({
-		install(app) {
-			app.use(vuetify); //import vuetify from you vuetify config
+	// Process slots to ensure they are functions
+	const slots = options.slots
+		? Object.fromEntries(
+			Object.entries(options.slots).map(([key, value]) => [
+				key,
+				// Convert strings or other non-function values into functions
+				typeof value === 'function'
+					? value
+					: () => (typeof value === 'string' ? h('div', value) : h(value)),
+			])
+		)
+		: {};
+
+	// Mount AppTemplate as the root and render `component` inside it
+	return mount(AppTemplate, {
+		...options,
+		slots: {
+			// Render the main component in the default slot of AppTemplate
+			default: () => h(component, options.props, slots),
 		},
-	});
-
-	return mount(component, options);
+	}) as Cypress.Chainable;
 });
-
-// Example use:
-// cy.mount(MyComponent)

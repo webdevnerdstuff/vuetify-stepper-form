@@ -60,6 +60,7 @@
 	},
 	"exclude": [
 		"cypress.config.ts",
+		"cypress/**/*.ts",
 		"node_modules",
 		"playground",
 		"src/**/*.spec.ts",

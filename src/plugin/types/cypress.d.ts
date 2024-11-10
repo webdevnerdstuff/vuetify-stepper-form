@@ -1,4 +1,6 @@
-import { mount } from 'cypress/vue';
+/// <reference types="cypress" />
+
+import { mount } from '@cypress/vue';
 
 declare global {
 	namespace Cypress {
