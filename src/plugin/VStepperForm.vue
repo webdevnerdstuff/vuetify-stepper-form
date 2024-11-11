@@ -190,12 +190,9 @@ const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
 const injectedOptions = inject<Ref<Settings>>('globalOptions')!;
 
-console.log('========= injectedOptions', injectedOptions);
-
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
-console.log('-------------', stepperProps);
 const { direction, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
