@@ -1,4 +1,3 @@
-
 import { App } from 'vue';
 import type {
 	FieldValidator,
@@ -67,7 +66,6 @@ export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'so
 	* VCheckbox
 	* VCombobox
 	* VColorField
-	// * VFancyRadio
 	* VFileInput
 	* VSelect
 	* VSwitch

@@ -23,12 +23,13 @@
 			>
 				<v-stepper
 					v-model="stepperModel"
+					data-cy="vsf-stepper-form"
 					v-bind="stepperSettings"
 					:mobile="sm"
 					width="100%"
 				>
 					<template #default="{ prev, next }">
-						<v-stepper-header>
+						<v-stepper-header data-cy="vsf-stepper-header">
 							<template
 								v-for="(page, i) in computedPages"
 								:key="`${getIndex(i)}-step`"
@@ -122,6 +123,7 @@
 									<v-btn
 										v-if="!lastPage"
 										:color="settings.color"
+										data-cy="vsf-next-button"
 										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
 										@click="runValidation(validate, 'next', next)"
@@ -129,6 +131,7 @@
 									<v-btn
 										v-else
 										:color="settings.color"
+										data-cy="vsf-submit-button"
 										:disabled="fieldsHaveErrors"
 										:size="navButtonSize"
 										type="submit"
@@ -137,6 +140,7 @@
 
 								<template #prev>
 									<v-btn
+										data-cy="vsf-previous-button"
 										:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
 										:size="navButtonSize"
 										@click="previousPage(prev)"
@@ -178,19 +182,20 @@ import {
 } from './composables/helpers';
 import componentEmits from './utils/emits';
 import { AllProps } from './utils/props';
-import { globalOptions } from './';
 
 
 const attrs = useAttrs();
 const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
-const injectedOptions = inject(globalOptions, {});
+const injectedOptions = inject<Ref<Settings>>('globalOptions')!;
 
+console.log('========= injectedOptions', injectedOptions);
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
+console.log('-------------', stepperProps);
 const { direction, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));

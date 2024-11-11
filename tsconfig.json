@@ -42,17 +42,18 @@
 			]
 		},
 		"resolveJsonModule": true,
-		"rootDir": "src",
+		"rootDir": "./",
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "ESNext",
 		"typeRoots": [
-			"./src/types",
+			"./src/plugin/types",
 			"./src/documentation/types",
 			"./node_modules/@types",
 			"./node_modules/vuetify"
 		],
 		"types": [
+			"cypress",
 			"jest",
 			"node"
 		],

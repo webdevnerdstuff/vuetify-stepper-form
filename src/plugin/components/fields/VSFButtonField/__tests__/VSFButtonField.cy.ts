@@ -98,7 +98,7 @@ const field = {
 
 const global = {
 	provide: {
-		settings: {},
+		globalOptions: {},
 		// settings: AllProps,
 	},
 };
