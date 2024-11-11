@@ -17,21 +17,22 @@ export const useDeepMerge: UseDeepMerge = (A, B, C) => {
 		const result: AnyObject = { ...obj1 };
 		for (const key in obj2) {
 			if (
-				obj2[key] &&
+				obj2[key] !== undefined && // Only proceed if obj2[key] is not undefined
 				typeof obj2[key] === 'object' &&
 				!Array.isArray(obj2[key])
 			) {
 				result[key] = deepMerge(result[key] ?? {}, obj2[key]);
 			}
-			else {
+			else if (obj2[key] !== undefined) {
+				// Only assign if obj2[key] is defined
 				result[key] = obj2[key];
 			}
 		}
 		return result;
 	};
 
-	// Merge A, B, and C with priority order C > B > A
-	return deepMerge(deepMerge(A, B), C);
+	// Merge only defined objects with priority order C > B > A
+	return [A, B, C].filter(Boolean).reduce(deepMerge, {});
 };
 
 
