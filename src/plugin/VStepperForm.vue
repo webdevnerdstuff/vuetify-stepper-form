@@ -37,7 +37,7 @@
 								<v-stepper-item
 									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
-									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
+									:edit-icon="page.isSummary ? '$complete' : settings.editIcon"
 									:editable="headerItemDisabled(page)"
 									elevation="0"
 									:error="page.error"
@@ -84,7 +84,7 @@
 								>
 									<v-container>
 										<PageContainer
-											v-if="!page.isReview"
+											v-if="!page.isSummary"
 											:key="`${getIndex(i)}-page`"
 											v-model="modelValue"
 											:fieldColumns="settings?.fieldColumns"
@@ -110,7 +110,7 @@
 											:page="page"
 											:pages="computedPages"
 											:settings="settings"
-											:summary-columns="summaryColumns"
+											:summaryColumns="settings?.summaryColumns"
 											@goToQuestion="stepperModel = $event"
 											@submit="onSubmit(modelValue)"
 										/>
@@ -319,7 +319,7 @@ function headerItemDisabled(page: Page): boolean {
 
 	// If you're on the last step (not review page) //
 	if (stepperModel.value === lastStep) {
-		return !page.isReview && (!settings.value.editable) && (!page.editable && settings.value?.editable !== false);
+		return !page.isSummary && (!settings.value.editable) && (!page.editable && settings.value?.editable !== false);
 	}
 
 	return false;
