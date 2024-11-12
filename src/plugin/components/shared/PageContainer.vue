@@ -126,6 +126,9 @@ export interface PageContainerProps {
 	page: Page;
 }
 
+defineOptions({
+	inheritAttrs: false,
+});
 const emit = defineEmits(['validate']);
 const slots = defineSlots();
 const { fieldColumns, page } = defineProps<PageContainerProps>();

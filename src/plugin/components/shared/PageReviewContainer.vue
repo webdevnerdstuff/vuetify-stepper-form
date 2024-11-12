@@ -76,6 +76,9 @@ export interface PageReviewContainerProps {
 const { summaryColumns, page, pages } = defineProps<PageReviewContainerProps>();
 const settings = inject<Settings>('settings')!;
 
+defineOptions({
+	inheritAttrs: false,
+});
 const emit = defineEmits([
 	'goToQuestion',
 	'submit',
