@@ -68,6 +68,7 @@ export const useBuildSettings: UseBuildSettings = (stepperProps: Settings) => {
 		prevText: stepperProps.prevText,
 		rounded: stepperProps.rounded,
 		selectedClass: stepperProps.selectedClass,
+		summaryColumns: stepperProps.summaryColumns,
 		tag: stepperProps.tag,
 		theme: stepperProps.theme,
 		tile: stepperProps.tile,
