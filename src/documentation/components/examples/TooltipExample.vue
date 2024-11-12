@@ -72,7 +72,7 @@ const pages = [
 		title: 'Address',
 	},
 	{
-		isReview: true,
+		isSummary: true,
 		text: 'Please review your information.',
 		title: 'Summary',
 	},
@@ -150,7 +150,7 @@ const pages = [
     title: 'Address',
   },
   {
-    isReview: true,
+    isSummary: true,
     text: 'Please review your information.',
     title: 'Summary',
   },
