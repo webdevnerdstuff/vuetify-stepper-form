@@ -9,7 +9,7 @@ declare global {
 	namespace Cypress {
 		interface Chainable {
 			mount: typeof mount;
-			dataCy(value: string): Chainable<JQuery<HTMLElement>>;
+			getDataCy(value: string): Chainable<JQuery<HTMLElement>>;
 		}
 	}
 }
@@ -43,4 +43,9 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 			default: () => h(component, options.props, slots),
 		},
 	}) as Cypress.Chainable;
+});
+
+
+Cypress.Commands.add('getDataCy', (name) => {
+	return cy.get(`[data-cy="${name}"]`);
 });
