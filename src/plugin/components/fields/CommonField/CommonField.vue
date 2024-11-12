@@ -12,6 +12,7 @@
 			:is="component"
 			v-model="modelValue"
 			v-bind="boundSettings"
+			:data-cy="`vsf-field-${field.name}`"
 			:error="hasErrors"
 			:error-messages="errorMessage || field.errorMessages"
 			:items="fieldItems"

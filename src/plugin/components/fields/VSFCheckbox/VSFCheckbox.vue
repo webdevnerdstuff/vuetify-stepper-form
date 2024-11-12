@@ -12,12 +12,14 @@
 		<v-checkbox
 			v-model="modelValue"
 			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
+			:data-cy="`vsf-field-${field.name}`"
 			:density="fieldDensity"
 			:disabled="isValidating"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
 			@blur="onActions(validate, 'blur')"
 			@change="onActions(validate, 'change')"
+			@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
 			@input="onActions(validate, 'input')"
 		>
 			<template #label>
@@ -80,6 +82,7 @@
 								v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
 								:id="option.id"
 								v-model="modelValue"
+								:data-cy="`vsf-field-${field.name}`"
 								:density="fieldDensity"
 								:disabled="isValidating"
 								:error="errorMessage ? errorMessage?.length > 0 : false"
@@ -90,6 +93,7 @@
 								:true-value="option.value"
 								@blur="onActions(validate, 'blur')"
 								@change="onActions(validate, 'change')"
+								@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
 								@input="onActions(validate, 'input')"
 								@update:focused="updateFocused($event)"
 							/>

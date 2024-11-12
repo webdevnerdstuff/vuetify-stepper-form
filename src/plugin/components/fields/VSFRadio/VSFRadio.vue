@@ -36,6 +36,7 @@
 					<v-radio-group
 						v-model="modelValue"
 						:append-icon="field?.appendIcon"
+						:data-cy="`vsf-field-group-${field.name}`"
 						:density="fieldDensity"
 						:direction="field?.direction"
 						:disabled="isValidating"
@@ -61,6 +62,7 @@
 							<v-radio
 								v-bind="boundSettings"
 								:id="undefined"
+								:data-cy="`vsf-field-${field.name}`"
 								:density="fieldDensity"
 								:error="errorMessage ? errorMessage?.length > 0 : false"
 								:error-messages="errorMessage"
@@ -70,6 +72,7 @@
 								:value="option.value"
 								@blur="onActions(validate, 'blur')"
 								@change="onActions(validate, 'change')"
+								@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
 								@input="onActions(validate, 'input')"
 							>
 							</v-radio>

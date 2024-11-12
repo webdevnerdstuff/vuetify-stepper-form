@@ -11,12 +11,14 @@
 		<v-switch
 			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
 			v-model="modelValue"
+			:data-cy="`vsf-field-${field.name}`"
 			:density="fieldDensity"
 			:disabled="isValidating"
 			:error="errorMessage ? errorMessage?.length > 0 : false"
 			:error-messages="errorMessage"
 			@blur="onActions((validate as ValidateFieldResult), 'blur')"
 			@change="onActions((validate as ValidateFieldResult), 'change')"
+			@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
 			@input="onActions((validate as ValidateFieldResult), 'input')"
 		>
 			<template #label>
