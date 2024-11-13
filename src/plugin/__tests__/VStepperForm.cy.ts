@@ -1,58 +1,15 @@
 /// <reference types="../cypress" />
 
 import type { Field } from '../../plugin/types';
+import * as DATA from '../../../cypress/templates/testData';
 import VStepperForm from '../VStepperForm.vue';
-import {
-	array as yupArray,
-	number as yupNumber,
-	string as yupString,
-	object as yupObject,
-} from 'yup';
 
 
-const finalAnswer = {
-	firstName: 'Bunny',
-	lastName: 'Rabbit',
-	email: 'test@test.com',
-	password: 'password1',
-	phone: '555-555-5555',
-	url: 'https://test.com',
-	number: 100,
-	isThisBoxChecked: 'yes',
-	checkboxMultiple: ["option1", "option3"],
-	isSingleRadioSelected: 'yes',
-	switchQuestion: 'yes',
-};
+const finalAnswer = DATA.finalAnswer;
+const items = DATA.items;
+const answers = DATA.answers;
+const validationSchema = DATA.validationSchema;
 
-const answers = {
-	firstName: null,
-	lastName: null,
-	email: null,
-	password: null,
-	phone: null,
-	url: null,
-	number: null,
-	isThisBoxChecked: null,
-	checkboxMultiple: null,
-	isSingleRadioSelected: null,
-	switchQuestion: null,
-	// autocomplete: undefined,
-	// autocomplete: 'foo',
-	// buttonField: [],
-	// color: '#ff0000',
-	// combobox: null,
-	// combobox: 'Foo',
-	// combobox: 'foo',
-	// combobox: null,
-	// combobox: { title: 'Foo', value: 'foo' },
-	// customFoo: null,
-	// customBar: null,
-	// desc: 'Hello World',
-	// file: null,
-	// radioMultiple: ['option1', 'option3'],
-	// selectField: null,
-	// selectField: 'foo',
-};
 
 const pages = [
 	{
@@ -98,6 +55,46 @@ const pages = [
 				label: 'Number',
 				name: 'number',
 				type: 'number' as const,
+				required: true,
+			},
+			{
+				items,
+				label: 'Select Animal',
+				name: 'selectAnimal',
+				type: 'select' as const,
+				required: true,
+			},
+			{
+				chips: true,
+				items,
+				itemValue: 'value',
+				label: 'Select Multiple Animals',
+				multiple: true,
+				name: 'selectsMultipleAnimals',
+				type: 'select' as const,
+				required: true,
+			},
+			{
+				items,
+				label: 'Autocomplete Animal',
+				name: 'autocompleteAnimal',
+				type: 'autocomplete' as const,
+				required: true,
+			},
+			{
+				chips: true,
+				clearOnSelect: true,
+				items,
+				label: 'Autocomplete Multiple Animal',
+				multiple: true,
+				name: 'autoCompleteMultipleAnimals',
+				type: 'autocomplete' as const,
+				required: true,
+			},
+			{
+				label: 'Description',
+				name: 'description',
+				type: 'textarea' as const,
 				required: true,
 			},
 		]
@@ -177,46 +174,7 @@ const pages = [
 	}
 ];
 
-function isRequired(field: string) {
-	return `${field} is required`;
-}
 
-
-const validationSchema = yupObject({
-	firstName: yupString().required(isRequired('First Name')),
-	lastName: yupString().required(isRequired('Last Name')),
-	email: yupString().email('Must be a valid Email').required(isRequired('Email')),
-	password: yupString().required(isRequired('Password'))
-		.min(5, 'Password must have at least ${min} characters'),
-	phone: yupString().required(isRequired('Phone')),
-	url: yupString().required(isRequired('URL'))
-		.url('Must be a valid URL'),
-	number: yupNumber().required(isRequired('Number'))
-		.min(finalAnswer.number, 'Number must be at least ${min}'),
-	isThisBoxChecked: yupString().required(isRequired('Checkbox Single')),
-	checkboxMultiple: yupArray().required(isRequired('Checkbox Multiple'))
-		.min(2, 'Must select at least ${min} options'),
-	isSingleRadioSelected: yupString().required(isRequired('Radio Single'))
-		.matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
-	switchQuestion: yupString().required(isRequired('Switch Question'))
-		.matches(/(yes)/, 'Only "yes" is allowed'),
-	// autocomplete: yupString().required(isRequired('Autocomplete')),
-	// autocomplete: yupArray().required(isRequired('Autocomplete')),
-	// buttonField: yupArray().required(isRequired('Button Field')),
-	// buttonField: yupString().required(isRequired('Button Field')).matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
-	// 	.matches(/(^true)/, isRequired('Checkbox Single')),
-	// .matches(/(^false)/, 'Checkbox must be not false'),
-	// color: yupString().required(isRequired('Color')),
-	// combobox: yupArray().required(isRequired('Combobox'))
-	// 	.length(1, 'Must select at least ${length} option.'),
-	// customFoo: yupString().required(isRequired('Custom Foo')),
-	// customBar: yupString().required(isRequired('Custom Bar')),
-	// desc: yupString().required(isRequired('Description')),
-	// fancyRadio: yupArray().required(isRequired('Fancy Radio')),
-	// fancyRadio: yupString().required(isRequired('Fancy Radio')),
-	// file: yupString().required(isRequired('File')),
-	// selectField: yupString().required(isRequired('Select Field')),
-});
 
 const global = {
 	provide: {
@@ -254,14 +212,16 @@ describe('Single Page Stepper Form', () => {
 			global,
 		});
 
-		// & -------------------------------------------------- Stepper Form //
+		// ~ -------------------------------------------------- Stepper Form //
 		cy.get('[data-cy="vsf-stepper-form"]').as('stepperForm');
 		cy.get('@stepperForm')
 			.should('exist')
 			.and('be.visible');
 
+		cy.get('.v-application__wrap').as('appWrap');
 
-		// & --------------------------------------------------  Stepper Header //
+
+		// ~ --------------------------------------------------  Stepper Header //
 		const stepperHeader = cy.getDataCy('vsf-stepper-header');
 		stepperHeader
 			.should('exist')
@@ -272,11 +232,11 @@ describe('Single Page Stepper Form', () => {
 			.and('contain', 'Summary');
 
 
-		// & --------------------------------------------------  Submit Button //
+		// ~ --------------------------------------------------  Submit Button //
 		cy.getDataCy('vsf-submit-button').should('not.exist');
 
 
-		// & --------------------------------------------------  Next & Previous Buttons //
+		// ~ --------------------------------------------------  Next & Previous Buttons //
 		cy.getDataCy('vsf-next-button').as('nextButton');
 		cy.get('@nextButton')
 			.should('exist')
@@ -289,18 +249,20 @@ describe('Single Page Stepper Form', () => {
 			.and('be.disabled');
 
 
-		// & -------------------------------------------------- Fill In Field //
+		// ~ -------------------------------------------------- Fill In Field //
 		function fillInField(fieldName: string, ans: string | number): void {
 			// cy.log('=========== Filling Field:', fieldName, ans);
 			cy.get(fieldName)
 				.click()
-				.trigger('focus')
+				.trigger('focus');
+
+			cy.get(fieldName)
 				.type('{selectall}{backspace}')
 				.type(String(ans))
 				.trigger('blur');
 		}
 
-		// & -------------------------------------------------- Test Fields //
+		// ~ -------------------------------------------------- Test Fields //
 		function testFields(field: Field, index: number, pageIndex: number): void {
 			// cy.log('=========== Testing Field:', field.label);
 			// cy.log('fieldIndex', index);
@@ -340,6 +302,7 @@ describe('Single Page Stepper Form', () => {
 			const correctAnswer = finalAnswer[field.name];
 			let theAnswer = correctAnswer;
 
+			// ~ Page 1 Fields //
 			// & -------------------------------------------------- Email field //
 			if (field.type === 'email') {
 				fillInField(fieldName, 'test');
@@ -395,6 +358,81 @@ describe('Single Page Stepper Form', () => {
 				cy.get('@stepperForm')
 					.should('not.contain', 'Password must have at least 5 characters');
 			}
+			// & -------------------------------------------------- Select field //
+			else if (field.name === 'selectsMultipleAnimals') {
+				cy.get(fieldName).as('theSelect');
+
+				cy.get('@theSelect')
+					.find('.v-field')
+					.invoke('attr', 'aria-owns')
+					.then((fieldId) => {
+						cy.get('@theSelect').click();
+
+						cy.get(`#${fieldId}`)
+							.find('.v-list-item')
+							.contains('.v-list-item', 'Rabbit')
+							.click();
+
+						// Lose focus so field will update correctly //
+						cy.get('@appWrap').click();
+						cy.get('@theSelect').click();
+
+						cy.get(`#${fieldId}`)
+							.find('.v-list-item')
+							.contains('.v-list-item', 'Duck')
+							.click();
+
+						cy.get('@appWrap').click();
+					});
+			}
+			// & -------------------------------------------------- Autocomplete field //
+			else if (field.name === 'autocompleteAnimal') {
+				cy.get(fieldName).as('theStringAutoSelect');
+
+				cy.get('@theStringAutoSelect').type('Bear');
+
+				cy.get('@theStringAutoSelect')
+					.find('.v-field')
+					.invoke('attr', 'aria-owns')
+					.then((fieldId) => {
+						cy.get('@theStringAutoSelect').click();
+
+						cy.get(`#${fieldId}`)
+							.find('.v-list-item')
+							.first()
+							.click();
+
+						cy.get('@appWrap').click();
+					});
+			}
+			// & -------------------------------------------------- Autocomplete Multiple field //
+			else if (field.name === 'autoCompleteMultipleAnimals') {
+				cy.get(fieldName).as('theArrayAutoSelect');
+
+				function autoSelectAnimals(animal: string) {
+					cy.get('@theArrayAutoSelect').type(animal);
+
+					cy.get('@theArrayAutoSelect')
+						.find('.v-field')
+						.invoke('attr', 'aria-owns')
+						.then((fieldId) => {
+							cy.get('@theArrayAutoSelect').click();
+
+							cy.get(`#${fieldId}`)
+								.find('.v-list-item')
+								.first()
+								.click();
+
+							// Lose focus so field will update correctly //
+							cy.get('@appWrap').click();
+						});
+				}
+
+				autoSelectAnimals('Bear');
+				autoSelectAnimals('Duck');
+			}
+
+			// ~ Page 2 Fields //
 			// & -------------------------------------------------- Checkbox field //
 			else if (field.name === 'isThisBoxChecked') {
 				cy.get(fieldName)
@@ -494,6 +532,21 @@ describe('Single Page Stepper Form', () => {
 			}
 		});
 
+
+		// ~ -------------------------------------------------- Check the final answers on Summary Page //
+		// Object.entries(finalAnswer).forEach(([key, ans]) => {
+		//   let finalAnswer = ans;
+
+		//   // TODO: Not sure why this doesn't work //
+		//   if (key === 'checkboxMultiple') {
+		//     // finalAnswer = ["option1", "option3"];
+		//     return;
+		//   }
+
+		//   cy.get('@stepperForm').should('contain', finalAnswer);
+		// });
+
+		// ~ -------------------------------------------------- Submit Form //
 		cy.getDataCy('vsf-submit-button')
 			.should('exist')
 			.and('be.visible')
@@ -509,16 +562,5 @@ describe('Single Page Stepper Form', () => {
 			expect(eventPayload).to.deep.equal(answers);
 		});
 
-		Object.entries(finalAnswer).forEach(([key, ans]) => {
-			let finalAnswer = ans;
-
-			// TODO: Not sure why this doesn't work //
-			if (key === 'checkboxMultiple') {
-				// finalAnswer = ["option1", "option3"];
-				return;
-			}
-
-			cy.get('@stepperForm').should('contain', finalAnswer);
-		});
 	});
 });

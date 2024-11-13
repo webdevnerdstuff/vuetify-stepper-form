@@ -25,6 +25,7 @@
 				v-model="modelValue"
 				class="mt-2"
 				:class="itemGroupClass"
+				:data-cy="`vsf-field-group-${field.name}`"
 				:style="itemGroupStyle"
 			>
 
@@ -45,7 +46,7 @@
 								[`${field.selectedClass}`]: isActive(option.value),
 							}"
 							:color="option?.color || field?.color || settings?.color"
-							data-test-id="vsf-button-field"
+							:data-cy="`vsf-field-${field.name}`"
 							:density="fieldDensity"
 							:height="getHeight(option)"
 							:icon="getIcon(option, 'icon')"

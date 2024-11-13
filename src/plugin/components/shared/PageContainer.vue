@@ -124,6 +124,7 @@ import * as Fields from '../fields/index';
 export interface PageContainerProps {
 	fieldColumns: ResponsiveColumns | undefined;
 	page: Page;
+	pageIndex: number;
 }
 
 defineOptions({

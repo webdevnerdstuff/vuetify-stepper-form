@@ -78,6 +78,7 @@
 								<v-stepper-window-item
 									v-for="page, i in computedPages"
 									:key="`${getIndex(i)}-content`"
+									:data-cy="page.isSummary ? 'vsf-page-summary' : `vsf-page-${getIndex(i)}`"
 									:reverse-transition="transitionComputed"
 									:transition="transitionComputed"
 									:value="getIndex(i)"
@@ -90,6 +91,7 @@
 											:fieldColumns="settings?.fieldColumns"
 											:index="getIndex(i)"
 											:page="page"
+											:pageIndex="getIndex(i)"
 											:settings="settings"
 											@validate="onFieldValidate($event, next)"
 										>
