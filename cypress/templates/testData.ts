@@ -4,6 +4,8 @@ import {
 	string as yupString,
 	object as yupObject,
 } from 'yup';
+import { useDeepMerge } from '../../src/plugin/composables/helpers';
+import { max } from 'cypress/types/lodash';
 
 
 const answers = {
@@ -154,6 +156,133 @@ const validationSchema = yupObject({
 	// selectField: yupString().required(isRequired('Select Field')),
 });
 
+const themeColors = [
+	'primary',
+	'secondary',
+	'success',
+	'info',
+	'warning',
+	'error',
+];
+
+const baseOptions = [
+	{
+		class: 'flower-class',
+		id: 'flower-id',
+		label: 'Flower',
+		value: 'flower',
+	},
+	{
+		class: 'cookie-class',
+		id: 'cookie-id',
+		label: 'Cookie',
+		value: 'cookie',
+	},
+	{
+		class: 'coffee-class',
+		id: 'coffee-id',
+		label: 'Coffee',
+		value: 'coffee',
+	},
+	{
+		class: 'heart-class',
+		id: 'heart-id',
+		label: 'Heart',
+		value: 'heart',
+	},
+];
+
+const buttonFieldOptions = {
+	aligns: [
+		'start',
+		'left',
+		'center',
+		'end',
+		'right',
+		'space-between',
+		'space-around',
+		'space-evenly',
+	],
+	colors: [
+		'primary',
+		'secondary',
+		'success',
+		'info',
+		'warning',
+		'error',
+	],
+	densities: [
+		'compact',
+		'comfortable',
+		'default',
+		'expanded',
+		'oversized',
+	],
+	options: {
+		animals: [
+			{
+				appendIcon: 'mdi:mdi-rabbit',
+				color: 'white',
+				label: 'Bunnies',
+				prependIcon: 'mdi:mdi-rabbit',
+				value: 'bunnies',
+			},
+			{
+				appendIcon: 'mdi:mdi-tortoise',
+				color: 'success',
+				label: 'Turtles',
+				prependIcon: 'mdi:mdi-tortoise',
+				value: 'turtles',
+			},
+			{
+				appendIcon: 'mdi:mdi-duck',
+				color: 'yellow',
+				label: 'duck',
+				prependIcon: 'mdi:mdi-duck',
+				value: 'duck',
+			},
+		],
+		basic: baseOptions,
+		colors: useDeepMerge(baseOptions, [
+			{ color: 'primary' },
+			{ color: 'secondary' },
+			{ color: 'success' },
+			{ color: 'info' },
+		]),
+		heightAndWidth: useDeepMerge(baseOptions, [
+			{ height: '125', width: '100' },
+			{ height: '175', width: '150' },
+			{ height: '225', width: '200' },
+			{ height: '275', width: '250' },
+		]),
+		minHeightAndWidth: useDeepMerge(baseOptions, [
+			{ height: '100', minHeight: '125', minWidth: '125', width: '100' },
+			{ height: '150', minHeight: '175', minWidth: '175', width: '150' },
+			{ height: '200', minHeight: '225', minWidth: '225', width: '200' },
+			{ height: '250', minHeight: '275', minWidth: '275', width: '250' },
+		]),
+		maxHeightAndWidth: useDeepMerge(baseOptions, [
+			{ height: '125', maxHeight: '100', maxWidth: '100', width: '125' },
+			{ height: '175', maxHeight: '150', maxWidth: '150', width: '175' },
+			{ height: '225', maxHeight: '200', maxWidth: '200', width: '225' },
+			{ height: '275', maxHeight: '250', maxWidth: '250', width: '275' },
+		]),
+		icon: useDeepMerge(baseOptions, [
+			{ icon: 'mdi:mdi-flower' },
+			{ icon: 'mdi:mdi-cookie' },
+			{ icon: 'mdi:mdi-coffee' },
+			{ icon: 'mdi:mdi-heart' },
+		]),
+		appendPrependIcon: useDeepMerge(baseOptions, [
+			{ appendIcon: 'mdi:mdi-flower', prependIcon: 'mdi:mdi-flower-outline' },
+			{ appendIcon: 'mdi:mdi-cookie', prependIcon: 'mdi:mdi-cookie-outline' },
+			{ appendIcon: 'mdi:mdi-coffee', prependIcon: 'mdi:mdi-coffee-outline' },
+			{ appendIcon: 'mdi:mdi-heart', prependIcon: 'mdi:mdi-heart-outline' },
+		]),
+	},
+	variants: ['text', 'elevated', 'tonal', 'outlined', 'plain'],
+};
+
 function isRequired(field: string) {
 	return `${field} is required`;
 }
@@ -161,7 +290,9 @@ function isRequired(field: string) {
 
 export {
 	answers,
+	buttonFieldOptions,
 	finalAnswer,
 	items,
+	themeColors,
 	validationSchema,
 };
