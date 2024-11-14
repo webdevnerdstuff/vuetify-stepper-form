@@ -25,8 +25,8 @@
 			"@/*": [
 				"./src/*"
 			],
-			"@types/*": [
-				"./src/plugin/types/*"
+			"@cypress/*": [
+				"./cypress/*"
 			],
 			"@components/*": [
 				"./src/plugin/components/*"
@@ -36,6 +36,9 @@
 			],
 			"@slots/*": [
 				"./src/plugin/slots/*"
+			],
+			"@types/*": [
+				"./src/plugin/types/*"
 			],
 			"@utils/*": [
 				"./src/plugin/utils/*"

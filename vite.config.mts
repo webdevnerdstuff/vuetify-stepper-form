@@ -61,6 +61,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),
+			'@cypress': fileURLToPath(new URL('./cypress', import.meta.url)),
 			'@root': fileURLToPath(new URL('.', import.meta.url)),
 		},
 		extensions: [
