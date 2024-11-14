@@ -50,9 +50,12 @@
 							:density="fieldDensity"
 							:height="getHeight(option)"
 							:icon="getIcon(option, 'icon')"
+							:maxHeight="getMaxHeight(option)"
 							:maxWidth="getMaxWidth(option)"
+							:minHeight="getMinHeight(option)"
 							:minWidth="getMinWidth(option)"
 							:prependIcon="getIcon(option, 'prependIcon')"
+							:value="option.value"
 							:variant="getVariant(option.value)"
 							:width="getWidth(option)"
 							@click.prevent="onActions(validate, 'click', option.value); handleInput(modelValue)"
@@ -236,7 +239,7 @@ function getMinWidth(option: Option): string | number | undefined {
 		return minWidth as string;
 	}
 
-	if (option?.icon) {
+	if (option?.icon || field?.icon) {
 		return getDensityValue();
 	}
 
@@ -248,6 +251,34 @@ function getMaxWidth(option: Option): string | number | undefined {
 
 	if (maxWidth != null) {
 		return maxWidth as string;
+	}
+
+	if (option?.icon || field?.icon) {
+		return getDensityValue();
+	}
+
+	return undefined;
+}
+
+function getMinHeight(option: Option): string | number | undefined {
+	const minHeight = option?.minHeight ?? field?.minHeight;
+
+	if (minHeight != null) {
+		return minHeight as string;
+	}
+
+	if (option?.icon || field?.icon) {
+		return getDensityValue();
+	}
+
+	return undefined;
+}
+
+function getMaxHeight(option: Option): string | number | undefined {
+	const maxHeight = option?.maxHeight ?? field?.maxHeight;
+
+	if (maxHeight != null) {
+		return maxHeight as string;
 	}
 
 	return undefined;
