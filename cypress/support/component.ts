@@ -3,13 +3,18 @@ import AppTemplate from '../templates/App.vue';
 import vuetify from "../../src/plugins/vuetify";
 import { h } from "vue";
 import { mount } from 'cypress/vue';
+import VStepperForm from '../../src/plugin/VStepperForm.vue';
+import * as DATA from '../templates/testData';
 
 
 declare global {
 	namespace Cypress {
 		interface Chainable {
-			mount: typeof mount;
+			baseIconClass(icon: string): string;
+			getBaseStepperElements(): Chainable;
 			getDataCy(value: string): Chainable<JQuery<HTMLElement>>;
+			mount: typeof mount;
+			mountComponent(options: any): Chainable;
 		}
 	}
 }
@@ -49,3 +54,66 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 Cypress.Commands.add('getDataCy', (name) => {
 	return cy.get(`[data-cy="${name}"]`);
 });
+
+
+const answers = {
+	buttonField: null,
+};
+
+const buttonField = DATA.buttonFieldOptions;
+
+const fieldDefault = {
+	label: 'Button Field Question',
+	name: 'buttonField',
+	options: buttonField.options.basic,
+	type: 'buttons' as const,
+};
+
+const globalOptions = {
+	validateOn: 'blur',
+};
+
+Cypress.Commands.add('mountComponent', (options: any = {}) => {
+	const { modelValue = {}, field = {}, globalProps = {}, stepperProps = {} } = options;
+
+	const localModelValue = { ...answers, ...modelValue };
+
+	return cy.then(() => {
+		cy.mount(VStepperForm, {
+			props: {
+				modelValue: localModelValue,
+				pages: [{ fields: [{ ...fieldDefault, ...field, }], }],
+				onSubmit: stepperProps.onSubmit ?? undefined,
+				validationSchema: stepperProps.validationSchema ?? undefined,
+				...stepperProps,
+			},
+			global: { provide: { globalOptions: { ...globalOptions, ...globalProps }, }, },
+		}).as('wrapper');
+	});
+});
+
+
+Cypress.Commands.add('getBaseStepperElements', () => {
+	// Stepper Form //
+	cy.get('[data-cy="vsf-stepper-form"]').as('stepperForm');
+	cy.get('@stepperForm')
+		.should('exist')
+		.and('be.visible');
+
+	// Application Wrap //
+	cy.get('.v-application__wrap').as('appWrap');
+
+	// Submit Button //
+	cy.getDataCy('vsf-submit-button')
+		.should('exist')
+		.and('be.visible');
+
+	// Field Group and Buttons //
+	cy.getDataCy('vsf-field-group-buttonField').as('fieldGroup');
+	cy.getDataCy('vsf-field-group-buttonField').find('button').as('fieldButtons');
+});
+
+
+cy.baseIconClass = (icon: string) => {
+	return icon.replace(/^mdi:/, '');
+};
