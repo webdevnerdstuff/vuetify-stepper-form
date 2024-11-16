@@ -202,7 +202,7 @@ describe('Single Page Stepper Form', () => {
 	it('should create multiple pages, navigate to the last page, submit form', () => {
 		const spy = cy.spy().as('submit');
 
-		cy.mount(VStepperForm, {
+		cy.mount(VStepperForm as any, {
 			props: {
 				modelValue: answers,
 				onSubmit: spy,
