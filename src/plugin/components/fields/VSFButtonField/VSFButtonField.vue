@@ -28,7 +28,6 @@
 				:data-cy="`vsf-field-group-${field.name}`"
 				:style="itemGroupStyle"
 			>
-
 				<v-item
 					v-for="option, key in field?.options"
 					:key="option.value"
@@ -43,7 +42,7 @@
 							:class="{
 								[`${option?.class}`]: true,
 								...buttonClass,
-								[`${field.selectedClass}`]: isActive(option.value),
+								[`${field.selectedClass}`]: isActive(option.value) && field.selectedClass != null,
 							}"
 							:color="option?.color || field?.color || settings?.color"
 							:data-cy="`vsf-field-${field.name}`"
@@ -86,6 +85,7 @@
 				<VMessages
 					:active="activeMessages(errorMessage)"
 					:color="errorMessage ? 'error' : undefined"
+					data-cy="vsf-field-messages"
 					:messages="fieldMessages(errorMessage)"
 				>
 				</VMessages>
@@ -93,6 +93,7 @@
 		</div>
 
 		<input
+			data-cy="vsf-button-field-input"
 			:name="field.name"
 			type="hidden"
 			:value="modelValue"

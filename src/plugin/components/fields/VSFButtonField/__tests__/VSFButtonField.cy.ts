@@ -1,484 +1,661 @@
-import { VSFButtonFieldProps } from '../';
+import {
+	string as yupString,
+	object as yupObject,
+} from 'yup';
 import * as DATA from '@cypress/templates/testData';
-// import type { VSFButtonField } from '../VSFButtonField.vue';
-import VStepperForm from '@/plugin/VStepperForm.vue';
 
 
 const buttonField = DATA.buttonFieldOptions;
 
-const fieldDefault = {
-	// activeColor: 'primary-darken-1', // ? Needs click events to test
-	// align: 'center', // *
-	// appendIcon: '$vuetify', // *
-	// baseColor: 'secondary', //
-	// block: true, //
-	// border: 'xl', //
-	// color: 'primary', //
-	// density: 'expanded' as const, // *
-	// disabled: true, //
-	// elevation: 10, //
-	// error: true, // ? Not really a button prop
-	// errorMessage: ['Error 1', 'Error 2'], // Works via the Field validation
-	// exact: true,
-	// flat: true,
-	// gap: '6', //
-	// height: '400px', //
-	// hideDetails: true, //
-	// hint: 'yo', //
-	// href: 'https://google.com', // ** Not allowed
-	// icon: '$vuetify', // *
-	// id: 'buttonField-id', //
-	label: 'Button Field Question',
-	// loading: true, //
-	maxErrors: 1,
-	// maxHeight: '100px', //
-	// maxWidth: '100px', //
-	// messages: 'Msg', //
-	// messages: ['Msg 1', 'Msg 2'], //
-	// minHeight: '800px', //
-	// minWidth: '300px', //  Set default min width to 100px
-	// multiple: true, //
-	name: 'buttonField', //
-	options: buttonField.options.basic,
-	// persistentHint: true, //
-	// position: 'fixed',
-	// prependIcon: '$vuetify', // *
-	// readonly: true, //
-	// replace: true,
-	required: true,
-	// ripple: false, //
-	// rounded: true, //
-	// selectedClass: 'selected-foo', //
-	// size: 'large',
-	// slim: false,
-	// stacked: true, //
-	// symbol: true,
-	// tag: 'a', //
-	// text: 'foo',
-	// theme: 'light', //
-	// tile: true, //
-	type: 'buttons' as const,
-	// value: 'yes',
-	// validateOn: 'change',
-	// variant: 'outlined', // *
-	// width: '500px', //
-};
 
-const options: VSFButtonFieldProps['field']['options'] = [
-	{
-		label: 'Yes',
-		value: 'yes',
-	},
-	{
-		label: 'No',
-		value: 'no',
-	},
-	{
-		label: 'Maybe',
-		value: 'maybe',
-	},
-	{
-		label: 'Sure',
-		value: 'sure',
-	},
-];
+describe('Buttons Field Props', () => {
 
-const globalOptions = {
-	validateOn: 'blur',
-};
-
-const answers = {
-	fooTest: 'foo',
-};
-
-
-function getBaseStepperElements() {
-	/// Stepper Form //
-	cy.get('[data-cy="vsf-stepper-form"]').as('stepperForm');
-	cy.get('@stepperForm')
-		.should('exist')
-		.and('be.visible');
-
-	// Application Wrap //
-	cy.get('.v-application__wrap').as('appWrap');
-
-	// Submit Button //
-	cy.getDataCy('vsf-submit-button')
-		.should('exist')
-		.and('be.visible');
-
-	// Field Group and Buttons //
-	cy.getDataCy('vsf-field-group-buttonField').as('fieldGroup');
-	cy.getDataCy('vsf-field-group-buttonField').find('button').as('fieldButtons');
-}
-
-async function mountComponent(options: any = {}) {
-	const { localAnswers = {}, field = {}, globalProps = {} } = options;
-
-	return await cy.mount(VStepperForm, {
-		props: {
-			modelValue: { ...answers, ...localAnswers },
-			pages: [{ fields: [{ ...fieldDefault, ...field, }], }],
-		},
-		global: { provide: { globalOptions: { ...globalOptions, ...globalProps }, }, },
-		// data() { return this; }
-	}).as('wrapper');
-}
-
-function baseIconClass(icon: string) {
-	return icon.replace(/^mdi:/, '');
-}
-
-// 'activeColor' |
-// 'appendIcon' |
-// 'block' |
-// 'border' |
-// 'height' |
-// 'icon' |
-// 'maxWidth' |
-// 'minWidth' |
-// 'prependIcon' |
-// 'selectedClass' |
-// 'size' |
-// 'stacked' |
-// 'variant' |
-// 'width'
-// align?: string;
-// gap?: string | number;
-// hint?: string;
-// messages?: string | string[];
-// multiple?: boolean;
-// options?: Option[];
-// persistentHint?: boolean;
-
-describe('Buttons Field', () => {
-
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Field Props ~ //
-	describe('Field Props', () => {
-		// Align Prop //
-		it('should check align prop', () => {
-			buttonField.aligns.forEach((align) => {
-				mountComponent({
-					field: { align }
-				});
-
-				getBaseStepperElements();
-
-				cy.get('@fieldGroup').should('have.class', `justify-${align}`);
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Individual Tests //
+	// Align Prop //
+	it('should check align prop', () => {
+		buttonField.aligns.forEach((align) => {
+			cy.mountComponent({
+				field: { align }
 			});
+
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldGroup').should('have.class', `justify-${align}`);
+		});
+	});
+
+	// Block Prop //
+	it('should check block prop', () => {
+		cy.mountComponent({ field: { block: true } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldGroup')
+			.should('have.class', 'flex-column');
+	});
+
+	// Border Prop //
+	it('should check border prop', () => {
+		buttonField.borders.forEach((borderSize) => {
+			cy.mountComponent({ field: { border: borderSize, color: 'primary' } });
+
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons').first().click();
+			cy.get('@fieldButtons')
+				.should('have.class', `border-${borderSize}`);
+		});
+	});
+
+	// Density Prop //
+	it('should check density prop', () => {
+		buttonField.densities.forEach((density) => {
+			cy.mountComponent({ field: { density } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons').should('have.class', `v-btn--density-${density}`);
+		});
+	});
+
+	// Disabled Prop //
+	it('should check disabled prop', () => {
+		cy.mountComponent({ field: { disabled: true } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons')
+			.each(($button) => {
+				cy.wrap($button).should('be.disabled');
+			});
+	});
+
+	// Elevation Prop //
+	it('should check elevation prop', () => {
+		cy.mountComponent({ field: { elevation: 10 } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons')
+			.should('have.class', 'elevation-10');
+	});
+
+	// Error Messages Prop //
+	it('should check error prop', () => {
+		const errorMessage = 'Field is required';
+		const validationSchema = yupObject({
+			buttonField: yupString().required(errorMessage),
+		});
+
+		cy.mountComponent({
+			stepperProps: {
+				validationSchema,
+			}
+		});
+		cy.getBaseStepperElements();
+
+		cy.getDataCy('vsf-submit-button')
+			.should('exist')
+			.and('be.visible')
+			.click();
+
+		cy.getDataCy('vsf-field-messages').as('fieldMessages');
+		cy.get('@fieldMessages')
+			.find('.v-messages__message')
+			.contains(errorMessage);
+	});
+
+	// Flat Prop //
+	it('should check flat prop', () => {
+		cy.mountComponent({ field: { flat: true, variant: 'elevated' } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons')
+			.should('have.class', 'v-btn--flat');
+	});
+
+	// Loading Prop //
+	it('should check loading prop', () => {
+		cy.mountComponent({ field: { loading: true } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons')
+			.each(($button) => {
+				cy.wrap($button).should('have.class', 'v-btn--loading');
+			});
+	});
+
+	// Readonly Prop //
+	it('should check readonly prop', () => {
+		cy.mountComponent({ field: { readonly: true } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons').should('have.class', 'v-btn--readonly');
+	});
+
+	// Size Prop //
+	it('should check large prop', () => {
+		buttonField.sizes.forEach((size) => {
+			cy.mountComponent({ field: { size } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons').should('have.class', `v-btn--size-${size}`);
+		});
+	});
+
+	// Slim Prop //
+	it('should check slim prop', () => {
+		cy.mountComponent({
+			field: { slim: true }
+		});
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons')
+			.should('have.class', 'v-btn--slim');
+	});
+
+	// Stacked Prop //
+	it('should check stacked prop', () => {
+		cy.mountComponent({ field: { prependIcon: 'mdi:mdi-cog', stacked: true } });
+		cy.getBaseStepperElements();
+
+		cy.get('@fieldButtons')
+			.should('have.class', 'v-btn--stacked');
+	});
+
+	// Tag Prop //
+	it('should check tag prop', () => {
+		cy.mountComponent({ field: { tag: 'section' } });
+
+		cy.getDataCy('vsf-field-group-buttonField').find('section').as('fieldAnchors');
+		cy.get('@fieldAnchors')
+			.each(($button) => {
+				cy.wrap($button).should('have.prop', 'tagName', 'SECTION');
+			});
+	});
+
+	// Variant Prop //
+	it('should check variant prop', () => {
+		buttonField.variants.forEach((variant) => {
+			cy.mountComponent({ field: { variant } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons').should('have.class', `v-btn--variant-${variant}`);
+		});
+	});
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Grouped Tests //
+	// ID and Class Props //
+	describe('ID and Class Props', () => {
+
+		// ID Props //
+		it('should check id prop', () => {
+			cy.mountComponent({ field: { id: 'buttonField-id' } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldGroup')
+				.should('have.id', 'buttonField-id');
+		});
+
+		// Selected Class Props //
+		it('should check selected class prop', () => {
+			cy.mountComponent({
+				field: {
+					color: 'primary',
+					selectedClass: 'selected-foo'
+				}
+			});
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.first()
+				.trigger('click')
+				.should('have.class', 'selected-foo');
+		});
+	});
+
+	// Color Props //
+	describe('Color Props', () => {
+
+		// Active Color Prop //
+		it('should check active color prop', () => {
+			cy.mountComponent({ field: { activeColor: 'secondary' } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.first()
+				.trigger('click')
+				.should('have.class', 'bg-secondary');
+		});
+
+		// Base Color Prop //
+		it('should check base color prop', () => {
+			cy.mountComponent({ field: { baseColor: '#0f0' } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.should('have.css', 'color', 'rgb(0, 255, 0)');
 		});
 
 		// Color Prop //
 		it('should check color prop', () => {
 			buttonField.colors.forEach((color) => {
-				mountComponent({ field: { color } });
-				getBaseStepperElements();
+				cy.mountComponent({ field: { color } });
+				cy.getBaseStepperElements();
 
 				cy.get('@fieldButtons').should('have.class', `text-${color}`);
 			});
 		});
+	});
 
-		// Gap Prop //
-		/**
-		 * TODO: Update docs to reflect this
-		 * ? 16 is the max Vuetify gap class allows:
-		 * ? https://vuetifyjs.com/en/styles/spacing/#how-it-works
-		*/
-		describe('Field Gap', () => {
-			it('should check gap prop as number', () => {
-				const gap = 16;
-				mountComponent({ field: { gap } });
-				getBaseStepperElements();
+	// Gap Prop //
+	/**
+	 * TODO: Update docs to reflect this
+	 * ? 16 is the max Vuetify gap class allows:
+	 * ? https://vuetifyjs.com/en/styles/spacing/#how-it-works
+	*/
+	describe('Field Gap', () => {
+		it('should check gap prop as number', () => {
+			const gap = 16;
+			cy.mountComponent({ field: { gap } });
+			cy.getBaseStepperElements();
 
-				cy.get('@fieldGroup').should('have.class', `ga-${gap}`);
+			cy.get('@fieldGroup').should('have.class', `ga-${gap}`);
+		});
+
+		it('should check gap prop as string no unit', () => {
+			const gap = '16';
+			cy.mountComponent({ field: { gap } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldGroup').should('have.class', `ga-${gap}`);
+		});
+
+		it('should check gap prop as string with unit', () => {
+			const gap = '20px';
+			cy.mountComponent({ field: { gap } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldGroup').should('have.css', 'gap', gap);
+		});
+	});
+
+	// Height & Width Props //
+	describe('Heights & Widths', () => {
+		// Height & Width Props //
+		it('should check height and width prop', () => {
+			cy.mountComponent({ field: { height: '200px', width: '200px' } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.each(($button) => {
+					cy.wrap($button)
+						.should('have.css', 'height', '200px')
+						.and('have.css', 'width', '200px');
+				});
+		});
+
+		// Min Height & Min Width Props //
+		it('should check max and min width prop', () => {
+			cy.mountComponent({
+				field: {
+					height: '200px',
+					minHeight: '300px',
+					width: '200px',
+					minWidth: '300px',
+				}
 			});
+			cy.getBaseStepperElements();
 
-			it('should check gap prop as string no unit', () => {
-				const gap = '16';
-				mountComponent({ field: { gap } });
-				getBaseStepperElements();
+			cy.get('@fieldButtons')
+				.should(el => expect(el.outerWidth()).eql(300))
+				.should(el => expect(el.outerHeight()).eql(300));
+		});
 
-				cy.get('@fieldGroup').should('have.class', `ga-${gap}`);
+		// Max Height & Max Width Props //
+		it('should check max and min width prop', () => {
+			cy.mountComponent({
+				field: {
+					height: '200px',
+					maxHeight: '100px',
+					width: '200px',
+					maxWidth: '100px',
+				}
 			});
+			cy.getBaseStepperElements();
 
-			it('should check gap prop as string with unit', () => {
-				const gap = '20px';
-				mountComponent({ field: { gap } });
-				getBaseStepperElements();
+			cy.get('@fieldButtons')
+				.should(el => expect(el.outerWidth()).eql(100))
+				.should(el => expect(el.outerHeight()).eql(100));
+		});
+	});
 
-				cy.get('@fieldGroup').should('have.css', 'gap', gap);
+	// Icon Elements //
+	describe('Icons', () => {
+		// Icon Prop //
+		it('should check icon prop', () => {
+			const icon = 'mdi:mdi-rabbit';
+
+			cy.mountComponent({ field: { icon } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.each(($button) => {
+					cy.wrap($button)
+						.find('.v-icon')
+						.should('exist')
+						.and('have.class', cy.baseIconClass(icon));
+				});
+		});
+
+		// Append & Prepend Icon Prop //
+		it('should check append & prepend icon props', () => {
+			const prependIcon = 'mdi:mdi-rabbit';
+			const appendIcon = 'mdi:mdi-duck';
+
+			cy.mountComponent({ field: { appendIcon, prependIcon } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.each(($button) => {
+					cy.wrap($button)
+						.find('.v-icon')
+						.should('exist')
+						.and('have.class', cy.baseIconClass(prependIcon))
+						.and('have.class', cy.baseIconClass(appendIcon));
+				});
+		});
+	});
+
+	// Multiple Prop //
+	describe('Multiple Prop', () => {
+		it('should check multiple true prop', () => {
+			const spy = cy.spy().as('submit');
+
+			const finalAnswer = {
+				buttonField: ['flower', 'cookie', 'coffee', 'heart'],
+			};
+
+			cy.mountComponent({
+				field: { color: 'primary', multiple: true },
+				stepperProps: {
+					onSubmit: spy,
+				}
+			});
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.each(($button) => {
+					cy.wrap($button).click();
+				});
+
+			cy.getDataCy('vsf-submit-button')
+				.should('exist')
+				.and('be.visible')
+				.click();
+
+			cy.get('@submit').should('have.been.called');
+			cy.should(() => expect(spy).to.have.been.called);
+
+			cy.get('@submit').its('args').then((args) => {
+				const eventPayload = args[0][0];
+				console.log('eventPayload', eventPayload);
+				expect(eventPayload).to.deep.equal(finalAnswer);
 			});
 		});
 
-		// // Density Prop //
-		// it('should check density prop', () => {
-		// 	buttonField.densities.forEach((density) => {
-		// 		mountComponent({ field: { density } });
-		// 		getBaseStepperElements();
+		it('should check multiple false prop', () => {
+			const spy = cy.spy().as('submit');
 
-		// 		cy.get('@fieldButtons').should('have.class', `v-btn--density-${density}`);
-		// 	});
-		// });
+			cy.mountComponent({
+				field: {
+					color: 'primary',
+					multiple: false,
+				},
+				stepperProps: {
+					onSubmit: spy,
+				}
+			});
+			cy.getBaseStepperElements();
+			cy.getDataCy('vsf-button-field-input').as('buttonFieldInput');
 
-		// // Append & Prepend Icon Prop //
-		// it('should check append & prepend icon props', () => {
-		// 	const prependIcon = 'mdi:mdi-rabbit';
-		// 	const appendIcon = 'mdi:mdi-duck';
+			cy.get('@fieldButtons')
+				.get('button[value="heart"]')
+				.click();
 
-		// 	mountComponent({ field: { appendIcon, prependIcon } });
-		// 	getBaseStepperElements();
+			cy.get('@buttonFieldInput').should('have.value', 'heart');
 
-		// 	cy.get('@fieldButtons')
-		// 		.each(($button) => {
-		// 			cy.wrap($button)
-		// 				.find('.v-icon')
-		// 				.should('exist')
-		// 				.and('have.class', baseIconClass(prependIcon))
-		// 				.and('have.class', baseIconClass(appendIcon));
-		// 		});
+			cy.getDataCy('vsf-submit-button').click();
 
-		// });
+			cy.get('@fieldButtons')
+				.get('button[value="flower"]')
+				.click();
 
-		// describe('Heights & Widths', () => {
-		// 	// Height & Width Props //
-		// 	it('should check height and width prop', () => {
-		// 		mountComponent({ field: { height: '200px', width: '200px' } });
-		// 		getBaseStepperElements();
+			cy.getDataCy('vsf-submit-button').click();
 
-		// 		cy.get('@fieldButtons')
-		// 			.each(($button) => {
-		// 				cy.wrap($button)
-		// 					.should('have.css', 'height', '200px')
-		// 					.and('have.css', 'width', '200px');
-		// 			});
-		// 	});
+			cy.get('@submit').its('args').then((args) => {
+				const firstCallPayload = args[0][0];
+				const secondCallPayload = args[1][0];
 
-		// 	// Min Height & Min Width Props //
-		// 	it('should check max and min width prop', () => {
-		// 		mountComponent({
-		// 			field: {
-		// 				height: '200px',
-		// 				minHeight: '300px',
-		// 				width: '200px',
-		// 				minWidth: '300px',
-		// 			}
-		// 		});
-		// 		getBaseStepperElements();
+				expect(firstCallPayload).to.deep.equal({
+					buttonField: 'heart',
+				});
 
-		// 		cy.get('@fieldButtons')
-		// 			.should(el => expect(el.outerWidth()).eql(300))
-		// 			.should(el => expect(el.outerHeight()).eql(300));
-		// 	});
-
-		// 	// Max Height & Max Width Props //
-		// 	it('should check max and min width prop', () => {
-		// 		mountComponent({
-		// 			field: {
-		// 				height: '200px',
-		// 				maxHeight: '100px',
-		// 				width: '200px',
-		// 				maxWidth: '100px',
-		// 			}
-		// 		});
-		// 		getBaseStepperElements();
-
-		// 		cy.get('@fieldButtons')
-		// 			.should(el => expect(el.outerWidth()).eql(100))
-		// 			.should(el => expect(el.outerHeight()).eql(100));
-		// 	});
-		// });
-
-		// describe('Icons', () => {
-		// 	// Icon Prop //
-		// 	it('should check icon prop', () => {
-		// 		const icon = 'mdi:mdi-rabbit';
-
-		// 		mountComponent({ field: { icon } });
-		// 		getBaseStepperElements();
-
-		// 		cy.get('@fieldButtons')
-		// 			.each(($button) => {
-		// 				cy.wrap($button)
-		// 					.find('.v-icon')
-		// 					.should('exist')
-		// 					.and('have.class', baseIconClass(icon));
-		// 			});
-		// 	});
-		// });
-
-		// // Variant Prop //
-		// it('should check variant prop', () => {
-		// 	buttonField.variants.forEach((variant) => {
-		// 		mountComponent({ field: { variant } });
-		// 		getBaseStepperElements();
-
-		// 		cy.get('@fieldButtons').should('have.class', `v-btn--variant-${variant}`);
-		// 	});
-		// });
+				expect(secondCallPayload).to.deep.equal({
+					buttonField: 'flower',
+				});
+			});
+		});
 	});
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Field Option (button) Props ~ DONE //
-	// describe('Field Option Props', () => {
-	// 	// Label Prop //
-	// 	it('should check label prop', () => {
-	// 		const options = buttonField.options.basic;
+	// Radius Type Props //
+	describe('Radius Type Props', () => {
 
-	// 		mountComponent({ field: { options } });
-	// 		getBaseStepperElements();
+		// Rounded Prop //
+		it('should check rounded prop', () => {
+			buttonField.rounded.forEach((rounded) => {
+				cy.mountComponent({ field: { rounded } });
+				cy.getBaseStepperElements();
 
-	// 		cy.get('@fieldButtons')
-	// 			.each(($button, index) => {
-	// 				const label = options[index]?.label;
+				cy.get('@fieldButtons')
+					.should('have.class', `rounded-${rounded}`);
+			});
+		});
 
-	// 				cy.wrap($button).should('have.text', label);
-	// 			});
-	// 	});
+		// Tile Prop //
+		it('should check tile prop', () => {
+			cy.mountComponent({ field: { tile: true } });
+			cy.getBaseStepperElements();
 
-	// 	// Value Prop //
-	// 	it('should check value prop', () => {
-	// 		const options = buttonField.options.basic;
+			cy.get('@fieldButtons')
+				.should('have.class', 'rounded-0');
+		});
+	});
 
-	// 		mountComponent({ field: { options } });
-	// 		getBaseStepperElements();
+	// Ripple Prop //
+	describe('Ripple Prop', () => {
+		it('should check ripple true prop', () => {
+			cy.mountComponent({ field: { ripple: true } });
+			cy.getBaseStepperElements();
 
-	// 		cy.get('@fieldButtons')
-	// 			.each(($button, index) => {
-	// 				const value = options[index]?.value;
+			// v-ripple__container
+			cy.get('@fieldButtons')
+				.first()
+				.trigger('mousedown')
+				.children('.v-ripple__container')
+				.should('exist');
+		});
 
-	// 				cy.wrap($button).should('have.value', value);
-	// 			});
-	// 	});
+		it('should check ripple false prop', () => {
+			cy.mountComponent({ field: { ripple: false } });
+			cy.getBaseStepperElements();
 
-	// 	// Color Prop //
-	// 	it('should check color prop', () => {
-	// 		const options = buttonField.options.colors;
+			cy.get('@fieldButtons')
+				.first()
+				.trigger('mousedown')
+				.children('.v-ripple__container')
+				.should('not.exist');
+		});
+	});
 
-	// 		mountComponent({ field: { options } });
-	// 		getBaseStepperElements();
+	// Text Elements //
+	describe('Text Elements', () => {
 
-	// 		cy.get('@fieldButtons')
-	// 			.each(($button, index) => {
-	// 				const color = options[index]?.color;
+		// Text Prop
+		it('should check text prop with html', () => {
+			const word = 'Bunnies';
 
-	// 				cy.wrap($button).should('have.class', `text-${color}`);
-	// 			});
-	// 	});
+			cy.mountComponent({
+				field: { text: `<div style="font-weight: 700;">${word}</div>` }
+			});
+			cy.getBaseStepperElements();
 
-	// 	// ID & Class Prop //
-	// 	it('should check id & class prop', () => {
-	// 		const options = buttonField.options.basic;
+			cy.getDataCy('vsf-field-text')
+				.should('exist')
+				.should('have.html', `<div style="font-weight: 700;">${word}</div>`)
+				.should('contain.text', word);
 
-	// 		mountComponent({ field: { options } });
-	// 		getBaseStepperElements();
+			cy.getDataCy('vsf-field-text')
+				.find('div')
+				.should('have.css', 'font-weight', '700');
+		});
 
-	// 		cy.get('@fieldButtons')
-	// 			.each(($button, index) => {
-	// 				const id = options[index]?.id;
-	// 				const className = options[index]?.class;
+		// Hide Details Prop //
+		it('should check hide details prop', () => {
+			cy.mountComponent({
+				field: {
+					hideDetails: true,
+					hint: 'Bunnies are awesome!',
+					messages: 'Bunnies',
+					persistentHint: true,
+				}
+			});
 
-	// 				cy.wrap($button)
-	// 					.should('have.id', id)
-	// 					.and('have.class', className);
-	// 			});
-	// 	});
+			cy.getDataCy('vsf-field-messages').should('not.exist');
+		});
 
-	// 	describe('Heights & Widths', () => {
-	// 		// Height & Width Prop //
-	// 		it('should check height and width prop', () => {
-	// 			const options = buttonField.options.heightAndWidth;
+		// Hint & Persistent Hint Prop //
+		describe('Hint & Persistent Hint', () => {
+			const hint = 'Bunnies are awesome!';
 
-	// 			mountComponent({ field: { options } });
-	// 			getBaseStepperElements();
+			// Hint //
+			it('should check hint prop', () => {
+				cy.mountComponent({ field: { hint } });
+				cy.getBaseStepperElements();
 
-	// 			cy.get('@fieldButtons')
-	// 				.each(($button, index) => {
-	// 					const height = options[index]?.height;
-	// 					const width = options[index]?.width;
+				cy.getDataCy('vsf-field-messages').as('fieldMessages');
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('not.exist');
 
-	// 					cy.log('height', height);
-	// 					cy.log('width', width);
+				cy.get('@fieldButtons')
+					.first()
+					.trigger('mousedown');
 
-	// 					cy.wrap($button)
-	// 						.should(el => expect(el.outerHeight()).eql(Number(height)))
-	// 						.and(el => expect(el.outerWidth()).eql(Number(width)));
-	// 				});
-	// 		});
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('exist')
+					.and('have.text', hint);
 
-	// 		// Min Height & Min Width Prop //
-	// 		it('should check min height and min width prop', () => {
-	// 			const options = buttonField.options.minHeightAndWidth;
+				cy.get('@fieldButtons')
+					.first()
+					.trigger('mouseup');
 
-	// 			mountComponent({ field: { options } });
-	// 			getBaseStepperElements();
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('not.exist');
+			});
 
-	// 			cy.get('@fieldButtons')
-	// 				.each(($button, index) => {
-	// 					const minHeight = options[index]?.minHeight;
-	// 					const minWidth = options[index]?.minWidth;
+			// Persistent Hint //
+			it('should check persistent hint prop', () => {
+				cy.mountComponent({ field: { hint, persistentHint: true } });
+				cy.getBaseStepperElements();
 
-	// 					cy.wrap($button)
-	// 						.should(el => expect(el.outerHeight()).eql(Number(minHeight)))
-	// 						.and(el => expect(el.outerWidth()).eql(Number(minWidth)));
-	// 				});
-	// 		});
+				cy.getDataCy('vsf-field-messages').as('fieldMessages');
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('exist')
+					.and('have.text', hint);
 
-	// 		// Max Height & Max Width Prop //
-	// 		it('should check max height and max width prop', () => {
-	// 			const options = buttonField.options.maxHeightAndWidth;
+				cy.get('@fieldButtons')
+					.first()
+					.trigger('mousedown')
+					.trigger('mouseup');
 
-	// 			mountComponent({ field: { options } });
-	// 			getBaseStepperElements();
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('exist')
+					.and('have.text', hint);
+			});
 
-	// 			cy.get('@fieldButtons')
-	// 				.each(($button, index) => {
-	// 					const maxHeight = options[index]?.maxHeight;
-	// 					const maxWidth = options[index]?.maxWidth;
+		});
 
-	// 					cy.wrap($button)
-	// 						.should(el => expect(el.outerHeight()).eql(Number(maxHeight)))
-	// 						.and(el => expect(el.outerWidth()).eql(Number(maxWidth)));
-	// 				});
-	// 		});
-	// 	});
+		// Messages Prop //
+		describe('Messages Prop', () => {
 
-	// 	describe('Icons', () => {
-	// 		// Icon Prop //
-	// 		it('should check icon prop', () => {
-	// 			const options = buttonField.options.icon;
+			// As String //
+			it('should check messages prop as a string', () => {
+				const messages = 'Bunnies';
 
-	// 			mountComponent({ field: { options } });
-	// 			getBaseStepperElements();
+				cy.mountComponent({ field: { messages } });
 
-	// 			cy.get('@fieldButtons')
-	// 				.each(($button, index) => {
-	// 					const icon = options[index]?.icon;
+				cy.getDataCy('vsf-field-messages').as('fieldMessages');
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('exist')
+					.and('have.text', messages);
+			});
 
-	// 					cy.wrap($button)
-	// 						.find('.v-icon')
-	// 						.should('exist')
-	// 						.and('have.class', baseIconClass(icon));
-	// 				});
-	// 		});
+			// As Array //
+			it('should check messages prop as an array', () => {
+				const messages = ['Bunnies', 'Ducks'];
 
-	// 		// Append & Prepend Icon Prop //
-	// 		it('should check append & prepend icon props', () => {
-	// 			const options = buttonField.options.appendPrependIcon;
+				cy.mountComponent({ field: { messages } });
 
-	// 			mountComponent({ field: { options } });
-	// 			getBaseStepperElements();
+				cy.getDataCy('vsf-field-messages').as('fieldMessages');
+				cy.get('@fieldMessages')
+					.find('.v-messages__message')
+					.should('exist')
+					.and('have.length', messages.length);
 
-	// 			cy.get('@fieldButtons')
-	// 				.each(($button, index) => {
-	// 					const appendIcon = options[index]?.appendIcon;
-	// 					const prependIcon = options[index]?.prependIcon;
+				messages.forEach((message, index) => {
+					cy.get('@fieldMessages')
+						.find('.v-messages__message')
+						.eq(index)
+						.should('have.text', message);
+				});
+			});
 
-	// 					cy.wrap($button)
-	// 						.find('.v-icon')
-	// 						.should('exist')
-	// 						.and('have.class', baseIconClass(appendIcon))
-	// 						.and('have.class', baseIconClass(prependIcon));
-	// 				});
-	// 		});
-	// 	});
-	// });
+		});
+
+		// Required Prop //
+		it('should check required prop', () => {
+			cy.mountComponent({ field: { required: true } });
+			cy.getBaseStepperElements();
+
+			cy.getDataCy('vsf-field-label')
+				.should('exist')
+				.find('span')
+				.should('have.class', 'text-error')
+				.should('contain.text', '*');
+		});
+	});
+
+	// Theme Prop //
+	describe('Theme Prop', () => {
+
+		// Dark Theme //
+		it('should check theme prop', () => {
+			cy.mountComponent({ field: { theme: 'dark' } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.should('have.class', 'v-theme--dark');
+		});
+
+		// Light Theme //
+		it('should check theme prop', () => {
+			cy.mountComponent({ field: { theme: 'light' } });
+			cy.getBaseStepperElements();
+
+			cy.get('@fieldButtons')
+				.should('have.class', 'v-theme--light');
+		});
+	});
 });
