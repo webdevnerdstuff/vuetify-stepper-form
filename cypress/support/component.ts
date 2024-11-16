@@ -8,6 +8,7 @@ import * as DATA from '../templates/testData';
 import { Component } from 'vue';
 
 
+
 declare global {
 	namespace Cypress {
 		interface Chainable {
@@ -56,7 +57,6 @@ Cypress.Commands.add('getDataCy', (name: string) => {
 	return cy.get(`[data-cy="${name}"]`);
 });
 
-
 const answers = {
 	buttonField: null,
 };
@@ -74,7 +74,14 @@ const globalOptions = {
 	validateOn: 'blur',
 };
 
-Cypress.Commands.add('mountComponent', (options: any = {}) => {
+interface MountComponentOptions {
+	modelValue?: Record<string, any>;
+	field?: Partial<typeof fieldDefault>;
+	globalProps?: Record<string, any>;
+	stepperProps?: Record<string, any>;
+}
+
+Cypress.Commands.add('mountComponent', (options: MountComponentOptions = {}) => {
 	const { modelValue = {}, field = {}, globalProps = {}, stepperProps = {} } = options;
 
 	const localModelValue = { ...answers, ...modelValue };
