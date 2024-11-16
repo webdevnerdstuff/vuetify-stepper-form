@@ -5,6 +5,7 @@ import { h } from "vue";
 import { mount } from 'cypress/vue';
 import VStepperForm from '../../src/plugin/VStepperForm.vue';
 import * as DATA from '../templates/testData';
+import { Component } from 'vue';
 
 
 declare global {
@@ -19,7 +20,7 @@ declare global {
 	}
 }
 
-Cypress.Commands.add('mount', (component, options = {}) => {
+Cypress.Commands.add('mount', (component: Component, options: any = {}) => {
 	// Ensure global settings are defined
 	options.global = options.global || {};
 	options.global.stubs = options.global.stubs || {};
@@ -35,7 +36,7 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 				// Convert strings or other non-function values into functions
 				typeof value === 'function'
 					? value
-					: () => (typeof value === 'string' ? h('div', value) : h(value)),
+					: () => (typeof value === 'string' ? h('div', value) : h(value as any)),
 			])
 		)
 		: {};
@@ -51,7 +52,7 @@ Cypress.Commands.add('mount', (component, options = {}) => {
 });
 
 
-Cypress.Commands.add('getDataCy', (name) => {
+Cypress.Commands.add('getDataCy', (name: string) => {
 	return cy.get(`[data-cy="${name}"]`);
 });
 
