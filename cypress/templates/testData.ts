@@ -5,7 +5,6 @@ import {
 	object as yupObject,
 } from 'yup';
 import { useDeepMerge } from '../../src/plugin/composables/helpers';
-import { max } from 'cypress/types/lodash';
 
 
 const answers = {
@@ -28,8 +27,6 @@ const answers = {
 	checkboxMultiple: null,
 	isSingleRadioSelected: null,
 	switchQuestion: null,
-	// autocomplete: undefined,
-	// autocomplete: 'foo',
 	// buttonField: [],
 	// color: '#ff0000',
 	// combobox: null,
@@ -41,8 +38,6 @@ const answers = {
 	// customBar: null,
 	// file: null,
 	// radioMultiple: ['option1', 'option3'],
-	// selectField: null,
-	// selectField: 'foo',
 };
 
 const finalAnswer = {
@@ -156,15 +151,6 @@ const validationSchema = yupObject({
 	// selectField: yupString().required(isRequired('Select Field')),
 });
 
-const themeColors = [
-	'primary',
-	'secondary',
-	'success',
-	'info',
-	'warning',
-	'error',
-];
-
 const baseOptions = [
 	{
 		class: 'flower-class',
@@ -202,6 +188,13 @@ const buttonFieldOptions = {
 		'space-between',
 		'space-around',
 		'space-evenly',
+	],
+	borders: [
+		'xs',
+		'sm',
+		'md',
+		'lg',
+		'xl',
 	],
 	colors: [
 		'primary',
@@ -280,6 +273,24 @@ const buttonFieldOptions = {
 			{ appendIcon: 'mdi:mdi-heart', prependIcon: 'mdi:mdi-heart-outline' },
 		]),
 	},
+	rounded: [
+		'0',
+		'xs',
+		'sm',
+		'md',
+		'lg',
+		'xl',
+		'pill',
+		'circle',
+		'shaped',
+	],
+	sizes: [
+		'x-small',
+		'small',
+		'default',
+		'large',
+		'x-large',
+	],
 	variants: ['text', 'elevated', 'tonal', 'outlined', 'plain'],
 };
 
@@ -287,12 +298,10 @@ function isRequired(field: string) {
 	return `${field} is required`;
 }
 
-
 export {
 	answers,
 	buttonFieldOptions,
 	finalAnswer,
 	items,
-	themeColors,
 	validationSchema,
 };
