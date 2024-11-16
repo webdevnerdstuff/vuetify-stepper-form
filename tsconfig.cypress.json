@@ -1,0 +1,25 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"types": [
+			"cypress"
+		],
+		"typeRoots": [
+			"./cypress/types/",
+		],
+		"paths": {
+			"@/*": [
+				"src/*"
+			],
+			"@cypress/*": [
+				"./cypress/*"
+			]
+		}
+	},
+	"include": [
+		"src/**/*.cy.ts",
+		"src/**/*.cy.tsx",
+		"cypress/**/*.ts"
+	]
+}
