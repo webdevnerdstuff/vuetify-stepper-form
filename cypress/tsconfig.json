@@ -1,3 +1,11 @@
 {
-	"extends": "../tsconfig.cypress.json"
+	"extends": "../tsconfig.cypress.json",
+	"compilerOptions": {
+		"types": [
+			"cypress"
+		],
+		"typeRoots": [
+			"node_modules/@types"
+		]
+	}
 }
