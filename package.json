@@ -23,9 +23,10 @@
 		"test:dev": "vitest",
 		"test:all": "vitest --run",
 		"test:build": "vitest --run --bail 1",
-		"cy:run": "npx cypress run --headless --browser electron",
-		"cy:run:dev": "cypress run --browser chrome",
-		"cy:open": "cypress open --browser chrome"
+		"cy:run": "npx cypress run --e2e && npx cypress run --component --headless",
+		"cy:run:e2e": "npx cypress run --headless --browser electron",
+		"cy:run:component": "npx cypress run --headless --component electron",
+		"cy:open": "npx cypress open --browser chrome"
 	},
 	"lint-staged": {
 		"src/**/*.{js,ts,vue}": [
