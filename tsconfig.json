@@ -45,7 +45,7 @@
 			]
 		},
 		"resolveJsonModule": true,
-		"rootDir": "./",
+		"rootDir": "./src",
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "ESNext",
