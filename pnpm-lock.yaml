@@ -117,9 +117,6 @@ importers:
       husky:
         specifier: ^9.1.6
         version: 9.1.6
-      jira-prepare-commit-msg:
-        specifier: ^1.7.2
-        version: 1.7.2(typescript@5.6.3)
       jsdom:
         specifier: ^25.0.1
         version: 25.0.1
@@ -2225,15 +2222,6 @@ packages:
     resolution: {integrity: sha512-AdmX6xUzdNASswsFtmwSt7Vj8po9IuqXm0UXz7QKPuEUmPB4XyjGfaAr2PSuELMwkRMVH1EpIkX5bTZGRB3eCA==}
     engines: {node: '>=10'}
 
-  cosmiconfig@8.3.6:
-    resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      typescript: '>=4.9.5'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   cosmiconfig@9.0.0:
     resolution: {integrity: sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==}
     engines: {node: '>=14'}
@@ -3625,11 +3613,6 @@ packages:
   jest-worker@27.5.1:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
-
-  jira-prepare-commit-msg@1.7.2:
-    resolution: {integrity: sha512-vPmwqPoi5TfMF1rXh9XN6u7TiSG+FwdcbeL01nMBUbRRxTMXvIqQZoJSRoNoprgY1JUpYXplc3HGRSVsV22rLg==}
-    engines: {node: '>=14'}
-    hasBin: true
 
   jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
@@ -8243,15 +8226,6 @@ snapshots:
       path-type: 4.0.0
       yaml: 1.10.2
 
-  cosmiconfig@8.3.6(typescript@5.6.3):
-    dependencies:
-      import-fresh: 3.3.0
-      js-yaml: 4.1.0
-      parse-json: 5.2.0
-      path-type: 4.0.0
-    optionalDependencies:
-      typescript: 5.6.3
-
   cosmiconfig@9.0.0(typescript@5.6.3):
     dependencies:
       env-paths: 2.2.1
@@ -9821,12 +9795,6 @@ snapshots:
       '@types/node': 22.9.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
-
-  jira-prepare-commit-msg@1.7.2(typescript@5.6.3):
-    dependencies:
-      cosmiconfig: 8.3.6(typescript@5.6.3)
-    transitivePeerDependencies:
-      - typescript
 
   jju@1.4.0: {}
 
