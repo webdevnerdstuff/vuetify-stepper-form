@@ -65,7 +65,7 @@ export interface Page {
     editable?: VStepperItem['editable'];
     error?: boolean;
     fields?: Field[];
-    isReview?: boolean;
+    isSummary?: boolean;
     pageFieldColumns?: ResponsiveColumns;
     text?: string;
     title?: string;
