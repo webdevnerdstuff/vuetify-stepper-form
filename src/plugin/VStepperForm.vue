@@ -366,7 +366,6 @@ function removePageError(pageIndex: number): void {
 	currentPageHasErrors.value = false;
 }
 
-
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
 	const currentPage = stepperModel.value - 1;
