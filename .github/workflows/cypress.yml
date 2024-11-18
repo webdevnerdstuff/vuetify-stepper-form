@@ -27,6 +27,11 @@ jobs:
     runs-on: ubuntu-22.04
     needs: install
     steps:
+      - name: Action Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Checkout
         uses: actions/checkout@v4
 
