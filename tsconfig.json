@@ -66,10 +66,8 @@
 	"exclude": [
 		"cypress.config.ts",
 		"cypress/**/*.ts",
-		"cypress/**/*.ts",
 		"node_modules",
 		"playground",
-
 		"src/playground/configs/templates/PlaygroundPage.vue",
 		"src/plugins/**/*.ts",
 		"src/stores/**/*.ts",
