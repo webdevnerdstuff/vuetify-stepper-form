@@ -1,5 +1,10 @@
 {
 	"exclude": [
+		"**/*__TEMP.*",
+		"**/*__TEMP/",
+		"cypress.config.ts",
+		"cypress/**/*.ts",
+		"cypress/**/*.ts",
 		"playground",
 		"src/**/*.spec.ts",
 		"src/**/*.test.ts",
