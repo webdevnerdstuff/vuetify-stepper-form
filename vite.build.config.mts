@@ -6,7 +6,8 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import dts from 'vite-plugin-dts';
 import pkg from './package.json';
 import terser from '@rollup/plugin-terser';
-import typescript from 'rollup-plugin-typescript2';
+// import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -78,7 +79,7 @@ export default defineConfig({
 			tsconfigPath: 'tsconfig.build.json',
 		}),
 		typescript({
-			check: true,
+			// check: true,
 			include: ['./src/plugin/**/*.vue'],
 			tsconfig: 'tsconfig.build.json',
 		}),
