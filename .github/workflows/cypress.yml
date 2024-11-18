@@ -17,12 +17,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Cypress install
-        uses: cypress-io/github-action@v6
-        with:
-          # Disable running of tests within install job
-          runTests: false
-          build: npm run build
+      - name: Build application
+        run: pnpm build
 
       - name: Save build folder
         uses: actions/upload-artifact@v4
@@ -35,7 +31,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: install
     steps:
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
