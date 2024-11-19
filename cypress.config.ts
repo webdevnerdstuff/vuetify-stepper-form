@@ -1,5 +1,5 @@
 import { defineConfig } from 'cypress';
-import customViteConfig from './vite.cypress.config.ts';
+import customViteConfig from './vite.cypress.config';
 
 export default defineConfig({
 	e2e: {

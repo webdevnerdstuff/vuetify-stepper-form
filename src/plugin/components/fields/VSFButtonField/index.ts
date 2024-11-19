@@ -1,10 +1,10 @@
-import type VSFButtonField from './VSFButtonField.vue';
 import type {
 	Field,
 	GlobalDensity,
 	SharedProps,
 } from '@/plugin/types';
 import type { VBtn } from 'vuetify/components';
+import VSFButtonField from './VSFButtonField.vue';
 
 
 export interface Option {

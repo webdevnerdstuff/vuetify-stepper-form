@@ -1,7 +1,5 @@
-/// <reference types="../cypress" />
-
 import type { Field } from '../../plugin/types';
-import * as DATA from '../../../cypress/templates/testData';
+import * as DATA from '@cypress/templates/testData';
 import VStepperForm from '../VStepperForm.vue';
 
 

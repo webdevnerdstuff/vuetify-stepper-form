@@ -1,93 +1,17 @@
 {
-	"compilerOptions": {
-		"allowSyntheticDefaultImports": true,
-		"baseUrl": "./",
-		"declaration": true,
-		"declarationDir": "./dist",
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"importHelpers": true,
-		"jsx": "preserve",
-		"lib": [
-			"ESNext",
-			"DOM"
-		],
-		"module": "ESNext",
-		"moduleResolution": "Node",
-		"noEmit": true,
-		"noFallthroughCasesInSwitch": true,
-		"noImplicitAny": false,
-		"noUncheckedIndexedAccess": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"outDir": "./dist",
-		"paths": {
-			"@/*": [
-				"./src/*"
-			],
-			"@cypress/*": [
-				"./cypress/*"
-			],
-			"@components/*": [
-				"./src/plugin/components/*"
-			],
-			"@composables/*": [
-				"./src/plugin/composables/*"
-			],
-			"@slots/*": [
-				"./src/plugin/slots/*"
-			],
-			"@types/*": [
-				"./src/plugin/types/*"
-			],
-			"@utils/*": [
-				"./src/plugin/utils/*"
-			]
-		},
-		"resolveJsonModule": true,
-		"rootDir": "./src",
-		"skipLibCheck": true,
-		"strict": true,
-		"target": "ESNext",
-		"typeRoots": [
-			"./cypress/types",
-			"./src/plugin/types",
-			"./src/documentation/types",
-			"./node_modules/@types",
-			"./node_modules/vuetify"
-		],
-		"types": [
-			"cypress",
-			"jest",
-			"node"
-		],
-		"useDefineForClassFields": true
-	},
-	"exclude": [
-		"cypress.config.ts",
-		"cypress/**/*.ts",
-		"node_modules",
-		"playground",
-		"src/playground/configs/templates/PlaygroundPage.vue",
-		"src/plugins/**/*.ts",
-		"src/stores/**/*.ts",
-	],
-	"include": [
-		"eslint.config.mjs",
-		"src/App.vue",
-		"src/main.ts",
-		"src/playground/**/*.ts",
-		"src/playground/**/*.vue",
-		"src/documentation/**/*.ts",
-		"src/documentation/**/*.tsx",
-		"src/documentation/**/*.vue",
-		"src/plugin/**/*.ts",
-		"src/plugin/**/*.tsx",
-		"src/plugin/**/*.vue"
-	],
+	"files": [],
 	"references": [
 		{
 			"path": "./tsconfig.node.json"
+		},
+		{
+			"path": "./tsconfig.app.json"
+		},
+		{
+			"path": "./tsconfig.cypress.json"
 		}
-	]
+	],
+	"compilerOptions": {
+		"module": "ESNext"
+	}
 }

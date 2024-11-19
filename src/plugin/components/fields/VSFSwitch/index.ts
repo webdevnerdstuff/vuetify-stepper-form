@@ -1,9 +1,9 @@
-import type VSFSwitch from './VSFSwitch.vue';
 import type {
 	Field,
 	SharedProps,
 } from '@/plugin/types';
 import type { VSwitch } from 'vuetify/components';
+import VSFSwitch from './VSFSwitch.vue';
 
 
 interface InternalField extends Omit<Field,

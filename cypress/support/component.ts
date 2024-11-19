@@ -5,21 +5,20 @@ import { h } from "vue";
 import { mount } from 'cypress/vue';
 import VStepperForm from '../../src/plugin/VStepperForm.vue';
 import * as DATA from '../templates/testData';
-import { Component } from 'vue';
+import type { Component } from 'vue';
 
 
-
-declare global {
-	namespace Cypress {
-		interface Chainable {
-			baseIconClass(icon: string): string;
-			getBaseStepperElements(): Chainable;
-			getDataCy(value: string): Chainable<JQuery<HTMLElement>>;
-			mount: typeof mount;
-			mountComponent(options: any): Chainable;
-		}
-	}
-}
+// declare global {
+// 	namespace Cypress {
+// 		interface Chainable {
+// 			baseIconClass(icon: string): string;
+// 			getBaseStepperElements(): Chainable;
+// 			getDataCy(value: string): Chainable<JQuery<HTMLElement>>;
+// 			mount: typeof mount;
+// 			mountComponent(options: any): Chainable;
+// 		}
+// 	}
+// }
 
 Cypress.Commands.add('mount', (component: Component, options: any = {}) => {
 	// Ensure global settings are defined
@@ -87,7 +86,7 @@ Cypress.Commands.add('mountComponent', (options: MountComponentOptions = {}) => 
 	const localModelValue = { ...answers, ...modelValue };
 
 	return cy.then(() => {
-		cy.mount(VStepperForm, {
+		cy.mount(VStepperForm as any, {
 			props: {
 				modelValue: localModelValue,
 				pages: [{ fields: [{ ...fieldDefault, ...field, }], }],

@@ -1,6 +1,6 @@
-import { default as VSFSwitch } from './VSFSwitch.vue';
 import { Field, SharedProps } from '../../../types';
 import { VSwitch } from 'vuetify/components';
+import { default as VSFSwitch } from './VSFSwitch.vue';
 interface InternalField extends Omit<Field, 'inline' | 'inlineSpacing' | 'labelPositionLeft'> {
     color?: VSwitch['color'];
     density?: VSwitch['density'];

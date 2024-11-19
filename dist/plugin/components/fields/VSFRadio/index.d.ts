@@ -1,6 +1,6 @@
-import { default as VSFRadio } from './VSFRadio.vue';
 import { Field, SharedProps } from '../../../types';
 import { VRadio, VRadioGroup } from 'vuetify/components';
+import { default as VSFRadio } from './VSFRadio.vue';
 export interface RadioGroupProps {
     appendIcon?: VRadioGroup['appendIcon'];
     direction?: VRadioGroup['direction'];

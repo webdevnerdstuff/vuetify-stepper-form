@@ -1,5 +1,5 @@
 import { watchDebounced } from '@vueuse/core';
-import {
+import type {
 	UseAutoPage,
 	UseBuildSettings,
 	UseColumnErrorCheck,
