@@ -51,5 +51,5 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: pnpm start
+          start: pnpm cy:run
           browser: chrome
