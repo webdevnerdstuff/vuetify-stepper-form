@@ -25,7 +25,7 @@ jobs:
         with:
           name: build
           if-no-files-found: error
-          path: build
+          path: frontend/build
 
   cypress-run:
     runs-on: ubuntu-22.04
@@ -43,7 +43,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: build
+          path: frontend/build
 
       - name: Install dependencies
         run: pnpm install
