@@ -1,6 +1,6 @@
-import { default as VSFButtonField } from './VSFButtonField.vue';
 import { Field, GlobalDensity, SharedProps } from '../../../types';
 import { VBtn } from 'vuetify/components';
+import { default as VSFButtonField } from './VSFButtonField.vue';
 export interface Option {
     appendIcon?: VBtn['appendIcon'];
     class?: string;

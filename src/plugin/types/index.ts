@@ -1,9 +1,9 @@
-import { App } from 'vue';
 import type {
 	FieldValidator,
 	FormValidationResult,
 	GenericObject,
 } from 'vee-validate';
+import type { App } from 'vue';
 import type {
 	VBtn,
 	// VIcon,

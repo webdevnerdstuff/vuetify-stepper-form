@@ -2,7 +2,7 @@ import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import { defineConfig } from 'vite';
 import AutoImport from 'unplugin-auto-import/vite';
-import path from 'path';
+import { resolve } from 'path';
 
 
 export default defineConfig({
@@ -35,9 +35,9 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'@': path.resolve(__dirname, './src'),
-			'@cypress': path.resolve(__dirname, './cypress'),
-			'@root': path.resolve(__dirname, '.'),
+			'@': resolve(__dirname, './src'),
+			'@cypress': resolve(__dirname, './cypress'),
+			'@root': resolve(__dirname, '.'),
 		},
 		extensions: [
 			'.js',
