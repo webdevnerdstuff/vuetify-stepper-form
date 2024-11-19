@@ -54,9 +54,6 @@ importers:
       '@stylistic/stylelint-plugin':
         specifier: ^3.1.1
         version: 3.1.1(stylelint@16.10.0(typescript@5.6.3))
-      '@tsconfig/node22':
-        specifier: ^22.0.0
-        version: 22.0.0
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
@@ -1009,9 +1006,6 @@ packages:
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
-
-  '@tsconfig/node22@22.0.0':
-    resolution: {integrity: sha512-twLQ77zevtxobBOD4ToAtVmuYrpeYUh3qh+TEp+08IWhpsrIflVHqQ1F1CiPxQGL7doCdBIOOCF+1Tm833faNg==}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -6797,8 +6791,6 @@ snapshots:
       stylelint: 16.10.0(typescript@5.6.3)
 
   '@trysound/sax@0.2.0': {}
-
-  '@tsconfig/node22@22.0.0': {}
 
   '@types/argparse@1.0.38': {}
 
