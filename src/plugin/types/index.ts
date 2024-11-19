@@ -258,7 +258,7 @@ export interface UseDeepMerge {
 	(
 		A: Record<string, any>,
 		B: Record<string, any>,
-		C: Record<string, any>
+		C?: Record<string, any>
 	): Record<string, any>;
 }
 

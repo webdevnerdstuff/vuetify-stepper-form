@@ -1,9 +1,33 @@
 import {
+	useBuildSettings,
 	useColumnErrorCheck,
 	useDeepMerge,
 } from '../helpers';
+import * as DATA from '../../../../cypress/templates/testData';
+
 
 describe('Helpers Composable', () => {
+
+	describe('useBuildSettings', () => {
+		it('should return the correct settings object', () => {
+			const stepperProps = DATA.stepperProps;
+
+			const result = useBuildSettings(stepperProps);
+
+			expect(result).to.deep.equal(stepperProps);
+		});
+
+		it('should return the incorrect settings object', () => {
+			const stepperProps = DATA.stepperProps;
+
+			const result = useBuildSettings(stepperProps);
+
+			expect(result).to.not.deep.equal({
+				...stepperProps,
+				bunnies: 'fluffy',
+			});
+		});
+	});
 
 	describe('useColumnErrorCheck', () => {
 		describe('Errors', () => {

@@ -7,6 +7,52 @@ import {
 import { useDeepMerge } from '../../src/plugin/composables/helpers';
 
 
+const stepperProps = {
+	altLabels: true,
+	autoPage: true,
+	autoPageDelay: 3000,
+	bgColor: 'secondary',
+	border: 'lg',
+	color: 'primary',
+	density: 'default' as const,
+	disabled: false,
+	editIcon: 'fas fa-pencil',
+	editable: false,
+	elevation: 10,
+	errorIcon: 'fas fa-cog',
+	fieldColumns: {
+		lg: 12,
+		md: 12,
+		sm: 12,
+		xl: 12,
+	},
+	flat: true,
+	headerTooltips: true,
+	height: '900px',
+	hideActions: true,
+	hideDetails: true,
+	keepValuesOnUnmount: false,
+	maxHeight: '50px',
+	maxWidth: '50px',
+	minHeight: '900px',
+	minWidth: '900px',
+	nextText: 'hop forward',
+	prevText: 'hop backwards',
+	rounded: 'pill',
+	selectedClass: 'bunnies',
+	summaryColumns: { sm: 6 },
+	tag: 'div',
+	theme: 'light',
+	tile: true,
+	tooltipLocation: 'end' as const,
+	tooltipOffset: 10,
+	tooltipTransition: 'fade-transition',
+	transition: 'fade-transition',
+	validateOn: 'blur' as const,
+	validateOnMount: true,
+	variant: 'outlined',
+};
+
 const answers = {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 1 //
 	firstName: null,
@@ -303,5 +349,6 @@ export {
 	buttonFieldOptions,
 	finalAnswer,
 	items,
+	stepperProps,
 	validationSchema,
 };

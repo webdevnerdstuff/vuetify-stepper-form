@@ -12,7 +12,7 @@ import type {
 */
 type AnyObject = Record<string, any>;
 
-export const useDeepMerge: UseDeepMerge = (A, B, C) => {
+export const useDeepMerge: UseDeepMerge = (A, B, C = {}) => {
 	const deepMerge = (obj1: AnyObject, obj2: AnyObject): AnyObject => {
 		const result: AnyObject = { ...obj1 };
 		for (const key in obj2) {
