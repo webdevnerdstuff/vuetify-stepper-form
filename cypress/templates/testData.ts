@@ -7,6 +7,243 @@ import {
 import { useDeepMerge } from '../../src/plugin/composables/helpers';
 
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Shared //
+const items = [
+	{ title: 'Bear', value: 'bear' },
+	{ title: 'Bearded Dragon', value: 'bearded-dragon' },
+	{ title: 'Budgie', value: 'budgie' },
+	{ title: 'Bulldog', value: 'bulldog' },
+	{ title: 'Cat', value: 'cat' },
+	{ title: 'Chicken', value: 'chicken' },
+	{ title: 'Chinchilla', value: 'chinchilla' },
+	{ title: 'Cobra', value: 'cobra' },
+	{ title: 'Cockatiel', value: 'cockatiel' },
+	{ title: 'Cow', value: 'cow' },
+	{ title: 'Dog', value: 'dog' },
+	{ title: 'Donkey', value: 'donkey' },
+	{ title: 'Dragon', value: 'dragon' },
+	{ title: 'Duck', value: 'duck' },
+	{ title: 'Eagle', value: 'eagle' },
+	{ title: 'Elephant', value: 'elephant' },
+	{ title: 'Ferret', value: 'ferret' },
+	{ title: 'Fox', value: 'fox' },
+	{ title: 'Goat', value: 'goat' },
+	{ title: 'Gorilla', value: 'gorilla' },
+	{ title: 'Guinea Pig', value: 'guinea-pig' },
+	{ title: 'Hamster', value: 'hamster' },
+	{ title: 'Horse', value: 'horse' },
+	{ title: 'Leopard', value: 'leopard' },
+	{ title: 'Lion', value: 'lion' },
+	{ title: 'Otter', value: 'otter' },
+	{ title: 'Panda', value: 'panda' },
+	{ title: 'Parrot', value: 'parrot' },
+	{ title: 'Penguin', value: 'penguin' },
+	{ title: 'Pig', value: 'pig' },
+	{ title: 'Pomeranian', value: 'pomeranian' },
+	{ title: 'Poodle', value: 'poodle' },
+	{ title: 'Rabbit', value: 'rabbit' },
+	{ title: 'Shark', value: 'shark' },
+	{ title: 'Sheep', value: 'sheep' },
+	{ title: 'Sphynx', value: 'sphynx' },
+	{ title: 'Tarantula', value: 'tarantula' },
+	{ title: 'Tiger', value: 'tiger' },
+	{ title: 'Whale', value: 'whale' },
+	{ title: 'Wolf', value: 'wolf' },
+];
+
+const defaultFields = {
+	firstName: {
+		label: 'First Name',
+		name: 'firstName',
+		type: 'text' as const,
+	},
+	lastName: {
+		label: 'Last Name',
+		name: 'lastName',
+		type: 'text' as const,
+	},
+	email: {
+		label: 'Email',
+		name: 'email',
+		type: 'email' as const,
+		required: true,
+	},
+	password: {
+		label: 'Password',
+		name: 'password',
+		type: 'password' as const,
+		required: true,
+	},
+	phone: {
+		label: 'Phone',
+		name: 'phone',
+		type: 'tel' as const,
+		required: true,
+	},
+	url: {
+		label: 'URL',
+		name: 'url',
+		type: 'url' as const,
+		required: true,
+	},
+	number: {
+		label: 'Number',
+		name: 'number',
+		type: 'number' as const,
+		required: true,
+	},
+	select: {
+		items,
+		label: 'Select Animal',
+		name: 'selectAnimal',
+		type: 'select' as const,
+		required: true,
+	},
+	selectMultiple: {
+		chips: true,
+		items,
+		itemValue: 'value',
+		label: 'Select Multiple Animals',
+		multiple: true,
+		name: 'selectsMultipleAnimals',
+		type: 'select' as const,
+		required: true,
+	},
+	textarea: {
+		label: 'Description',
+		name: 'description',
+		type: 'textarea' as const,
+		required: true,
+	},
+	autocomplete: {
+		items,
+		label: 'Autocomplete Animal',
+		name: 'autocompleteAnimal',
+		type: 'autocomplete' as const,
+		required: true,
+	},
+	autocompleteMultiple: {
+		chips: true,
+		clearOnSelect: true,
+		items,
+		label: 'Autocomplete Multiple Animal',
+		multiple: true,
+		name: 'autoCompleteMultipleAnimals',
+		type: 'autocomplete' as const,
+		required: true,
+	},
+	combobox: {
+		chips: true,
+		clearable: true,
+		items: items,
+		label: 'Combobox Question',
+		multiple: true,
+		name: 'combobox',
+		placeholder: 'Select an item',
+		type: 'combobox' as const,
+		variant: 'outlined',
+	},
+	color: {
+		label: 'Color',
+		name: 'color',
+		pip: true,
+		type: 'color' as const,
+	},
+	date: {
+		label: 'Date',
+		name: 'date',
+		pip: true,
+		type: 'date' as const,
+	},
+	checkbox: {
+		label: 'Checkbox Single',
+		name: 'isThisBoxChecked',
+		type: 'checkbox' as const,
+		required: true,
+	},
+	checkboxMultiple: {
+		inline: true,
+		label: 'Checkbox Multiple',
+		multiple: true,
+		name: 'checkboxMultiple',
+		options: [
+			{
+				id: 'option1-id',
+				label: 'Option 1',
+				value: 'option1',
+			},
+			{
+				id: 'option2-id',
+				label: 'Option 2',
+				value: 'option2',
+			},
+			{
+				id: 'option3-id',
+				label: 'Option 3',
+				value: 'option3',
+			},
+		],
+		type: 'checkbox' as const,
+		required: true,
+	},
+	radio: {
+		label: 'Radio Single',
+		name: 'isSingleRadioSelected',
+		options: [
+			{
+				label: 'Yes',
+				value: 'yes',
+			},
+			{
+				label: 'No',
+				value: 'no',
+			},
+			{
+				label: 'Maybe',
+				value: 'maybe',
+			},
+		],
+		type: 'radio' as const,
+		required: true,
+	},
+	switch: {
+		label: 'Switch Question',
+		falseValue: 'no',
+		name: 'switchQuestion',
+		trueValue: 'yes',
+		type: 'switch' as const,
+	},
+	hidden: {
+		name: 'hidden',
+		type: 'hidden' as const,
+	},
+
+	// -- //
+	address: {
+		label: 'Address',
+		name: 'address',
+		type: 'text' as const,
+	},
+	city: {
+		label: 'City',
+		name: 'city',
+		type: 'text' as const,
+	},
+	zipcode: {
+		label: 'Zipcode',
+		name: 'zipcode',
+		type: 'number' as const,
+	},
+};
+
+function isRequired(field: string) {
+	return `${field} is required`;
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VStepperForm.cy.ts //
+
+// & ------------------------- Stepper Form //
 const stepperProps = {
 	altLabels: true,
 	autoPage: true,
@@ -54,7 +291,7 @@ const stepperProps = {
 };
 
 const answers = {
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 1 //
+	// ? ------------------------- Common Fields //
 	firstName: null,
 	lastName: null,
 	email: null,
@@ -64,95 +301,60 @@ const answers = {
 	number: null,
 	selectAnimal: null,
 	selectsMultipleAnimals: null,
+	description: null,
+	// hidden: "I'm a hidden field answer",
+
+	// ? ------------------------- Less Common Fields //
 	autocompleteAnimal: null,
 	autoCompleteMultipleAnimals: null,
-	description: null,
+	color: null,
+	date: null,
+	// file: null,
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 2 //
+	// ? ------------------------- Radio/Checkbox/Switch Fields //
 	isThisBoxChecked: null,
 	checkboxMultiple: null,
 	isSingleRadioSelected: null,
 	switchQuestion: null,
 	// buttonField: [],
-	// color: '#ff0000',
-	// combobox: null,
-	// combobox: 'Foo',
-	// combobox: 'foo',
-	// combobox: null,
-	// combobox: { title: 'Foo', value: 'foo' },
+
+	// ? ------------------------- Slot Fields //
 	// customFoo: null,
 	// customBar: null,
-	// file: null,
-	// radioMultiple: ['option1', 'option3'],
+
 };
 
 const finalAnswer = {
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 1 //
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Common Fields Page //
 	firstName: 'Bunny',
 	lastName: 'Rabbit',
 	email: 'test@test.com',
 	password: 'password1',
 	phone: '555-555-5555',
 	url: 'https://test.com',
-	number: 100,
+	number: '100',
 	selectAnimal: 'rabbit',
 	selectsMultipleAnimals: ['rabbit', 'duck'],
+	description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec pur',
+	// hidden: "I'm a hidden field answer",
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
 	autocompleteAnimal: 'rabbit',
 	autoCompleteMultipleAnimals: ['rabbit', 'duck'],
-	description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec pur',
+	combobox: [{ title: "Rabbit", value: "rabbit" }, { title: "Duck", value: "duck" }],
+	color: '#804040',
+	// date: 'Wed May 25 1977 00:00:00 GMT-0700 (Pacific Daylight Time)',
+	// date: new Date('05/25/1977'),
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 2 //
-	isThisBoxChecked: 'yes',
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Radio/Checkbox/Switch Fields Page //
+	isThisBoxChecked: true,
 	checkboxMultiple: ['option1', 'option3'],
 	isSingleRadioSelected: 'yes',
 	switchQuestion: 'yes',
 };
 
-const items = [
-	{ title: 'Bear', value: 'bear' },
-	{ title: 'Bearded Dragon', value: 'bearded-dragon' },
-	{ title: 'Budgie', value: 'budgie' },
-	{ title: 'Bulldog', value: 'bulldog' },
-	{ title: 'Cat', value: 'cat' },
-	{ title: 'Chicken', value: 'chicken' },
-	{ title: 'Chinchilla', value: 'chinchilla' },
-	{ title: 'Cobra', value: 'cobra' },
-	{ title: 'Cockatiel', value: 'cockatiel' },
-	{ title: 'Cow', value: 'cow' },
-	{ title: 'Dog', value: 'dog' },
-	{ title: 'Donkey', value: 'donkey' },
-	{ title: 'Dragon', value: 'dragon' },
-	{ title: 'Duck', value: 'duck' },
-	{ title: 'Eagle', value: 'eagle' },
-	{ title: 'Elephant', value: 'elephant' },
-	{ title: 'Ferret', value: 'ferret' },
-	{ title: 'Fox', value: 'fox' },
-	{ title: 'Goat', value: 'goat' },
-	{ title: 'Gorilla', value: 'gorilla' },
-	{ title: 'Guinea Pig', value: 'guinea-pig' },
-	{ title: 'Hamster', value: 'hamster' },
-	{ title: 'Horse', value: 'horse' },
-	{ title: 'Leopard', value: 'leopard' },
-	{ title: 'Lion', value: 'lion' },
-	{ title: 'Otter', value: 'otter' },
-	{ title: 'Panda', value: 'panda' },
-	{ title: 'Parrot', value: 'parrot' },
-	{ title: 'Penguin', value: 'penguin' },
-	{ title: 'Pig', value: 'pig' },
-	{ title: 'Pomeranian', value: 'pomeranian' },
-	{ title: 'Poodle', value: 'poodle' },
-	{ title: 'Rabbit', value: 'rabbit' },
-	{ title: 'Shark', value: 'shark' },
-	{ title: 'Sheep', value: 'sheep' },
-	{ title: 'Sphynx', value: 'sphynx' },
-	{ title: 'Tarantula', value: 'tarantula' },
-	{ title: 'Tiger', value: 'tiger' },
-	{ title: 'Whale', value: 'whale' },
-	{ title: 'Wolf', value: 'wolf' },
-];
-
 const validationSchema = yupObject({
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 1 //
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Common Fields Page //
 	firstName: yupString().required(isRequired('First Name')),
 	lastName: yupString().required(isRequired('Last Name')),
 	email: yupString().email('Must be a valid Email').required(isRequired('Email')),
@@ -162,14 +364,20 @@ const validationSchema = yupObject({
 	url: yupString().required(isRequired('URL'))
 		.url('Must be a valid URL'),
 	number: yupNumber().required(isRequired('Number'))
-		.min(finalAnswer.number, 'Number must be at least ${min}'),
+		.min(Number(finalAnswer.number), 'Number must be at least ${min}'),
 	description: yupString().required(isRequired('Description')),
 	selectAnimal: yupString().required(isRequired('Select Animal')),
 	selectsMultipleAnimals: yupArray().required(isRequired('Select Multiple Animals')),
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
 	autocompleteAnimal: yupString().required(isRequired('Autocomplete Animal')),
 	autoCompleteMultipleAnimals: yupArray().required(isRequired('Autocomplete Multiple Animal')),
+	combobox: yupArray().required(isRequired('Combobox'))
+		.min(2, 'Must select at least ${min} options'),
+	color: yupString().required(isRequired('Color')),
+	// date: yupString().required(isRequired('Date')),
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Page 2 //
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Radio/Checkbox/Switch Fields Page //
 	isThisBoxChecked: yupString().required(isRequired('Checkbox Single')),
 	checkboxMultiple: yupArray().required(isRequired('Checkbox Multiple'))
 		.min(2, 'Must select at least ${min} options'),
@@ -178,25 +386,57 @@ const validationSchema = yupObject({
 	switchQuestion: yupString().required(isRequired('Switch Question'))
 		.matches(/(yes)/, 'Only "yes" is allowed'),
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-	// autocomplete: yupString().required(isRequired('Autocomplete')),
-	// autocomplete: yupArray().required(isRequired('Autocomplete')),
 	// buttonField: yupArray().required(isRequired('Button Field')),
 	// buttonField: yupString().required(isRequired('Button Field')).matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
 	// 	.matches(/(^true)/, isRequired('Checkbox Single')),
 	// .matches(/(^false)/, 'Checkbox must be not false'),
-	// color: yupString().required(isRequired('Color')),
-	// combobox: yupArray().required(isRequired('Combobox'))
-	// 	.length(1, 'Must select at least ${length} option.'),
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Slot Fields Page //
 	// customFoo: yupString().required(isRequired('Custom Foo')),
 	// customBar: yupString().required(isRequired('Custom Bar')),
-	// file: yupString().required(isRequired('File')),
-	// selectField: yupString().required(isRequired('Select Field')),
 });
 
+
+// & ------------------------- Field Columns //
+const fieldColumnsPagesPageColumns = { lg: 8, md: 10, sm: 12, xl: 6 };
+const fieldColumnsPages = [
+	{
+		fields: [defaultFields.firstName],
+		title: 'Page 1',
+	},
+	{
+		fields: [
+			defaultFields.lastName,
+			defaultFields.email,
+		],
+		pageFieldColumns: fieldColumnsPagesPageColumns,
+		title: 'Page 2',
+	},
+	{
+		fields: [
+			{
+				...defaultFields.address,
+				columns: { lg: 4, md: 4, sm: 4, xl: 4 },
+			},
+			{
+				...defaultFields.city,
+				columns: { lg: 6, md: 6, sm: 6, xl: 6 },
+			},
+			{
+				...defaultFields.zipcode,
+				columns: { lg: 2, md: 2, sm: 2, xl: 2 },
+			},
+		],
+		title: 'Page 3',
+	},
+	{
+		isSummary: true,
+		title: 'Summary',
+	}
+];
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ VSFButtonField.cy.ts //
 const baseOptions = [
 	{
 		class: 'flower-class',
@@ -340,13 +580,13 @@ const buttonFieldOptions = {
 	variants: ['text', 'elevated', 'tonal', 'outlined', 'plain'],
 };
 
-function isRequired(field: string) {
-	return `${field} is required`;
-}
 
 export {
 	answers,
 	buttonFieldOptions,
+	defaultFields,
+	fieldColumnsPages,
+	fieldColumnsPagesPageColumns,
 	finalAnswer,
 	items,
 	stepperProps,
