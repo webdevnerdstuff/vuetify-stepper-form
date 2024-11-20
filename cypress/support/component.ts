@@ -6,6 +6,7 @@ import { mount } from 'cypress/vue';
 import VStepperForm from '../../src/plugin/VStepperForm.vue';
 import * as DATA from '../templates/testData';
 import type { Component } from 'vue';
+import "cypress-real-events";
 
 
 // declare global {
