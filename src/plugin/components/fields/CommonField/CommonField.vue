@@ -73,7 +73,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 
 const fieldItems = computed(() => field?.items ? field.items as unknown : undefined);
 const fieldType = computed(() => {
-	if (field.type === 'color') {
+	if (field.type === 'color' || field.type === 'date') {
 		return 'text';
 	}
 
