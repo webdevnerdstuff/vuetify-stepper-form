@@ -11,6 +11,7 @@
 			<input
 				v-if="field.type === 'hidden' || !field.type"
 				v-model="modelValue[field.name]"
+				:data-cy="`vsf-field-${field.name}`"
 				:name="field.name"
 				type="hidden"
 			/>
@@ -114,6 +115,7 @@ import {
 	VTextField,
 	VTextarea,
 } from 'vuetify/components';
+import { VDateInput } from 'vuetify/labs/VDateInput';
 import type {
 	ComputedClasses,
 	Field,
@@ -160,6 +162,8 @@ function getComponent(fieldType: string): Component | null {
 			return markRaw(VColorField);
 		case 'combobox':
 			return markRaw(VCombobox);
+		case 'date':
+			return markRaw(VDateInput);
 		case 'file':
 			return markRaw(VFileInput);
 		case 'select':
