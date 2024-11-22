@@ -4,6 +4,7 @@ import type {
 	UseBuildSettings,
 	UseColumnErrorCheck,
 	UseDeepMerge,
+	UseGetFirstAndLastEditableFalse,
 } from '@/plugin/types';
 
 
@@ -123,4 +124,22 @@ export const useColumnErrorCheck: UseColumnErrorCheck = (options) => {
 	}
 
 	throw new Error(`The ${propName} values must be between 1 and 12`);
+};
+
+
+export const useGetFirstAndLastEditableFalse: UseGetFirstAndLastEditableFalse = (pages) => {
+	let firstNonEditableIndex = -1;
+	let lastNonEditableIndex = -1;
+
+	pages.forEach((item, index) => {
+		if (item.editable === false) {
+			if (firstNonEditableIndex === -1) {
+				firstNonEditableIndex = index;
+			}
+
+			lastNonEditableIndex = index;
+		}
+	});
+
+	return { firstNonEditableIndex, lastNonEditableIndex };
 };
