@@ -45,7 +45,7 @@
 									:value="getIndex(i)"
 								>
 									<v-tooltip
-										v-if="!mobile && settings.headerTooltips && page?.fields && (page?.fields as Field[]).length > 0"
+										v-if="!mobile && settings.headerTooltips && page?.fields && page?.fields.length > 0"
 										:activator="page.title ? 'parent' : `.vsf-activator-${componentId}-${i + 1}`"
 										:location="settings.tooltipLocation"
 										:offset="page.title ? settings.tooltipOffset : Number(settings.tooltipOffset) - 28"
