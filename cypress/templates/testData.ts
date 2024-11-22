@@ -580,6 +580,68 @@ const buttonFieldOptions = {
 	variants: ['text', 'elevated', 'tonal', 'outlined', 'plain'],
 };
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Navigation //
+const navigationTest = {
+	answers: {
+		firstName: null,
+		lastName: null,
+		email: null,
+		url: null,
+	},
+	global: {
+		provide: {
+			globalOptions: {
+				color: 'primary',
+				validateOn: 'blur',
+				variant: 'outlined',
+			},
+		},
+	},
+	pages: [
+		{
+			editable: true,
+			fields: [
+				defaultFields.firstName,
+			],
+			title: 'Page 1',
+		},
+		{
+			editable: true,
+			fields: [
+				defaultFields.lastName,
+			],
+			title: 'Page 2',
+		},
+		{
+			editable: true,
+			fields: [
+				defaultFields.email,
+			],
+			title: 'Page 3',
+		},
+		{
+			editable: true,
+			fields: [
+				defaultFields.url,
+			],
+			title: 'Page 4',
+		},
+		// {
+		// 	editable: true,
+		// 	fields: [
+		// 		defaultFields.password,
+		// 	],
+		// 	title: 'Page 5',
+		// },
+		{
+			editable: true,
+			isSummary: true,
+			title: 'Summary',
+		},
+	]
+};
+
+
 
 export {
 	answers,
@@ -589,6 +651,7 @@ export {
 	fieldColumnsPagesPageColumns,
 	finalAnswer,
 	items,
+	navigationTest,
 	stepperProps,
 	validationSchema,
 };
