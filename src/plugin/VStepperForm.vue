@@ -41,7 +41,7 @@
 									:editable="headerItemEnabled(page)"
 									elevation="0"
 									:error="currentPageHasErrors && errorPageIndexes.includes(i)"
-									:title="`${page.title} ${page.editable !== false}`"
+									:title="page.title"
 									:value="getIndex(i)"
 								>
 									<v-tooltip
