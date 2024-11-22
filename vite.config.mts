@@ -62,6 +62,7 @@ export default defineConfig({
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),
 			'@root': fileURLToPath(new URL('.', import.meta.url)),
+			'@cypress': fileURLToPath(new URL('./cypress', import.meta.url)),
 		},
 		extensions: [
 			'.js',
