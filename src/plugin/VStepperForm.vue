@@ -377,7 +377,7 @@ function headerItemEnabled(page: Page): boolean {
 	const pageNotEditable = page.editable === false;
 	const currentPageIdx = stepperModel.value - 1;
 	const currentPageEditable = currentPages[currentPageIdx]?.editable !== false;
-	const currentPageNotEditable = currentPages[currentPageIdx]?.editable === false;
+	// const currentPageNotEditable = currentPages[currentPageIdx]?.editable === false;
 	const lastPageIdx = currentPages.length - 1;
 
 	const previousPageIdx = pageIdx - 1;
@@ -416,92 +416,121 @@ function headerItemEnabled(page: Page): boolean {
 	// & -------------------------------------------------- Always True //
 	// Always set current page to editable //
 	if (currentPageIdx === pageIdx) {
-		console.log('a', page.title, pageIdx, currentPageIdx);
-		// console.log('current page', page.title);
 		return true;
 	}
 
 	// & -------------------------------------------------- Always False //
 	// Entire Stepper Form is not editable //
 	if (!stepperFormIsEditable.value) {
-		console.log('b', page.title, pageIdx, currentPageIdx);
 		return false;
 	}
 
 	// If current page has errors disable all //
 	if (currentPageHasErrors.value) {
-		// console.log('c', page.title, pageIdx, currentPageIdx);
 		return false;
 	}
 
-
-	// & -------------------------------------------------- Conditions //
+	// & -------------------------------------------------- Non Jump Ahead //
 	// If not allowed to jump ahead //
 	if (!jumpAhead.value) {
 
-		if (
-			pageIdx < currentPageIdx &&
-			pageIdx > firstNonEditableIndex &&
-			pageIdx > lastNonEditableIndex &&
-			currentPageIdx > lastNonEditableIndex &&
-			currentPageIdx === lastPageIdx &&
-			pageEditable
-		) {
-			// console.log('d', page.title, pageIdx, currentPageIdx);
-			return true;
+		// If page is before the current page //
+		if (pageIdx < currentPageIdx) {
+
+			// If the current page is before the last non editable page //
+			if (currentPageIdx > lastNonEditableIndex) {
+
+				/**
+				 * If the page is before the first non editable page
+				 * And the page is before the last non editable page
+				 * And the current page is the last page
+				 * And the page is editable
+				 */
+				if (
+					pageIdx > firstNonEditableIndex &&
+					pageIdx > lastNonEditableIndex &&
+					currentPageIdx === lastPageIdx &&
+					pageEditable
+				) {
+					// console.log('d', page.title, pageIdx, currentPageIdx);
+					return true;
+				}
+
+				// If the page is not editable //
+				if (!pageEditable) {
+					// console.log('aa', page.title, pageIdx, currentPageIdx);
+					return false;
+				}
+			}
+
+			/**
+			 * If the page is before the first non editable page
+			 * And the current page is before or equal to the first non editable page
+			 */
+			if (pageIdx < firstNonEditableIndex && currentPageIdx <= firstNonEditableIndex) {
+				// console.log('ab', page.title, pageIdx, currentPageIdx);
+				return true;
+			}
 		}
 
-		if (pageIdx < currentPageIdx && currentPageIdx > lastNonEditableIndex && !pageEditable) {
-			// console.log('aa', page.title, pageIdx, currentPageIdx);
-			return false;
-		}
-
-		if (pageIdx < currentPageIdx && pageIdx < firstNonEditableIndex && currentPageIdx <= firstNonEditableIndex) {
-			// console.log('ab', page.title, pageIdx, currentPageIdx);
-			return true;
-		}
-
+		/**
+		 * If the page is before or equal to the first non editable page
+		 * And the current page is editable
+		 */
 		if (pageIdx <= firstNonEditableIndex && currentPageEditable) {
 			// console.log('ac', page.title, pageIdx, currentPageIdx);
 			return false;
 		}
 
-		if (
-			pageIdx < currentPageIdx &&
-			pageIdx > firstNonEditableIndex &&
-			pageIdx < lastNonEditableIndex &&
-			currentPageIdx <= lastNonEditableIndex &&
-			nextPageNotEditable &&
-			pageEditable
-		) {
-			// console.log('ad', page.title, pageIdx, currentPageIdx);
-			return true;
-		}
+		// If the page is before the current page //
+		if (pageIdx < currentPageIdx) {
 
-		if (
-			pageIdx < currentPageIdx &&
-			pageIdx < lastNonEditableIndex &&
-			pageNotEditable
-		) {
-			// console.log('ae', page.title, pageIdx, currentPageIdx);
-			return false;
-		}
+			/**
+			 * If the page is after the first non editable page
+			 * And the page is before the last non editable page
+			 * And the current page is before or equal to the last non editable page
+			 * And the next page is not editable
+			 * And the page is editable
+			 */
+			if (
+				pageIdx > firstNonEditableIndex &&
+				pageIdx < lastNonEditableIndex &&
+				currentPageIdx <= lastNonEditableIndex &&
+				nextPageNotEditable &&
+				pageEditable
+			) {
+				// console.log('ad', page.title, pageIdx, currentPageIdx);
+				return true;
+			}
 
-		// Allow previous pages to be revisited //
-		if (
-			pageIdx < currentPageIdx &&
-			pageIdx > firstNonEditableIndex &&
-			nextPageEditable &&
-			currentPageIdx !== lastPageIdx
-		) {
-			// console.log('af', page.title, pageIdx, currentPageIdx);
-			return true;
+			/**
+			 * If the page is before the last non editable page
+			 * And the page is not editable
+			 */
+			if (pageIdx < lastNonEditableIndex && pageNotEditable) {
+				// console.log('ae', page.title, pageIdx, currentPageIdx);
+				return false;
+			}
+
+			/**
+			 * If the page is before the first non editable page
+			 * And the next page is editable
+			 * And the current page is not the last page
+			 */
+			if (
+				pageIdx > firstNonEditableIndex &&
+				nextPageEditable &&
+				currentPageIdx !== lastPageIdx
+			) {
+				// console.log('af', page.title, pageIdx, currentPageIdx);
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-
+	// & -------------------------------------------------- Jump Ahead //
 	// If the page is before the last non editable page //
 	if (pageIdx > lastNonEditableIndex) {
 
@@ -521,21 +550,13 @@ function headerItemEnabled(page: Page): boolean {
 		return false;
 	}
 
-	/**
-	 * If the current page is equal to the last page
-	 * And the page is before the last non editable page
-	 */
-	if (currentPageIdx === lastPageIdx && pageIdx < lastNonEditableIndex) {
-		// console.log('x', page.title, pageIdx, currentPageIdx);
-		return false;
-	}
+	// If the page is before the last non editable page //
+	if (pageIdx < lastNonEditableIndex) {
 
-
-	/**
-	 * If the page is after the first non editable page
-	 * And the page is before the last non editable page
-	 */
-	if (pageIdx > firstNonEditableIndex && pageIdx < lastNonEditableIndex) {
+		// If the current page is equal to the last page //
+		if (currentPageIdx === lastPageIdx) {
+			return false;
+		}
 
 		// If the current page is after the first non editable page //
 		if (pageIdx > firstNonEditableIndex) {
@@ -564,12 +585,9 @@ function headerItemEnabled(page: Page): boolean {
 			}
 
 			// console.log('j-4', page.title, pageIdx, currentPageIdx);
+			return false;
 		}
-
-		// console.log('j', page.title, pageIdx, currentPageIdx);
-		return false;
 	}
-
 
 	// If the page is after than the first non editable page //
 	if (pageIdx > firstNonEditableIndex) {
@@ -597,11 +615,7 @@ function headerItemEnabled(page: Page): boolean {
 	 * If the current page is before the page
 	 * And the page is before or equal to the first non editable page
 	 */
-	if (
-		// firstNonEditableIndex !== -1 &&
-		currentPageIdx > pageIdx &&
-		pageIdx <= firstNonEditableIndex
-	) {
+	if (currentPageIdx > pageIdx && pageIdx <= firstNonEditableIndex) {
 		// console.log('e-4', page.title, pageIdx, currentPageIdx);
 		return false;
 	}
@@ -635,7 +649,6 @@ function headerItemEnabled(page: Page): boolean {
 	 */
 	if (currentPageIdx >= pageIdx && previousPageEditable) {
 		// console.log('currentPageIdx >= pageIdx', page.title, pageIdx, currentPageIdx);
-		// check if next page is editable, if it is then enable the next step //
 		return true;
 	}
 
@@ -644,15 +657,6 @@ function headerItemEnabled(page: Page): boolean {
 		return false;
 	}
 
-	/**
-	 * If the page is not editable
-	 * And the page is no the current page
-	 */
-	if (pageNotEditable && pageIdx !== currentPageIdx) {
-		return false;
-	}
-
-	// console.log('Fallback false', page.title, pageIdx, currentPageIdx);
 	return false;
 }
 
