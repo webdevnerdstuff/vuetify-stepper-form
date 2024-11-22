@@ -38,10 +38,10 @@
 									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
 									:edit-icon="page.isSummary ? '$complete' : settings.editIcon"
-									:editable="headerItemDisabled(page)"
+									:editable="headerItemEnabled(page)"
 									elevation="0"
-									:error="page.error"
-									:title="page.title"
+									:error="currentPageHasErrors && errorPageIndexes.includes(i)"
+									:title="`${page.title} ${page.editable !== false}`"
 									:value="getIndex(i)"
 								>
 									<v-tooltip
@@ -128,6 +128,7 @@
 										data-cy="vsf-next-button"
 										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
+										:variant="navButtonVariant"
 										@click="runValidation(validate, 'next', next)"
 									/>
 									<v-btn
@@ -137,14 +138,17 @@
 										:disabled="fieldsHaveErrors"
 										:size="navButtonSize"
 										type="submit"
+										:variant="navButtonVariant"
 									>Submit</v-btn>
 								</template>
 
 								<template #prev>
+									<!-- :disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)" -->
 									<v-btn
 										data-cy="vsf-previous-button"
-										:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
+										:disabled="prevButtonDisabled"
 										:size="navButtonSize"
+										:variant="navButtonVariant"
 										@click="previousPage(prev)"
 									/>
 								</template>
@@ -181,6 +185,7 @@ import {
 	useBuildSettings,
 	useColumnErrorCheck,
 	useDeepMerge,
+	useGetFirstAndLastEditableFalse,
 } from './composables/helpers';
 import componentEmits from './utils/emits';
 import { AllProps } from './utils/props';
@@ -195,7 +200,7 @@ const injectedOptions = inject<Ref<Settings>>('globalOptions')!;
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
-const { direction, title, width } = toRefs(props);
+const { direction, jumpAhead, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
@@ -268,6 +273,13 @@ provide('parentForm', parentForm);
 
 
 // -------------------------------------------------- Stepper Action //
+
+// ------------------------- Editable //
+const stepperFormIsEditable = computed<boolean | undefined>(() => settings.value.editable);
+
+
+// ------------------------- Check Disables //
+
 const stepperActionsDisabled = computed(() => {
 	return stepperModel.value === 1 ? 'prev' : stepperModel.value === Object.keys(props.pages).length ? 'next' : undefined;
 });
@@ -278,8 +290,60 @@ const nextButtonDisabled = computed(() => {
 	return fieldsHaveErrors.value || isDisabled;
 });
 
+const prevButtonDisabled = computed(() => {
+	const currentPage = stepperModel.value - 1;
+	const { firstNonEditableIndex, lastNonEditableIndex } = useGetFirstAndLastEditableFalse(computedPages.value);
+	// console.log('currentPage', currentPage);
+	// console.log('firstNonEditableIndex', firstNonEditableIndex);
+	// console.log('lastNonEditableIndex', lastNonEditableIndex);
+	// console.log('isSummary', computedPages.value[currentPage]?.isSummary);
+
+	// First Page //
+	if (currentPage === 0) {
+		// console.log('FIRST PAGE');
+		return true;
+	}
+
+	// Entire Stepper Form is not editable //
+	if (!stepperFormIsEditable.value) {
+		// console.log('NOT EDITABLE');
+		return true;
+	}
+
+	// If current page has errors disable //
+	if (currentPageHasErrors.value) {
+		// console.log('HAS ERRORS');
+		return true;
+	}
+
+	if (currentPage - 1 === lastNonEditableIndex) {
+		// console.log('LAST NON EDITABLE');
+		return true;
+	}
+
+	// if (currentPage <= firstNonEditableIndex) {
+	// 	return true;
+	// }
+
+
+	// if (stepperModel.value - 1 <= lastNonEditableIndex + 1 && lastNonEditableIndex != -1) {
+	// 	return true;
+	// }
+
+	// if (lastPage.value && lastNonEditableIndex === computedPages.value.length - 2) {
+	// 	return true;
+	// }
+
+
+	return false;
+});
+
 const canReviewPreviousButtonDisabled = computed<boolean>(() => {
 	const previousPage = computedPages.value[stepperModel.value - 2];
+
+	if (stepperFormIsEditable.value === true) {
+		return false;
+	}
 
 	if (previousPage) {
 		return previousPage.editable === false;
@@ -303,27 +367,292 @@ const lastPage = computed<boolean>(() => {
 });
 
 
-// TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
-function headerItemDisabled(page: Page): boolean {
-	const totalSteps = Object.keys(computedPages.value).length;
-	const lastStep = totalSteps - 1;
+// ------------------------- Header Item Disabled //
+function headerItemEnabled(page: Page): boolean {
+	const { firstNonEditableIndex, lastNonEditableIndex } = useGetFirstAndLastEditableFalse(computedPages.value);
+	const currentPages = computedPages.value;
 
-	if (page.editable === false && currentPageHasErrors.value) {
-		return true;
-	}
-
+	const pageIdx = currentPages.findIndex((p) => p === page);
+	const pageEditable = page.editable !== false;
+	const pageNotEditable = page.editable === false;
 	const currentPageIdx = stepperModel.value - 1;
-	const pageIdx = computedPages.value.findIndex((p) => p === page);
+	const currentPageEditable = currentPages[currentPageIdx]?.editable !== false;
+	const currentPageNotEditable = currentPages[currentPageIdx]?.editable === false;
+	const lastPageIdx = currentPages.length - 1;
 
-	if (page.editable !== false && pageIdx < currentPageIdx) {
+	const previousPageIdx = pageIdx - 1;
+	const previousPageEditable = currentPages[previousPageIdx]?.editable !== false;
+	const previousPageNotEditable = currentPages[previousPageIdx]?.editable === false;
+
+	const nextPageIdx = pageIdx + 1;
+	const nextPageEditable = currentPages[nextPageIdx]?.editable !== false;
+	const nextPageNotEditable = currentPages[nextPageIdx]?.editable === false;
+
+	// const debug = true;
+
+	// if (debug) {
+	// 	console.groupCollapsed('page', page.title);
+	// 	console.log('previousPageIdx\t', previousPageIdx);
+	// 	console.log('currentPageIdx\t', currentPageIdx);
+	// 	console.log('nextPageIdx\t\t', nextPageIdx);
+
+	// 	console.log('lastPageIdx\t\t', lastPageIdx);
+	// 	console.log('pageIdx\t\t\t', pageIdx);
+	// 	console.log('');
+	// 	console.log('pageEditable\t\t\t', pageEditable);
+	// 	console.log('pageNotEditable\t\t\t', pageNotEditable);
+	// 	console.log('currentPageEditable\t\t', currentPageEditable);
+	// 	console.log('currentPageNotEditable\t', currentPageNotEditable);
+	// 	console.log('previousPageEditable\t', previousPageEditable);
+	// 	console.log('previousPageNotEditable\t', previousPageNotEditable);
+	// 	console.log('nextPageEditable\t\t', nextPageEditable);
+	// 	console.log('nextPageNotEditable\t\t', nextPageNotEditable);
+	// 	console.log('');
+	// 	console.log('getFirstAndLastEditableFalse.value\t\t', { firstNonEditableIndex, lastNonEditableIndex });
+	// 	console.groupEnd();
+	// 	console.log('');
+	// }
+
+	// & -------------------------------------------------- Always True //
+	// Always set current page to editable //
+	if (currentPageIdx === pageIdx) {
+		console.log('a', page.title, pageIdx, currentPageIdx);
+		// console.log('current page', page.title);
 		return true;
 	}
 
-	// If you're on the last step (not review page) //
-	if (stepperModel.value === lastStep) {
-		return !page.isSummary && (!settings.value.editable) && (!page.editable && settings.value?.editable !== false);
+	// & -------------------------------------------------- Always False //
+	// Entire Stepper Form is not editable //
+	if (!stepperFormIsEditable.value) {
+		console.log('b', page.title, pageIdx, currentPageIdx);
+		return false;
 	}
 
+	// If current page has errors disable all //
+	if (currentPageHasErrors.value) {
+		// console.log('c', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+
+	// & -------------------------------------------------- Conditions //
+	// If not allowed to jump ahead //
+	if (!jumpAhead.value) {
+
+		if (
+			pageIdx < currentPageIdx &&
+			pageIdx > firstNonEditableIndex &&
+			pageIdx > lastNonEditableIndex &&
+			currentPageIdx > lastNonEditableIndex &&
+			currentPageIdx === lastPageIdx &&
+			pageEditable
+		) {
+			// console.log('d', page.title, pageIdx, currentPageIdx);
+			return true;
+		}
+
+		if (pageIdx < currentPageIdx && currentPageIdx > lastNonEditableIndex && !pageEditable) {
+			// console.log('aa', page.title, pageIdx, currentPageIdx);
+			return false;
+		}
+
+		if (pageIdx < currentPageIdx && pageIdx < firstNonEditableIndex && currentPageIdx <= firstNonEditableIndex) {
+			// console.log('ab', page.title, pageIdx, currentPageIdx);
+			return true;
+		}
+
+		if (pageIdx <= firstNonEditableIndex && currentPageEditable) {
+			// console.log('ac', page.title, pageIdx, currentPageIdx);
+			return false;
+		}
+
+		if (
+			pageIdx < currentPageIdx &&
+			pageIdx > firstNonEditableIndex &&
+			pageIdx < lastNonEditableIndex &&
+			currentPageIdx <= lastNonEditableIndex &&
+			nextPageNotEditable &&
+			pageEditable
+		) {
+			// console.log('ad', page.title, pageIdx, currentPageIdx);
+			return true;
+		}
+
+		if (
+			pageIdx < currentPageIdx &&
+			pageIdx < lastNonEditableIndex &&
+			pageNotEditable
+		) {
+			// console.log('ae', page.title, pageIdx, currentPageIdx);
+			return false;
+		}
+
+		// Allow previous pages to be revisited //
+		if (
+			pageIdx < currentPageIdx &&
+			pageIdx > firstNonEditableIndex &&
+			nextPageEditable &&
+			currentPageIdx !== lastPageIdx
+		) {
+			// console.log('af', page.title, pageIdx, currentPageIdx);
+			return true;
+		}
+
+		return false;
+	}
+
+
+	// If the page is before the last non editable page //
+	if (pageIdx > lastNonEditableIndex) {
+
+		// If the current page is after the last non editable page //
+		if (currentPageIdx > lastNonEditableIndex) {
+			// console.log('f1', page.title, pageIdx, currentPageIdx);
+			return true;
+		}
+
+		// console.log('f', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+	// If the page is equal to the last non editable page //
+	if (pageIdx === lastNonEditableIndex) {
+		// console.log('g', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+	/**
+	 * If the current page is equal to the last page
+	 * And the page is before the last non editable page
+	 */
+	if (currentPageIdx === lastPageIdx && pageIdx < lastNonEditableIndex) {
+		// console.log('x', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+
+	/**
+	 * If the page is after the first non editable page
+	 * And the page is before the last non editable page
+	 */
+	if (pageIdx > firstNonEditableIndex && pageIdx < lastNonEditableIndex) {
+
+		// If the current page is after the first non editable page //
+		if (pageIdx > firstNonEditableIndex) {
+
+			// If the current page is editable and the next page is editable //
+			if (currentPageEditable && nextPageEditable) {
+				// console.log('j-3', page.title, pageIdx, currentPageIdx);
+				return true;
+			}
+
+			/**
+			 * If the current page is editable
+			 * And the next page is not editable
+			 * And the page is after the first non editable page
+			 * And the page is after the current page
+			 */
+			if (
+				currentPageEditable &&
+				nextPageNotEditable &&
+				pageIdx > firstNonEditableIndex &&
+				currentPageIdx > firstNonEditableIndex &&
+				pageIdx > currentPageIdx
+			) {
+				// console.log('j-3-1', page.title, pageIdx, currentPageIdx);
+				return true;
+			}
+
+			// console.log('j-4', page.title, pageIdx, currentPageIdx);
+		}
+
+		// console.log('j', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+
+	// If the page is after than the first non editable page //
+	if (pageIdx > firstNonEditableIndex) {
+
+		// If the current page is before or equal to the first non editable page //
+		if (currentPageIdx <= firstNonEditableIndex) {
+			// console.log('e-2', page.title, pageIdx, currentPageIdx);
+			return false;
+		}
+
+		// console.log('e', page.title, pageIdx, currentPageIdx);
+		return true;
+	}
+
+	/**
+	 * If the page is before the first non editable page
+	 * And the current page is before or equal to the first non editable page
+	 */
+	if (pageIdx < firstNonEditableIndex && currentPageIdx <= firstNonEditableIndex) {
+		// console.log('e-3', page.title, pageIdx, currentPageIdx);
+		return true;
+	}
+
+	/**
+	 * If the current page is before the page
+	 * And the page is before or equal to the first non editable page
+	 */
+	if (
+		// firstNonEditableIndex !== -1 &&
+		currentPageIdx > pageIdx &&
+		pageIdx <= firstNonEditableIndex
+	) {
+		// console.log('e-4', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+	// If the page is before the current page //
+	if (pageIdx < currentPageIdx) {
+		// console.log('h', page.title, pageIdx, currentPageIdx);
+		return true;
+	}
+
+	// If the page is not editable //
+	if (pageNotEditable) {
+		// console.log('i', page.title, pageIdx, currentPageIdx);
+		return false;
+	}
+
+	// If the current page is before or equal to the page //
+	if (currentPageIdx <= pageIdx) {
+
+		// If the page is before the first non editable page //
+		if (pageIdx < firstNonEditableIndex) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * If the current page is after the page
+	 * And the previous page is editable
+	 */
+	if (currentPageIdx >= pageIdx && previousPageEditable) {
+		// console.log('currentPageIdx >= pageIdx', page.title, pageIdx, currentPageIdx);
+		// check if next page is editable, if it is then enable the next step //
+		return true;
+	}
+
+	// If the next or previous page is not editable //
+	if (nextPageNotEditable || previousPageNotEditable) {
+		return false;
+	}
+
+	/**
+	 * If the page is not editable
+	 * And the page is no the current page
+	 */
+	if (pageNotEditable && pageIdx !== currentPageIdx) {
+		return false;
+	}
+
+	// console.log('Fallback false', page.title, pageIdx, currentPageIdx);
 	return false;
 }
 
@@ -463,6 +792,7 @@ function callbacks() {
 
 // ------------------------ Conditional "when" callbacks //
 const computedPages = computed<Page[]>(() => {
+	// const localPages = JSON.parse(JSON.stringify(pages));
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		const localPage = page;
 		localPage.visible = true;
