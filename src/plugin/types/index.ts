@@ -295,7 +295,6 @@ export interface UseGetFirstAndLastEditableFalse {
 	};
 }
 
-
 // ------------------------- Classes //
 export type ComputedClasses = Record<string, boolean>;
 
@@ -323,6 +322,42 @@ export interface UseColumnClasses {
 			propName?: string;
 		}
 	): ComputedClasses;
+}
+
+// ------------------------- Navigation //
+export interface UseHandleJumpAhead {
+	(options:
+		{
+			currentPageEditable: boolean;
+			currentPageIdx: number;
+			firstNonEditableIndex: number;
+			lastNonEditableIndex: number;
+			lastPageIdx: number;
+			nextPageEditable: boolean;
+			nextPageNotEditable: boolean;
+			pageIdx: number;
+			pageNotEditable: boolean;
+			previousPageEditable: boolean;
+			previousPageNotEditable: boolean;
+		}
+	): boolean;
+}
+
+export interface UseHandleNonJumpAhead {
+	(options:
+		{
+			currentPageEditable: boolean;
+			currentPageIdx: number;
+			firstNonEditableIndex: number;
+			lastNonEditableIndex: number;
+			lastPageIdx: number;
+			nextPageEditable: boolean;
+			nextPageNotEditable: boolean;
+			pageEditable: boolean;
+			pageIdx: number;
+			pageNotEditable: boolean;
+		}
+	): boolean;
 }
 
 
