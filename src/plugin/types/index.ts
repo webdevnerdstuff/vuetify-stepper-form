@@ -182,8 +182,12 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	fieldColumns?: ResponsiveColumns | undefined;
 	headerTooltips?: boolean;
 	hideDetails?: GlobalHideDetails;
+
+	// TODO: Add to docs //
+	jumpAhead?: boolean;
 	keepValuesOnUnmount?: boolean,
 	navButtonSize?: VBtn['size'];
+	navButtonVariant?: VBtn['variant'];
 	summaryColumns?: ResponsiveColumns;
 	title?: string;
 	tooltipLocation?: VTooltip['location'];
@@ -282,6 +286,15 @@ export interface UseColumnErrorCheck {
 			propName?: string;
 		}
 	): void;
+}
+
+export interface UseGetFirstAndLastEditableFalse {
+	(
+		pages: Page[]
+	): {
+		firstNonEditableIndex: number;
+		lastNonEditableIndex: number;
+	};
 }
 
 
