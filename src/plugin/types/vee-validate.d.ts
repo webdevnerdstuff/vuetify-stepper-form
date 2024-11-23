@@ -8,6 +8,7 @@ declare module 'vee-validate' {
 		FormValidationResult,
 		GenericObject,
 		PrivateFormContext,
+		useForm,
 		validate,
 	} from 'vee-validate';
 
@@ -20,6 +21,7 @@ declare module 'vee-validate' {
 		FormValidationResult,
 		GenericObject,
 		PrivateFormContext,
+		useForm,
 		validate,
 	};
 }

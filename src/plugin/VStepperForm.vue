@@ -43,6 +43,7 @@
 									:error="currentPageHasErrors && errorPageIndexes.includes(i)"
 									:title="page.title"
 									:value="getIndex(i)"
+									@click="headerCheckPreviousStepValidation(i)"
 								>
 									<v-tooltip
 										v-if="!mobile && settings.headerTooltips && page?.fields && page?.fields.length > 0"
@@ -66,12 +67,8 @@
 							</template>
 						</v-stepper-header>
 
-						<Form
+						<form
 							ref="stepperFormRef"
-							v-slot="{ validate }"
-							:keep-values-on-unmount="settings?.keepValuesOnUnmount"
-							:validate-on-mount="settings?.validateOnMount"
-							:validation-schema="validationSchema"
 							@submit="onSubmit"
 						>
 							<v-stepper-window>
@@ -84,6 +81,7 @@
 									:value="getIndex(i)"
 								>
 									<v-container>
+
 										<PageContainer
 											v-if="!page.isSummary"
 											:key="`${getIndex(i)}-page`"
@@ -114,8 +112,8 @@
 											:settings="settings"
 											:summaryColumns="settings?.summaryColumns"
 											@goToQuestion="stepperModel = $event"
-											@submit="onSubmit(modelValue)"
 										/>
+
 									</v-container>
 								</v-stepper-window-item>
 							</v-stepper-window>
@@ -129,7 +127,7 @@
 										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
 										:variant="navButtonVariant"
-										@click="runValidation(validate, 'next', next)"
+										@click="runValidation('next', next)"
 									/>
 									<v-btn
 										v-else
@@ -139,6 +137,7 @@
 										:size="navButtonSize"
 										type="submit"
 										:variant="navButtonVariant"
+										@click="onSubmit"
 									>Submit</v-btn>
 								</template>
 
@@ -153,7 +152,7 @@
 									/>
 								</template>
 							</v-stepper-actions>
-						</Form>
+						</form>
 					</template>
 				</v-stepper>
 			</v-container>
@@ -165,7 +164,7 @@
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { watchDeep } from '@vueuse/core';
-import { Form } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import { useDisplay } from 'vuetify';
 import type {
 	ComputedClasses,
@@ -268,6 +267,8 @@ watchDeep(modelValue, () => {
 
 const stepperModel = ref(1);
 
+const currentPageIdx = computed(() => stepperModel.value - 1);
+
 
 const { mobile, sm } = useDisplay();
 const transitionComputed: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
@@ -295,33 +296,24 @@ const nextButtonDisabled = computed(() => {
 });
 
 const prevButtonDisabled = computed(() => {
-	const currentPage = stepperModel.value - 1;
-	const { firstNonEditableIndex, lastNonEditableIndex } = useGetFirstAndLastEditableFalse(computedPages.value);
-	// console.log('currentPage', currentPage);
-	// console.log('firstNonEditableIndex', firstNonEditableIndex);
-	// console.log('lastNonEditableIndex', lastNonEditableIndex);
-	// console.log('isSummary', computedPages.value[currentPage]?.isSummary);
+	const { lastNonEditableIndex } = useGetFirstAndLastEditableFalse(computedPages.value);
 
 	// First Page //
-	if (currentPage === 0) {
-		// console.log('FIRST PAGE');
+	if (currentPageIdx.value === 0) {
 		return true;
 	}
 
 	// Entire Stepper Form is not editable //
 	if (!stepperFormIsEditable.value) {
-		// console.log('NOT EDITABLE');
 		return true;
 	}
 
 	// If current page has errors disable //
 	if (currentPageHasErrors.value) {
-		// console.log('HAS ERRORS');
 		return true;
 	}
 
-	if (currentPage - 1 === lastNonEditableIndex) {
-		// console.log('LAST NON EDITABLE');
+	if (currentPageIdx.value - 1 === lastNonEditableIndex) {
 		return true;
 	}
 
@@ -379,9 +371,8 @@ function headerItemEnabled(page: Page): boolean {
 	const pageIdx = currentPages.findIndex((p) => p === page);
 	const pageEditable = page.editable !== false;
 	const pageNotEditable = page.editable === false;
-	const currentPageIdx = stepperModel.value - 1;
-	const currentPageEditable = currentPages[currentPageIdx]?.editable !== false;
-	// const currentPageNotEditable = currentPages[currentPageIdx]?.editable === false;
+	const currentPageEditable = currentPages[currentPageIdx.value]?.editable !== false;
+	// const currentPageNotEditable = currentPages[currentPageIdx.value]?.editable === false;
 	const lastPageIdx = currentPages.length - 1;
 
 	const previousPageIdx = pageIdx - 1;
@@ -397,7 +388,7 @@ function headerItemEnabled(page: Page): boolean {
 	// if (debug) {
 	// 	console.groupCollapsed('page', page.title);
 	// 	console.log('previousPageIdx\t', previousPageIdx);
-	// 	console.log('currentPageIdx\t', currentPageIdx);
+	// 	console.log('currentPageIdx\t', currentPageIdx.value);
 	// 	console.log('nextPageIdx\t\t', nextPageIdx);
 
 	// 	console.log('lastPageIdx\t\t', lastPageIdx);
@@ -419,7 +410,7 @@ function headerItemEnabled(page: Page): boolean {
 
 	// & Always True //
 	// Always set current page to editable //
-	if (currentPageIdx === pageIdx) {
+	if (currentPageIdx.value === pageIdx) {
 		return true;
 	}
 
@@ -474,17 +465,52 @@ const errorPageIndexes: Ref<number[]> = ref<number[]>([]);
 
 const fieldsHaveErrors = computed(() => errorPageIndexes.value.includes(stepperModel.value - 1));
 
+const $useForm = useForm({
+	initialValues: modelValue.value,
+	keepValuesOnUnmount: settings.value?.keepValuesOnUnmount,
+	validationSchema: validationSchema.value,
+	valueOnMount: settings.value?.validateOnMount,
+});
+
+
 // ------------------------ Run Validation //
+function headerCheckPreviousStepValidation(index: number): void {
+	const previousIndex = index === 0 ? 0 : index - 1;
+	const previousPage = computedPages.value[previousIndex];
+
+	if (!previousPage || !previousPage.fields) {
+		return;
+	}
+
+	previousPage.fields.forEach((field) => {
+		$useForm.validateField(field.name, {}, { name: field.name })
+			.then((response: ValidateResult) => {
+				const errors = response.errors as unknown as ValidateResult['errors'];
+
+				if (errors.length) {
+					stepperModel.value = previousIndex + 1;
+					currentPageHasErrors.value = true;
+
+					setPageToError(previousIndex, previousPage, 'submit');
+					return;
+				}
+
+				removePageError(previousIndex);
+			});
+	});
+}
+
 function runValidation(
-	validate: () => Promise<ValidateResult>,
 	source = 'submit',
 	next: () => void = () => { },
 ): void {
-	validate()
+	if (!parentForm.value) {
+		return;
+	}
+
+	$useForm.validate()
 		.then((response: ValidateResult) => {
 			const errors = response.errors as unknown as ValidateResult['errors'];
-
-
 			checkForPageErrors(errors, source, next);
 		})
 		.catch((error: Error) => {
@@ -507,8 +533,7 @@ function removePageError(pageIndex: number): void {
 
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
-	const currentPage = stepperModel.value - 1;
-	const page = computedPages.value[currentPage];
+	const page = computedPages.value[currentPageIdx.value];
 
 	if (!page) {
 		return;
@@ -551,7 +576,7 @@ function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void
 let debounceTimer: ReturnType<typeof setTimeout>;
 
 function onFieldValidate(field: Field, next: () => void): void {
-	const errors = parentForm.value?.errors as ValidateResult['errors'];
+	const errors = $useForm.errorBag as ValidateResult['errors'];
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
 	// If autoPage //
@@ -559,7 +584,7 @@ function onFieldValidate(field: Field, next: () => void): void {
 
 		if (parentForm.value) {
 			// First validate the page before proceeding to the next page //
-			(parentForm.value as { validate: () => Promise<ValidateResult>; }).validate()
+			$useForm.validate()
 				.then((res: ValidateResult) => {
 					if (res.valid) {
 						// debounce next //
@@ -571,8 +596,7 @@ function onFieldValidate(field: Field, next: () => void): void {
 						return;
 					}
 
-					const currentPage = stepperModel.value - 1;
-					const page = computedPages.value[currentPage];
+					const page = computedPages.value[currentPageIdx.value];
 					const pageIndex = computedPages.value.findIndex((p) => p === page);
 
 					setPageToError(pageIndex, page, 'validating');
@@ -585,14 +609,18 @@ function onFieldValidate(field: Field, next: () => void): void {
 		return;
 	}
 
-	checkForPageErrors(errors, 'field', shouldAutoPage);
+	$useForm.validateField(field.name, {}, { name: field.name })
+		.then(() => {
+			checkForPageErrors($useForm.errorBag.value, 'field', shouldAutoPage);
+
+		});
 }
 
 
 // -------------------------------------------------- Submit //
-function onSubmit(values: any): void {
+const onSubmit = $useForm.handleSubmit((values: any): void => {
 	emit('submit', values);
-}
+});
 
 
 // ------------------------------------------------ Callbacks //

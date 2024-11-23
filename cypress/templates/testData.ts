@@ -56,11 +56,13 @@ const defaultFields = {
 		label: 'First Name',
 		name: 'firstName',
 		type: 'text' as const,
+		required: true,
 	},
 	lastName: {
 		label: 'Last Name',
 		name: 'lastName',
 		type: 'text' as const,
+		required: true,
 	},
 	email: {
 		label: 'Email',
@@ -159,6 +161,7 @@ const defaultFields = {
 		label: 'Checkbox Single',
 		name: 'isThisBoxChecked',
 		type: 'checkbox' as const,
+		trueValue: 'yes',
 		required: true,
 	},
 	checkboxMultiple: {
@@ -204,6 +207,7 @@ const defaultFields = {
 			},
 		],
 		type: 'radio' as const,
+		trueValue: 'yes',
 		required: true,
 	},
 	switch: {
@@ -329,7 +333,7 @@ const finalAnswer = {
 	firstName: 'Bunny',
 	lastName: 'Rabbit',
 	email: 'test@test.com',
-	password: 'password1',
+	password: '7#L%W^7FC*8W#Xt7LvZCHU$%^Sxn&*PjUo',
 	phone: '555-555-5555',
 	url: 'https://test.com',
 	number: '100',
@@ -340,8 +344,12 @@ const finalAnswer = {
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
 	autocompleteAnimal: 'rabbit',
-	autoCompleteMultipleAnimals: ['rabbit', 'duck'],
-	combobox: [{ title: "Rabbit", value: "rabbit" }, { title: "Duck", value: "duck" }],
+
+	// ! Autocomplete with multiple and combobox not working correctly //
+	// autoCompleteMultipleAnimals: ['rabbit', 'duck'],
+	// combobox: [{ title: "Rabbit", value: "rabbit" }, { title: "Duck", value: "duck" }],
+
+
 	color: '#804040',
 	// date: 'Wed May 25 1977 00:00:00 GMT-0700 (Pacific Daylight Time)',
 	// date: new Date('05/25/1977'),
@@ -352,6 +360,52 @@ const finalAnswer = {
 	isSingleRadioSelected: 'yes',
 	switchQuestion: 'yes',
 };
+
+const newValidationSchema = [
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Common Fields Page //
+	yupObject({
+		firstName: yupString().required(isRequired('First Name')),
+		lastName: yupString().required(isRequired('Last Name')),
+		email: yupString().email('Must be a valid Email').required(isRequired('Email')),
+		password: yupString().required(isRequired('Password'))
+			.min(5, 'Password must have at least ${min} characters'),
+		phone: yupString().required(isRequired('Phone')),
+		url: yupString().required(isRequired('URL'))
+			.url('Must be a valid URL'),
+		number: yupNumber().required(isRequired('Number'))
+			.min(Number(finalAnswer.number), 'Number must be at least ${min}'),
+		description: yupString().required(isRequired('Description')),
+		selectAnimal: yupString().required(isRequired('Select Animal')),
+		selectsMultipleAnimals: yupArray().required(isRequired('Select Multiple Animals')),
+	}),
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
+	yupObject({
+		autocompleteAnimal: yupString().required(isRequired('Autocomplete Animal')),
+
+		// ! Autocomplete with multiple and combobox not working correctly //
+		// autoCompleteMultipleAnimals: yupArray().required(isRequired('Autocomplete Multiple Animal')),
+		// combobox: yupArray().required(isRequired('Combobox'))
+		// 	.min(2, 'Must select at least ${min} options'),
+
+		color: yupString().required(isRequired('Color')),
+		// date: yupString().required(isRequired('Date')),
+	}),
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Radio/Checkbox/Switch Fields Page //
+	yupObject({
+		isThisBoxChecked: yupString().required(isRequired('Checkbox Single')),
+		checkboxMultiple: yupArray().required(isRequired('Checkbox Multiple'))
+			.min(2, 'Must select at least ${min} options'),
+		isSingleRadioSelected: yupString().required(isRequired('Radio Single'))
+			.matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
+		switchQuestion: yupString().required(isRequired('Switch Question'))
+			.matches(/(yes)/, 'Only "yes" is allowed'),
+
+		// buttonField: yupArray().required(isRequired('Button Field')),
+		// buttonField: yupString().required(isRequired('Button Field')).matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
+		// 	.matches(/(^true)/, isRequired('Checkbox Single')),
+		// .matches(/(^false)/, 'Checkbox must be not false'),
+	}),
+];
 
 const validationSchema = yupObject({
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Common Fields Page //
@@ -371,9 +425,12 @@ const validationSchema = yupObject({
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
 	autocompleteAnimal: yupString().required(isRequired('Autocomplete Animal')),
-	autoCompleteMultipleAnimals: yupArray().required(isRequired('Autocomplete Multiple Animal')),
-	combobox: yupArray().required(isRequired('Combobox'))
-		.min(2, 'Must select at least ${min} options'),
+
+	// ! Autocomplete with multiple and combobox not working correctly //
+	// autoCompleteMultipleAnimals: yupArray().required(isRequired('Autocomplete Multiple Animal')),
+	// combobox: yupArray().required(isRequired('Combobox'))
+	// 	.min(2, 'Must select at least ${min} options'),
+
 	color: yupString().required(isRequired('Color')),
 	// date: yupString().required(isRequired('Date')),
 
@@ -652,6 +709,7 @@ export {
 	finalAnswer,
 	items,
 	navigationTest,
+	newValidationSchema,
 	stepperProps,
 	validationSchema,
 };

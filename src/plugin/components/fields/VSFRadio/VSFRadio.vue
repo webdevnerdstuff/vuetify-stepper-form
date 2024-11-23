@@ -23,8 +23,9 @@
 				:id="field?.groupId"
 				:style="radioContainerStyle"
 			>
+
 				<Field
-					v-slot="{ errorMessage, validate }"
+					v-slot="props"
 					v-model="modelValue"
 					:name="field.name"
 					type="radio"
@@ -41,7 +42,7 @@
 						:direction="field?.direction"
 						:disabled="isValidating"
 						:error="hasErrors"
-						:error-messages="errorMessage || field?.errorMessages"
+						:error-messages="props.errorMessage || field?.errorMessages"
 						:hideDetails="field?.hideDetails || settings?.hideDetails"
 						:hint="field?.hint"
 						:inline="field?.inline"
@@ -60,20 +61,22 @@
 							:key="key"
 						>
 							<v-radio
-								v-bind="boundSettings"
+								v-bind="{ ...boundSettings, ...props.field }"
 								:id="undefined"
 								:data-cy="`vsf-field-${field.name}`"
 								:density="fieldDensity"
-								:error="errorMessage ? errorMessage?.length > 0 : false"
-								:error-messages="errorMessage"
+								:error="props.errorMessage ? props.errorMessage?.length > 0 : false"
+								:error-messages="props.errorMessage"
+								:false-value="field.falseValue"
 								:label="option.label"
 								:name="field.name"
 								:style="radioStyle"
+								:true-value="option.value || field.trueValue"
 								:value="option.value"
-								@blur="onActions(validate, 'blur')"
-								@change="onActions(validate, 'change')"
-								@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
-								@input="onActions(validate, 'input')"
+								@blur="onActions(props.validate, 'blur')"
+								@change="onActions(props.validate, 'change')"
+								@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(props.validate, 'click') : undefined"
+								@input="onActions(props.validate, 'input')"
 							>
 							</v-radio>
 						</div>
@@ -149,8 +152,9 @@ const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings.value.color,
 	density: field.density || settings.value.density,
-	falseValue: field.falseValue || undefined,
+	falseValue: field.falseValue || false,
 	hideDetails: field.hideDetails || settings.value.hideDetails,
+	trueValue: field.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));

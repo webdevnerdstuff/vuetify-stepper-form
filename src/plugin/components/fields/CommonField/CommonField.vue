@@ -1,6 +1,7 @@
 <template>
+
 	<Field
-		v-slot="{ errorMessage, validate }"
+		v-slot="props"
 		v-model="modelValue"
 		:name="field.name"
 		:validate-on-blur="fieldValidateOn === 'blur'"
@@ -10,15 +11,14 @@
 	>
 		<component
 			:is="component"
-			v-model="modelValue"
-			v-bind="boundSettings"
+			v-bind="{ ...boundSettings, ...props.field }"
 			:data-cy="`vsf-field-${field.name}`"
 			:error="hasErrors"
-			:error-messages="errorMessage || field.errorMessages"
+			:error-messages="props.errorMessage || field.errorMessages"
 			:items="fieldItems"
-			@blur="onActions(validate, 'blur')"
-			@change="onActions(validate, 'change')"
-			@input="onActions(validate, 'input')"
+			@blur="onActions(props.validate, 'blur')"
+			@change="onActions(props.validate, 'change')"
+			@input="onActions(props.validate, 'input')"
 		>
 			<template #label>
 				<FieldLabel

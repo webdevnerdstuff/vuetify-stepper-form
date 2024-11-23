@@ -3,7 +3,7 @@ import type {
 	FormValidationResult,
 	GenericObject,
 } from 'vee-validate';
-import type { App } from 'vue';
+import type { App, MaybeRef } from 'vue';
 import type {
 	VBtn,
 	// VIcon,
@@ -178,6 +178,7 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	color?: string | undefined;
 	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';
+	editable?: VStepperItem['editable'];
 	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
 	headerTooltips?: boolean;
@@ -329,7 +330,7 @@ export interface UseHandleJumpAhead {
 	(options:
 		{
 			currentPageEditable: boolean;
-			currentPageIdx: number;
+			currentPageIdx: MaybeRef<number>;
 			firstNonEditableIndex: number;
 			lastNonEditableIndex: number;
 			lastPageIdx: number;
@@ -347,7 +348,7 @@ export interface UseHandleNonJumpAhead {
 	(options:
 		{
 			currentPageEditable: boolean;
-			currentPageIdx: number;
+			currentPageIdx: MaybeRef<number>;
 			firstNonEditableIndex: number;
 			lastNonEditableIndex: number;
 			lastPageIdx: number;

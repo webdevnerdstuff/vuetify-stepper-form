@@ -1,26 +1,28 @@
 <template>
 	<Field
 		v-if="!field?.multiple"
-		v-slot="{ errorMessage, validate }"
+		v-slot="props"
 		v-model="modelValue"
 		:name="field.name"
+		type="checkbox"
+		:unchecked-value="field.falseValue"
 		:validate-on-blur="fieldValidateOn === 'blur'"
 		:validate-on-change="fieldValidateOn === 'change'"
 		:validate-on-input="fieldValidateOn === 'input'"
 		:validate-on-model-update="false"
+		:value="field.trueValue"
 	>
 		<v-checkbox
-			v-model="modelValue"
-			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
+			v-bind="{ ...(boundSettings as Omit<Settings, 'validateOn'>), ...props.field }"
 			:data-cy="`vsf-field-${field.name}`"
 			:density="fieldDensity"
 			:disabled="isValidating"
-			:error="errorMessage ? errorMessage?.length > 0 : false"
-			:error-messages="errorMessage"
-			@blur="onActions(validate, 'blur')"
-			@change="onActions(validate, 'change')"
-			@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
-			@input="onActions(validate, 'input')"
+			:error="props.errorMessage ? props.errorMessage?.length > 0 : false"
+			:error-messages="props.errorMessage"
+			@blur="onActions(props.validate, 'blur')"
+			@change="onActions(props.validate, 'change')"
+			@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(props.validate, 'click') : undefined"
+			@input="onActions(props.validate, 'input')"
 		>
 			<template #label>
 				<FieldLabel
@@ -55,9 +57,10 @@
 			</v-label>
 
 			<Field
-				v-slot="{ errorMessage, validate }"
+				v-slot="props"
 				v-model="modelValue"
 				:name="field.name"
+				type="checkbox"
 				:validate-on-blur="fieldValidateOn === 'blur'"
 				:validate-on-change="fieldValidateOn === 'change'"
 				:validate-on-input="fieldValidateOn === 'input'"
@@ -67,7 +70,7 @@
 					:id="field?.id"
 					:class="{
 						'v-selection-control-group': field.inline,
-						'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
+						'v-input--error': props.errorMessage ? props.errorMessage?.length > 0 : false,
 					}"
 					:style="checkboxContainerStyle"
 				>
@@ -79,22 +82,21 @@
 							:key="option.value"
 						>
 							<v-checkbox
-								v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
+								v-bind="{ ...(boundSettings as Omit<Settings, 'validateOn'>), ...props.field }"
 								:id="option.id"
-								v-model="modelValue"
 								:data-cy="`vsf-field-${field.name}`"
 								:density="fieldDensity"
 								:disabled="isValidating"
-								:error="errorMessage ? errorMessage?.length > 0 : false"
-								:error-messages="errorMessage"
+								:error="props.errorMessage ? props.errorMessage?.length > 0 : false"
+								:error-messages="props.errorMessage"
 								:hide-details="true"
 								:label="option.label"
 								:style="checkboxStyle"
 								:true-value="option.value"
-								@blur="onActions(validate, 'blur')"
-								@change="onActions(validate, 'change')"
-								@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(validate, 'click') : undefined"
-								@input="onActions(validate, 'input')"
+								@blur="onActions(props.validate, 'blur')"
+								@change="onActions(props.validate, 'change')"
+								@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(props.validate, 'click') : undefined"
+								@input="onActions(props.validate, 'input')"
 								@update:focused="updateFocused($event)"
 							/>
 						</template>
@@ -104,9 +106,9 @@
 						class="v-input__details"
 					>
 						<VMessages
-							:active="activeMessages(errorMessage)"
-							:color="errorMessage ? 'error' : undefined"
-							:messages="fieldMessages(errorMessage)"
+							:active="activeMessages(props.errorMessage)"
+							:color="props.errorMessage ? 'error' : undefined"
+							:messages="fieldMessages(props.errorMessage)"
 						>
 						</VMessages>
 					</div>
@@ -174,8 +176,9 @@ const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings.value.color,
 	density: field.density || settings.value.density,
-	falseValue: field.falseValue || undefined,
+	falseValue: field.falseValue || false,
 	hideDetails: field.hideDetails || settings.value.hideDetails,
+	trueValue: field.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>, [

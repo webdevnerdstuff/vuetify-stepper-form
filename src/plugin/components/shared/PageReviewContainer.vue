@@ -16,7 +16,7 @@
 				>
 					<v-list-item
 						v-if="checkIfEditable(field)"
-						@click="settings.editable ? goToQuestion(field) : null"
+						@click="settingsEditable && field.editable !== false ? goToQuestion(field) : undefined"
 					>
 						<v-list-item-title>
 							{{ field.label }}
@@ -65,6 +65,9 @@ import type {
 	ResponsiveColumns,
 } from '../../types/index';
 import { useColumnClasses } from '../../composables/classes';
+import {
+	useGetFirstAndLastEditableFalse,
+} from '../../composables/helpers';
 
 
 export interface PageReviewContainerProps {
@@ -76,34 +79,47 @@ export interface PageReviewContainerProps {
 const { summaryColumns, page, pages } = defineProps<PageReviewContainerProps>();
 const settings = inject<Settings>('settings')!;
 
+const { editable: settingsEditable } = unref(settings);
+
 defineOptions({
 	inheritAttrs: false,
 });
 const emit = defineEmits([
 	'goToQuestion',
-	'submit',
 ]);
 
 const modelValue = defineModel<any>();
 
+interface InternalField extends Field {
+	editable: boolean;
+}
+
 
 // -------------------------------------------------- Flatten page fields //
-const allFieldsArray = ref<Field[]>([]);
+const allFieldsArray = ref<InternalField[]>([]);
+const { lastNonEditableIndex } = useGetFirstAndLastEditableFalse(pages);
 
-Object.values(pages).forEach((p) => {
-	if (p.fields) {
-		Object.values(p.fields).forEach((field: Field) => {
-			allFieldsArray.value.push(field);
+Object.values(pages).forEach((page, index) => {
+	if (page.fields) {
+		Object.values(page.fields as InternalField[]).forEach((field) => {
+			const internalField = field;
+
+
+			if (index <= lastNonEditableIndex) {
+				internalField.editable = false;
+			}
+
+			allFieldsArray.value.push(internalField);
 		});
 	}
 });
 
 
 // -------------------------------------------------- Go to question navigation //
-function goToQuestion(field: Field) {
+function goToQuestion(field: InternalField) {
 	let pageIndex = pages.findIndex(page => page.fields ? page.fields.some(f => f.name === field.name) : -1);
 
-	if (pages[pageIndex]?.editable === false) {
+	if (pages[pageIndex]?.editable === false || field.editable === false) {
 		return;
 	}
 
@@ -115,10 +131,10 @@ function goToQuestion(field: Field) {
 }
 
 
-function checkIfEditable(field: Field) {
+function checkIfEditable(field: InternalField) {
 	const pageIndex = pages.findIndex(page => page.fields ? page.fields.some(f => f.name === field.name) : -1);
 
-	return pages[pageIndex]?.editable !== false;
+	return settingsEditable !== false && pages[pageIndex]?.editable !== false && field.editable !== false;
 }
 
 

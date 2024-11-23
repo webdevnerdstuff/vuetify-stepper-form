@@ -6,7 +6,6 @@ import {
 
 const useHandleJumpAhead: UseHandleJumpAhead = (options) => {
 	const { currentPageEditable,
-		currentPageIdx,
 		firstNonEditableIndex,
 		lastNonEditableIndex,
 		lastPageIdx,
@@ -16,6 +15,8 @@ const useHandleJumpAhead: UseHandleJumpAhead = (options) => {
 		pageNotEditable,
 		previousPageEditable,
 		previousPageNotEditable } = options;
+
+	const currentPageIdx = unref(options.currentPageIdx);
 
 	// If the page is before the last non editable page //
 	if (pageIdx > lastNonEditableIndex) {
@@ -148,7 +149,6 @@ const useHandleJumpAhead: UseHandleJumpAhead = (options) => {
 
 const useHandleNonJumpAhead: UseHandleNonJumpAhead = (options) => {
 	const { currentPageEditable,
-		currentPageIdx,
 		firstNonEditableIndex,
 		lastNonEditableIndex,
 		lastPageIdx,
@@ -157,6 +157,9 @@ const useHandleNonJumpAhead: UseHandleNonJumpAhead = (options) => {
 		pageEditable,
 		pageIdx,
 		pageNotEditable } = options;
+
+	const currentPageIdx = unref(options.currentPageIdx);
+
 	// If page is before the current page //
 	if (pageIdx < currentPageIdx) {
 

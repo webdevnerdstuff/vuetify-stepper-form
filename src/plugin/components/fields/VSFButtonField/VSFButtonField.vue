@@ -1,6 +1,6 @@
 <template>
 	<Field
-		v-slot="{ errorMessage, validate, handleInput }"
+		v-slot="props"
 		v-model="modelValue"
 		:name="field.name"
 		type="text"
@@ -11,7 +11,7 @@
 	>
 		<div :class="{
 			...buttonFieldContainerClass,
-			'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
+			'v-input--error': props.errorMessage ? props.errorMessage?.length > 0 : false,
 		}">
 			<v-label>
 				<FieldLabel
@@ -57,8 +57,8 @@
 							:value="option.value"
 							:variant="getVariant(option.value)"
 							:width="getWidth(option)"
-							@click.prevent="onActions(validate, 'click', option.value); handleInput(modelValue)"
-							@keydown.space.prevent="onActions(validate, 'click', option.value); handleInput(modelValue)"
+							@click.prevent="onActions(props.validate, 'click', option.value); props.handleInput(modelValue)"
+							@keydown.space.prevent="onActions(props.validate, 'click', option.value); props.handleInput(modelValue)"
 							@mousedown="onFocus(option.value)"
 							@mouseleave="onFocus(null)"
 							@mouseup="onFocus(null)"
@@ -83,10 +83,10 @@
 				class="v-input__details"
 			>
 				<VMessages
-					:active="activeMessages(errorMessage)"
-					:color="errorMessage ? 'error' : undefined"
+					:active="activeMessages(props.errorMessage)"
+					:color="props.errorMessage ? 'error' : undefined"
 					data-cy="vsf-field-messages"
-					:messages="fieldMessages(errorMessage)"
+					:messages="fieldMessages(props.errorMessage)"
 				>
 				</VMessages>
 			</div>
