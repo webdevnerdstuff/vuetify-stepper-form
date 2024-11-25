@@ -1,109 +1,92 @@
 <template>
-	<Field
-		v-slot="props"
-		v-model="modelValue"
-		:name="field.name"
-		type="text"
-		:validate-on-blur="fieldValidateOn === 'blur'"
-		:validate-on-change="fieldValidateOn === 'change'"
-		:validate-on-input="fieldValidateOn === 'input'"
-		:validate-on-model-update="fieldValidateOn != null"
-	>
-		<div :class="{
-			...buttonFieldContainerClass,
-			'v-input--error': props.errorMessage ? props.errorMessage?.length > 0 : false,
-		}">
-			<v-label>
-				<FieldLabel
-					:label="field.label"
-					:required="fieldRequired"
-				/>
-			</v-label>
+	<div :class="buttonFieldContainerClass">
+		<v-label>
+			<FieldLabel
+				:label="field.label"
+				:required="fieldRequired"
+			/>
+		</v-label>
 
-			<v-item-group
-				:id="field?.id"
-				v-model="modelValue"
-				class="mt-2"
-				:class="itemGroupClass"
-				:data-cy="`vsf-field-group-${field.name}`"
-				:style="itemGroupStyle"
+		<v-item-group
+			:id="field?.id"
+			v-model="modelValue"
+			class="mt-2"
+			:class="itemGroupClass"
+			:data-cy="`vsf-field-group-${field.name}`"
+			:style="itemGroupStyle"
+		>
+			<v-item
+				v-for="option, key in field?.options"
+				:key="option.value"
 			>
-				<v-item
-					v-for="option, key in field?.options"
-					:key="option.value"
-				>
-					<template #default>
-						<v-btn
-							v-bind="boundSettings"
-							:id="getId(option, key)"
-							:active="isActive(option.value)"
-							:appendIcon="getIcon(option, 'appendIcon')"
-							class="text-none"
-							:class="{
-								[`${option?.class}`]: true,
-								...buttonClass,
-								[`${field.selectedClass}`]: isActive(option.value) && field.selectedClass != null,
-							}"
-							:color="option?.color || field?.color || settings?.color"
-							:data-cy="`vsf-field-${field.name}`"
-							:density="fieldDensity"
-							:height="getHeight(option)"
-							:icon="getIcon(option, 'icon')"
-							:maxHeight="getMaxHeight(option)"
-							:maxWidth="getMaxWidth(option)"
-							:minHeight="getMinHeight(option)"
-							:minWidth="getMinWidth(option)"
-							:prependIcon="getIcon(option, 'prependIcon')"
-							:value="option.value"
-							:variant="getVariant(option.value)"
-							:width="getWidth(option)"
-							@click.prevent="onActions(props.validate, 'click', option.value); props.handleInput(modelValue)"
-							@keydown.space.prevent="onActions(props.validate, 'click', option.value); props.handleInput(modelValue)"
-							@mousedown="onFocus(option.value)"
-							@mouseleave="onFocus(null)"
-							@mouseup="onFocus(null)"
+				<template #default>
+					<v-btn
+						v-bind="boundSettings"
+						:id="getId(option, key)"
+						:active="isActive(option.value)"
+						:appendIcon="getIcon(option, 'appendIcon')"
+						class="text-none"
+						:class="{ ...buttonClass, ...buttonClassAdditional(option) }"
+						:color="option?.color || field?.color || settings?.color"
+						:data-cy="`vsf-field-${field.name}`"
+						:density="fieldDensity"
+						:height="getHeight(option)"
+						:icon="getIcon(option, 'icon')"
+						:maxHeight="getMaxHeight(option)"
+						:maxWidth="getMaxWidth(option)"
+						:minHeight="getMinHeight(option)"
+						:minWidth="getMinWidth(option)"
+						:prependIcon="getIcon(option, 'prependIcon')"
+						:value="option.value"
+						:variant="getVariant(option.value)"
+						:width="getWidth(option)"
+						@click.prevent="onActions('click', option.value)"
+						@keydown.space.prevent="onActions('click', option.value)"
+						@mousedown="onFocus(option.value)"
+						@mouseleave="onFocus(null)"
+						@mouseup="onFocus(null)"
+					>
+						<template
+							v-if="getIcon(option, 'icon') == null"
+							#default
 						>
-							<template
-								v-if="getIcon(option, 'icon') == null"
-								#default
-							>
-								<span
-									class="vsf-button-field__btn-label"
-									:class="getLabelClass(option)"
-									v-html="option.label"
-								></span>
-							</template>
-						</v-btn>
-					</template>
-				</v-item>
-			</v-item-group>
+							<span
+								class="vsf-button-field__btn-label"
+								:class="getLabelClass(option)"
+								v-html="option.label"
+							></span>
+						</template>
+					</v-btn>
+				</template>
+			</v-item>
+		</v-item-group>
 
-			<div
-				v-if="hasDetails"
-				class="v-input__details"
+		<div
+			v-if="hasDetails"
+			class="v-input__details"
+		>
+			<VMessages
+				:active="activeMessages(errorMessage)"
+				:color="errorMessage ? 'error' : undefined"
+				data-cy="vsf-field-messages"
+				:messages="fieldMessages(errorMessage)"
 			>
-				<VMessages
-					:active="activeMessages(props.errorMessage)"
-					:color="props.errorMessage ? 'error' : undefined"
-					data-cy="vsf-field-messages"
-					:messages="fieldMessages(props.errorMessage)"
-				>
-				</VMessages>
-			</div>
+			</VMessages>
 		</div>
+	</div>
 
-		<input
-			data-cy="vsf-button-field-input"
-			:name="field.name"
-			type="hidden"
-			:value="modelValue"
-		/>
-	</Field>
+	<input
+		v-model="value"
+		data-cy="vsf-button-field-input"
+		:name="field.name"
+		type="hidden"
+		@change="handleChange"
+	/>
 </template>
 
 
 <script lang="ts" setup>
-import { Field } from 'vee-validate';
+import { useField } from 'vee-validate';
 import { VMessages } from 'vuetify/components';
 import type { Option, VSFButtonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
@@ -125,42 +108,62 @@ const fieldRequired = computed<FieldLabelProps['required']>(() => {
 const fieldValidateOn = computed(() => field?.validateOn ?? settings.value?.validateOn);
 const originalValue = modelValue.value;
 
+
+const { errorMessage, handleChange, setValue, validate, value } = useField(
+	field.name,
+	undefined,
+	{
+		initialValue: field?.multiple ? [] : null,
+		validateOnBlur: fieldValidateOn.value === 'blur',
+		validateOnChange: fieldValidateOn.value === 'change',
+		validateOnInput: fieldValidateOn.value === 'input',
+		validateOnModelUpdate: fieldValidateOn.value != null,
+	},
+);
+
+
 onUnmounted(() => {
 	if (!settings.value?.keepValuesOnUnmount) {
 		modelValue.value = originalValue;
+		setValue(originalValue);
 	}
 });
 
 
-if (modelValue?.value == null) {
-	modelValue.value = field?.multiple ? [] : null;
-}
-
 const currentValue = ref(modelValue.value);
 
 // ------------------------- Validate On Actions //
-async function onActions(validate: FieldValidateResult, action: ValidateAction, value?: string | number): Promise<void> {
-	if (currentValue.value === value && (fieldValidateOn.value === 'change' || fieldValidateOn.value === 'input')) {
+async function onActions(action: ValidateAction, val?: string | number): Promise<void> {
+	if (currentValue.value === val && (fieldValidateOn.value === 'change' || fieldValidateOn.value === 'input')) {
 		return;
 	}
 
-	if (!field?.disabled && value) {
-		if (field?.multiple) {
-			const localModelValue = modelValue.value == null ? [] : modelValue.value as string[];
+	if (!field?.disabled && value.value) {
+		let updatedValue: string | string[];
 
-			if (localModelValue != null && localModelValue.includes(String(value))) {
-				const index = localModelValue.indexOf(String(value));
-				localModelValue.splice(index, 1);
+		if (field?.multiple) {
+			const localModelValue = Array.isArray(value.value) ? value.value.slice() : [];
+			const valStr = String(val);
+
+			if (localModelValue.includes(valStr)) {
+				localModelValue.splice(localModelValue.indexOf(valStr), 1);
 			}
 			else {
-				localModelValue.push(String(value));
+				localModelValue.push(valStr);
 			}
 
-			modelValue.value = localModelValue;
+			updatedValue = localModelValue;
 		}
 		else {
-			modelValue.value = value;
+			updatedValue = val as string;
 		}
+
+		setValue(updatedValue);
+		modelValue.value = updatedValue;
+	}
+	else {
+		setValue(val);
+		modelValue.value = val;
 	}
 
 	await useOnActions({
@@ -170,7 +173,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction, 
 		settingsValidateOn: settings.value?.validateOn,
 		validate,
 	}).then(() => {
-		currentValue.value = modelValue.value;
+		currentValue.value = value.value;
 	})
 		.catch((error: Error) => {
 			console.error(error);
@@ -310,11 +313,11 @@ function getHeight(option: Option): string | number | undefined {
 }
 
 const isActive = (val: string | number): boolean | undefined => {
-	if (!modelValue.value) {
+	if (!value.value) {
 		return undefined;
 	}
 
-	return modelValue.value === val || (modelValue.value as string[]).includes(val as string);
+	return value.value === val || (value.value as string[]).includes(val as string);
 };
 
 // ------------------------- Variants //
@@ -330,8 +333,8 @@ function getVariant(val: string | number): VSFButtonFieldProps['field']['variant
 
 
 // -------------------------------------------------- Active Messages //
-function activeMessages(errorMessage: string | string[]): boolean {
-	if (errorMessage ? errorMessage.length > 0 : false) {
+function activeMessages(errorMsg: string | string[]): boolean {
+	if (errorMsg ? errorMsg.length > 0 : false) {
 		return true;
 	}
 
@@ -346,9 +349,9 @@ function activeMessages(errorMessage: string | string[]): boolean {
 	return false;
 }
 
-function fieldMessages(errorMessage?: string | string[]): string | string[] {
-	if (errorMessage ? errorMessage.length > 0 : false) {
-		return errorMessage as string[];
+function fieldMessages(errorMsg?: string | string[]): string | string[] {
+	if (errorMsg ? errorMsg.length > 0 : false) {
+		return errorMsg as string[];
 	}
 
 	if (field.hint && (field.persistentHint || isFocused.value)) {
@@ -403,6 +406,7 @@ const buttonFieldContainerClass = computed(() => {
 	return {
 		'd-flex': field?.align,
 		'flex-column': field?.align,
+		'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
 		'vsf-button-field__container': true,
 		[`align-${field?.align}`]: field?.align,
 	};
@@ -419,6 +423,13 @@ const buttonClass = computed(() => {
 
 	return {};
 });
+
+const buttonClassAdditional = (option) => {
+	return {
+		[`${option?.class}`]: true,
+		[`${field.selectedClass}`]: isActive(option.value) && field.selectedClass != null,
+	};
+};
 
 const getLabelClass = (option: Option): object => {
 	const isActiveOption = isActive(option.value);
