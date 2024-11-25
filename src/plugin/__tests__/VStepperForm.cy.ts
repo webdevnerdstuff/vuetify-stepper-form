@@ -32,10 +32,8 @@ const pages = [
 		title: 'Less Common Fields',
 		fields: [
 			defaultFields.autocomplete,
-
-			// ! Autocomplete with multiple and combobox not working correctly //
-			// defaultFields.autocompleteMultiple,
-			// defaultFields.combobox,
+			defaultFields.autocompleteMultiple,
+			defaultFields.combobox,
 			{
 				...defaultFields.color,
 				readonlyInput: true,
@@ -58,10 +56,6 @@ const pages = [
 			defaultFields.switch,
 		],
 	},
-	// {
-	// 	title: 'Page 3',
-	// 	fields: [],
-	// },
 	{
 		isSummary: true,
 		text: "Here's the data you've entered. Feel free to review it.",
@@ -156,7 +150,7 @@ describe('Stepper Form', () => {
 			}
 
 			// ~ -------------------------------------------------- Test Fields //
-			function testFields(field: Field, index: number, pageIndex: number): void {
+			function testFields(field: Field, index: number): void {
 				let fieldName = `${field.name}`;
 				cy.get('@appWrap').click();
 
@@ -470,7 +464,7 @@ describe('Stepper Form', () => {
 					// Fail by not selecting enough options //
 					cy.get(fieldName)
 						.find('[type="checkbox"]')
-						.check(['option1']);
+						.check('option1');
 
 					cy.get(fieldName)
 						.parent()
@@ -480,7 +474,7 @@ describe('Stepper Form', () => {
 
 					cy.get(fieldName)
 						.find('[type="checkbox"]')
-						.check(['option3']);
+						.check('option3');
 
 					cy.get('@stepperForm')
 						.should('not.contain', 'Must select at least 2 options');
@@ -544,10 +538,10 @@ describe('Stepper Form', () => {
 			}
 
 			// Loop through each page and test each fields //
-			Object.values(pages).forEach((page, pageIndex) => {
+			Object.values(pages).forEach((page) => {
 				if (page.fields) {
 					Object.values(page?.fields).forEach((field, index) => {
-						testFields(field, index, pageIndex);
+						testFields(field, index);
 					});
 
 					// ? Need to use realClick to trigger the click event or the next button will be disabled //
@@ -582,10 +576,10 @@ describe('Stepper Form', () => {
 			cy.should(() => expect(spy).to.have.been.called);
 
 			// ? Check the final @submit event payload //
-			// cy.get('@submit').its('args').then((args) => {
-			// 	const eventPayload = args[0][0];
-			// 	expect(eventPayload).to.deep.equal(DATA.finalAnswer);
-			// });
+			cy.get('@submit').its('args').then((args) => {
+				const eventPayload = args[0][0];
+				expect(eventPayload).to.deep.equal(DATA.finalAnswer);
+			});
 
 		});
 	});

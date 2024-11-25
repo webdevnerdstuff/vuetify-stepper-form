@@ -424,7 +424,7 @@ const buttonClass = computed(() => {
 	return {};
 });
 
-const buttonClassAdditional = (option) => {
+const buttonClassAdditional = (option: Option) => {
 	return {
 		[`${option?.class}`]: true,
 		[`${field.selectedClass}`]: isActive(option.value) && field.selectedClass != null,
