@@ -3,6 +3,7 @@ export declare const AllProps: {
     direction: "horizontal";
     disabled: boolean;
     editable: boolean;
+    jumpAhead: boolean;
     keepValuesOnUnmount: boolean;
     navButtonSize: "large";
     tooltipLocation: "bottom";
