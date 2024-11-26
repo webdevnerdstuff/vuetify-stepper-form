@@ -3,7 +3,7 @@
 </p>
 
 <p>
-  <h1 align="center">Vuetify Stepper Form (Beta)</h1>
+  <h1 align="center">Vuetify Stepper Form</h1>
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@ The Vuetify Stepper Form plugin provides a structured way to create multi-step f
 
 ## License
 
-Copyright (c) 2023 WebDevNerdStuff  
+Copyright (c) 2024 WebDevNerdStuff  
 Licensed under the [MIT license](https://github.com/webdevnerdstuff/vuetify-stepper-form/blob/master/LICENSE.md).
 
 

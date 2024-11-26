@@ -15,28 +15,61 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build application
+        run: pnpm build:docs
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          if-no-files-found: error
+          path: ./docs
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     strategy:
       matrix:
         node-version: [20]
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Build
-      run: |
-        git config --global user.email "webdevnerdstuff@gmail.com"
-        git config --global user.name "WebDevNerdStuff"
-        mkdir docs
-        npm install --g gh-pages
-        npm i
-        npm run build:docs
-        git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-        npm run deploy -u "github-actions-bot <support+actions@github.com>"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download the build folder
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./docs
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
