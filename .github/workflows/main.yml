@@ -79,6 +79,8 @@ jobs:
 
       - name: Download the build folder
         uses: actions/download-artifact@v4
+        with:
+          path: ./docs
 
       - name: Display structure of downloaded files
         run: ls -R ./docs
