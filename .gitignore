@@ -28,4 +28,11 @@ dist-ssr
 
 src/plugin/**/*.bk.*
 
+# Temp files and directories
+*__TEMP.*
+*__TEMP/
 
+# Cypress
+cypress/downloads
+cypress/screenshots
+cypress/videos

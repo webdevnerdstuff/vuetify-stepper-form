@@ -23,12 +23,13 @@
 			>
 				<v-stepper
 					v-model="stepperModel"
+					data-cy="vsf-stepper-form"
 					v-bind="stepperSettings"
 					:mobile="sm"
 					width="100%"
 				>
 					<template #default="{ prev, next }">
-						<v-stepper-header>
+						<v-stepper-header data-cy="vsf-stepper-header">
 							<template
 								v-for="(page, i) in computedPages"
 								:key="`${getIndex(i)}-step`"
@@ -36,15 +37,16 @@
 								<v-stepper-item
 									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
-									:edit-icon="page.isReview ? '$complete' : settings.editIcon"
-									:editable="headerItemDisabled(page)"
+									:edit-icon="page.isSummary ? '$complete' : settings.editIcon"
+									:editable="headerItemEnabled(page)"
 									elevation="0"
-									:error="page.error"
+									:error="currentPageHasErrors && errorPageIndexes.includes(i)"
 									:title="page.title"
 									:value="getIndex(i)"
+									@click="headerCheckPreviousStepValidation(i)"
 								>
 									<v-tooltip
-										v-if="!mobile && settings.headerTooltips && page?.fields && (page?.fields as Field[]).length > 0"
+										v-if="!mobile && settings.headerTooltips && page?.fields && page?.fields.length > 0"
 										:activator="page.title ? 'parent' : `.vsf-activator-${componentId}-${i + 1}`"
 										:location="settings.tooltipLocation"
 										:offset="page.title ? settings.tooltipOffset : Number(settings.tooltipOffset) - 28"
@@ -65,30 +67,29 @@
 							</template>
 						</v-stepper-header>
 
-						<Form
+						<form
 							ref="stepperFormRef"
-							v-slot="{ validate }"
-							:keep-values-on-unmount="settings?.keepValuesOnUnmount"
-							:validate-on-mount="settings?.validateOnMount"
-							:validation-schema="validationSchema"
 							@submit="onSubmit"
 						>
 							<v-stepper-window>
 								<v-stepper-window-item
 									v-for="page, i in computedPages"
 									:key="`${getIndex(i)}-content`"
+									:data-cy="page.isSummary ? 'vsf-page-summary' : `vsf-page-${getIndex(i)}`"
 									:reverse-transition="transitionComputed"
 									:transition="transitionComputed"
 									:value="getIndex(i)"
 								>
 									<v-container>
+
 										<PageContainer
-											v-if="!page.isReview"
+											v-if="!page.isSummary"
 											:key="`${getIndex(i)}-page`"
 											v-model="modelValue"
 											:fieldColumns="settings?.fieldColumns"
 											:index="getIndex(i)"
 											:page="page"
+											:pageIndex="getIndex(i)"
 											:settings="settings"
 											@validate="onFieldValidate($event, next)"
 										>
@@ -109,10 +110,10 @@
 											:page="page"
 											:pages="computedPages"
 											:settings="settings"
-											:summary-columns="summaryColumns"
+											:summaryColumns="settings?.summaryColumns"
 											@goToQuestion="stepperModel = $event"
-											@submit="onSubmit(modelValue)"
 										/>
+
 									</v-container>
 								</v-stepper-window-item>
 							</v-stepper-window>
@@ -122,28 +123,36 @@
 									<v-btn
 										v-if="!lastPage"
 										:color="settings.color"
+										data-cy="vsf-next-button"
 										:disabled="nextButtonDisabled"
 										:size="navButtonSize"
-										@click="runValidation(validate, 'next', next)"
+										:variant="navButtonVariant"
+										@click="runValidation('next', next)"
 									/>
 									<v-btn
 										v-else
 										:color="settings.color"
+										data-cy="vsf-submit-button"
 										:disabled="fieldsHaveErrors"
 										:size="navButtonSize"
 										type="submit"
+										:variant="navButtonVariant"
+										@click="onSubmit"
 									>Submit</v-btn>
 								</template>
 
 								<template #prev>
+									<!-- :disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)" -->
 									<v-btn
-										:disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)"
+										data-cy="vsf-previous-button"
+										:disabled="prevButtonDisabled"
 										:size="navButtonSize"
+										:variant="navButtonVariant"
 										@click="previousPage(prev)"
 									/>
 								</template>
 							</v-stepper-actions>
-						</Form>
+						</form>
 					</template>
 				</v-stepper>
 			</v-container>
@@ -155,7 +164,7 @@
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
 import { watchDeep } from '@vueuse/core';
-import { Form } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import { useDisplay } from 'vuetify';
 import type {
 	ComputedClasses,
@@ -175,23 +184,26 @@ import {
 	useBuildSettings,
 	useColumnErrorCheck,
 	useDeepMerge,
+	useGetFirstAndLastEditableFalse,
 } from './composables/helpers';
+import {
+	useHandleJumpAhead,
+	useHandleNonJumpAhead,
+} from './composables/navigation';
 import componentEmits from './utils/emits';
 import { AllProps } from './utils/props';
-import { globalOptions } from './';
 
 
 const attrs = useAttrs();
 const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
-const injectedOptions = inject(globalOptions, {});
-
+const injectedOptions = inject<Ref<Settings>>('globalOptions')!;
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
-const { direction, title, width } = toRefs(props);
+const { direction, jumpAhead, title, width } = toRefs(props);
 const pages = reactive<Page[]>(props.pages);
 const originalPages = JSON.parse(JSON.stringify(pages));
 
@@ -255,6 +267,8 @@ watchDeep(modelValue, () => {
 
 const stepperModel = ref(1);
 
+const currentPageIdx = computed(() => stepperModel.value - 1);
+
 
 const { mobile, sm } = useDisplay();
 const transitionComputed: ComputedRef<Props['transition']> = computed(() => stepperProps.transition);
@@ -264,6 +278,13 @@ provide('parentForm', parentForm);
 
 
 // -------------------------------------------------- Stepper Action //
+
+// ------------------------- Editable //
+const stepperFormIsEditable = computed<boolean | undefined>(() => settings.value.editable);
+
+
+// ------------------------- Check Disables //
+
 const stepperActionsDisabled = computed(() => {
 	return stepperModel.value === 1 ? 'prev' : stepperModel.value === Object.keys(props.pages).length ? 'next' : undefined;
 });
@@ -274,8 +295,51 @@ const nextButtonDisabled = computed(() => {
 	return fieldsHaveErrors.value || isDisabled;
 });
 
+const prevButtonDisabled = computed(() => {
+	const { lastNonEditableIndex } = useGetFirstAndLastEditableFalse(computedPages.value);
+
+	// First Page //
+	if (currentPageIdx.value === 0) {
+		return true;
+	}
+
+	// Entire Stepper Form is not editable //
+	if (!stepperFormIsEditable.value) {
+		return true;
+	}
+
+	// If current page has errors disable //
+	if (currentPageHasErrors.value) {
+		return true;
+	}
+
+	if (currentPageIdx.value - 1 === lastNonEditableIndex) {
+		return true;
+	}
+
+	// if (currentPage <= firstNonEditableIndex) {
+	// 	return true;
+	// }
+
+
+	// if (stepperModel.value - 1 <= lastNonEditableIndex + 1 && lastNonEditableIndex != -1) {
+	// 	return true;
+	// }
+
+	// if (lastPage.value && lastNonEditableIndex === computedPages.value.length - 2) {
+	// 	return true;
+	// }
+
+
+	return false;
+});
+
 const canReviewPreviousButtonDisabled = computed<boolean>(() => {
 	const previousPage = computedPages.value[stepperModel.value - 2];
+
+	if (stepperFormIsEditable.value === true) {
+		return false;
+	}
 
 	if (previousPage) {
 		return previousPage.editable === false;
@@ -299,28 +363,98 @@ const lastPage = computed<boolean>(() => {
 });
 
 
-// TODO: This needs some more work and add a setting to not allow users to jump ahead in the questions //
-function headerItemDisabled(page: Page): boolean {
-	const totalSteps = Object.keys(computedPages.value).length;
-	const lastStep = totalSteps - 1;
+// ------------------------- Header Item Disabled //
+function headerItemEnabled(page: Page): boolean {
+	const { firstNonEditableIndex, lastNonEditableIndex } = useGetFirstAndLastEditableFalse(computedPages.value);
+	const currentPages = computedPages.value;
 
-	if (page.editable === false && currentPageHasErrors.value) {
+	const pageIdx = currentPages.findIndex((p) => p === page);
+	const pageEditable = page.editable !== false;
+	const pageNotEditable = page.editable === false;
+	const currentPageEditable = currentPages[currentPageIdx.value]?.editable !== false;
+	// const currentPageNotEditable = currentPages[currentPageIdx.value]?.editable === false;
+	const lastPageIdx = currentPages.length - 1;
+
+	const previousPageIdx = pageIdx - 1;
+	const previousPageEditable = currentPages[previousPageIdx]?.editable !== false;
+	const previousPageNotEditable = currentPages[previousPageIdx]?.editable === false;
+
+	const nextPageIdx = pageIdx + 1;
+	const nextPageEditable = currentPages[nextPageIdx]?.editable !== false;
+	const nextPageNotEditable = currentPages[nextPageIdx]?.editable === false;
+
+	// const debug = true;
+
+	// if (debug) {
+	// 	console.groupCollapsed('page', page.title);
+	// 	console.log('previousPageIdx\t', previousPageIdx);
+	// 	console.log('currentPageIdx\t', currentPageIdx.value);
+	// 	console.log('nextPageIdx\t\t', nextPageIdx);
+
+	// 	console.log('lastPageIdx\t\t', lastPageIdx);
+	// 	console.log('pageIdx\t\t\t', pageIdx);
+	// 	console.log('');
+	// 	console.log('pageEditable\t\t\t', pageEditable);
+	// 	console.log('pageNotEditable\t\t\t', pageNotEditable);
+	// 	console.log('currentPageEditable\t\t', currentPageEditable);
+	// 	console.log('currentPageNotEditable\t', currentPageNotEditable);
+	// 	console.log('previousPageEditable\t', previousPageEditable);
+	// 	console.log('previousPageNotEditable\t', previousPageNotEditable);
+	// 	console.log('nextPageEditable\t\t', nextPageEditable);
+	// 	console.log('nextPageNotEditable\t\t', nextPageNotEditable);
+	// 	console.log('');
+	// 	console.log('getFirstAndLastEditableFalse.value\t\t', { firstNonEditableIndex, lastNonEditableIndex });
+	// 	console.groupEnd();
+	// 	console.log('');
+	// }
+
+	// & Always True //
+	// Always set current page to editable //
+	if (currentPageIdx.value === pageIdx) {
 		return true;
 	}
 
-	const currentPageIdx = stepperModel.value - 1;
-	const pageIdx = computedPages.value.findIndex((p) => p === page);
-
-	if (page.editable !== false && pageIdx < currentPageIdx) {
-		return true;
+	// & Always False //
+	// Entire Stepper Form is not editable //
+	if (!stepperFormIsEditable.value) {
+		return false;
 	}
 
-	// If you're on the last step (not review page) //
-	if (stepperModel.value === lastStep) {
-		return !page.isReview && (!settings.value.editable) && (!page.editable && settings.value?.editable !== false);
+	// If current page has errors disable all //
+	if (currentPageHasErrors.value) {
+		return false;
 	}
 
-	return false;
+	// & Non Jump Ahead //
+	if (!jumpAhead.value) {
+		return useHandleNonJumpAhead({
+			currentPageEditable,
+			currentPageIdx,
+			firstNonEditableIndex,
+			lastNonEditableIndex,
+			lastPageIdx,
+			nextPageEditable,
+			nextPageNotEditable,
+			pageEditable,
+			pageIdx,
+			pageNotEditable,
+		});
+	}
+
+	// & Jump Ahead //
+	return useHandleJumpAhead({
+		currentPageEditable,
+		currentPageIdx,
+		firstNonEditableIndex,
+		lastNonEditableIndex,
+		lastPageIdx,
+		nextPageEditable,
+		nextPageNotEditable,
+		pageIdx,
+		pageNotEditable,
+		previousPageEditable,
+		previousPageNotEditable,
+	});
 }
 
 
@@ -331,17 +465,52 @@ const errorPageIndexes: Ref<number[]> = ref<number[]>([]);
 
 const fieldsHaveErrors = computed(() => errorPageIndexes.value.includes(stepperModel.value - 1));
 
+const $useForm = useForm({
+	initialValues: modelValue.value,
+	keepValuesOnUnmount: settings.value?.keepValuesOnUnmount,
+	validationSchema: validationSchema.value,
+	valueOnMount: settings.value?.validateOnMount,
+});
+
+
 // ------------------------ Run Validation //
+function headerCheckPreviousStepValidation(index: number): void {
+	const previousIndex = index === 0 ? 0 : index - 1;
+	const previousPage = computedPages.value[previousIndex];
+
+	if (!previousPage || !previousPage.fields) {
+		return;
+	}
+
+	previousPage.fields.forEach((field) => {
+		$useForm.validateField(field.name, {}, { name: field.name })
+			.then((response: ValidateResult) => {
+				const errors = response.errors as unknown as ValidateResult['errors'];
+
+				if (errors.length) {
+					stepperModel.value = previousIndex + 1;
+					currentPageHasErrors.value = true;
+
+					setPageToError(previousIndex, previousPage, 'submit');
+					return;
+				}
+
+				removePageError(previousIndex);
+			});
+	});
+}
+
 function runValidation(
-	validate: () => Promise<ValidateResult>,
 	source = 'submit',
 	next: () => void = () => { },
 ): void {
-	validate()
+	if (!parentForm.value) {
+		return;
+	}
+
+	$useForm.validate()
 		.then((response: ValidateResult) => {
 			const errors = response.errors as unknown as ValidateResult['errors'];
-
-
 			checkForPageErrors(errors, source, next);
 		})
 		.catch((error: Error) => {
@@ -362,11 +531,9 @@ function removePageError(pageIndex: number): void {
 	currentPageHasErrors.value = false;
 }
 
-
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
-	const currentPage = stepperModel.value - 1;
-	const page = computedPages.value[currentPage];
+	const page = computedPages.value[currentPageIdx.value];
 
 	if (!page) {
 		return;
@@ -409,7 +576,7 @@ function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void
 let debounceTimer: ReturnType<typeof setTimeout>;
 
 function onFieldValidate(field: Field, next: () => void): void {
-	const errors = parentForm.value?.errors as ValidateResult['errors'];
+	const errors = $useForm.errorBag as ValidateResult['errors'];
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
 	// If autoPage //
@@ -417,7 +584,7 @@ function onFieldValidate(field: Field, next: () => void): void {
 
 		if (parentForm.value) {
 			// First validate the page before proceeding to the next page //
-			(parentForm.value as { validate: () => Promise<ValidateResult>; }).validate()
+			$useForm.validate()
 				.then((res: ValidateResult) => {
 					if (res.valid) {
 						// debounce next //
@@ -429,8 +596,7 @@ function onFieldValidate(field: Field, next: () => void): void {
 						return;
 					}
 
-					const currentPage = stepperModel.value - 1;
-					const page = computedPages.value[currentPage];
+					const page = computedPages.value[currentPageIdx.value];
 					const pageIndex = computedPages.value.findIndex((p) => p === page);
 
 					setPageToError(pageIndex, page, 'validating');
@@ -443,14 +609,18 @@ function onFieldValidate(field: Field, next: () => void): void {
 		return;
 	}
 
-	checkForPageErrors(errors, 'field', shouldAutoPage);
+	$useForm.validateField(field.name, {}, { name: field.name })
+		.then(() => {
+			checkForPageErrors($useForm.errorBag.value, 'field', shouldAutoPage);
+
+		});
 }
 
 
 // -------------------------------------------------- Submit //
-function onSubmit(values: any): void {
+const onSubmit = $useForm.handleSubmit((values: any): void => {
 	emit('submit', values);
-}
+});
 
 
 // ------------------------------------------------ Callbacks //
@@ -460,6 +630,7 @@ function callbacks() {
 
 // ------------------------ Conditional "when" callbacks //
 const computedPages = computed<Page[]>(() => {
+	// const localPages = JSON.parse(JSON.stringify(pages));
 	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		const localPage = page;
 		localPage.visible = true;

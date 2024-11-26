@@ -1,37 +1,28 @@
 <template>
-	<Field
-		v-slot="{ errorMessage, validate }"
-		v-model="modelValue"
-		:name="field.name"
-		:validate-on-blur="fieldValidateOn === 'blur'"
-		:validate-on-change="fieldValidateOn === 'change'"
-		:validate-on-input="fieldValidateOn === 'input'"
-		:validate-on-model-update="false"
+	<component
+		:is="component"
+		v-model="value"
+		v-bind="{ ...boundSettings }"
+		:data-cy="`vsf-field-${field.name}`"
+		:error="hasErrors"
+		:error-messages="errorMessage || field.errorMessages"
+		:items="fieldItems"
+		@blur="onActions('blur')"
+		@change="onActions('change')"
+		@input="onActions('input')"
 	>
-		<component
-			:is="component"
-			v-model="modelValue"
-			v-bind="boundSettings"
-			:error="hasErrors"
-			:error-messages="errorMessage || field.errorMessages"
-			:items="fieldItems"
-			@blur="onActions(validate, 'blur')"
-			@change="onActions(validate, 'change')"
-			@input="onActions(validate, 'input')"
-		>
-			<template #label>
-				<FieldLabel
-					:label="field.label"
-					:required="fieldRequired"
-				/>
-			</template>
-		</component>
-	</Field>
+		<template #label>
+			<FieldLabel
+				:label="field.label"
+				:required="fieldRequired"
+			/>
+		</template>
+	</component>
 </template>
 
 
 <script lang="ts" setup>
-import { Field } from 'vee-validate';
+import { useField } from 'vee-validate';
 import type { CommonFieldProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
 import { useBindingSettings } from '../../../composables/bindings';
@@ -52,15 +43,29 @@ const fieldRequired = computed<FieldLabelProps['required']>(() => {
 const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
+
+const { errorMessage, setValue, validate, value } = useField(
+	field.name,
+	undefined,
+	{
+		initialValue: modelValue.value,
+		validateOnBlur: fieldValidateOn.value === 'blur',
+		validateOnChange: fieldValidateOn.value === 'change',
+		validateOnInput: fieldValidateOn.value === 'input',
+		validateOnModelUpdate: fieldValidateOn.value != null,
+	},
+);
+
 onUnmounted(() => {
 	if (!settings.value.keepValuesOnUnmount) {
 		modelValue.value = originalValue;
+		setValue(originalValue);
 	}
 });
 
 
 // ------------------------- Validate On Actions //
-async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+async function onActions(action: ValidateAction): Promise<void> {
 	await useOnActions({
 		action,
 		emit,
@@ -72,7 +77,7 @@ async function onActions(validate: FieldValidateResult, action: ValidateAction):
 
 const fieldItems = computed(() => field?.items ? field.items as unknown : undefined);
 const fieldType = computed(() => {
-	if (field.type === 'color') {
+	if (field.type === 'color' || field.type === 'date') {
 		return 'text';
 	}
 

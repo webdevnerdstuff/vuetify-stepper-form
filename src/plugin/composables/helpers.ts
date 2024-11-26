@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { watchDebounced } from '@vueuse/core';
-import {
+import type {
 	UseAutoPage,
 	UseBuildSettings,
 	UseColumnErrorCheck,
 	UseDeepMerge,
+	UseGetFirstAndLastEditableFalse,
 } from '@/plugin/types';
 
 
@@ -13,26 +13,27 @@ import {
 */
 type AnyObject = Record<string, any>;
 
-export const useDeepMerge: UseDeepMerge = (A, B, C) => {
+export const useDeepMerge: UseDeepMerge = (A, B, C = {}) => {
 	const deepMerge = (obj1: AnyObject, obj2: AnyObject): AnyObject => {
 		const result: AnyObject = { ...obj1 };
 		for (const key in obj2) {
 			if (
-				obj2[key] &&
+				obj2[key] !== undefined && // Only proceed if obj2[key] is not undefined
 				typeof obj2[key] === 'object' &&
 				!Array.isArray(obj2[key])
 			) {
 				result[key] = deepMerge(result[key] ?? {}, obj2[key]);
 			}
-			else {
+			else if (obj2[key] !== undefined) {
+				// Only assign if obj2[key] is defined
 				result[key] = obj2[key];
 			}
 		}
 		return result;
 	};
 
-	// Merge A, B, and C with priority order C > B > A
-	return deepMerge(deepMerge(A, B), C);
+	// Merge only defined objects with priority order C > B > A
+	return [A, B, C].filter(Boolean).reduce(deepMerge, {});
 };
 
 
@@ -68,6 +69,7 @@ export const useBuildSettings: UseBuildSettings = (stepperProps: Settings) => {
 		prevText: stepperProps.prevText,
 		rounded: stepperProps.rounded,
 		selectedClass: stepperProps.selectedClass,
+		summaryColumns: stepperProps.summaryColumns,
 		tag: stepperProps.tag,
 		theme: stepperProps.theme,
 		tile: stepperProps.tile,
@@ -122,4 +124,22 @@ export const useColumnErrorCheck: UseColumnErrorCheck = (options) => {
 	}
 
 	throw new Error(`The ${propName} values must be between 1 and 12`);
+};
+
+
+export const useGetFirstAndLastEditableFalse: UseGetFirstAndLastEditableFalse = (pages) => {
+	let firstNonEditableIndex = -1;
+	let lastNonEditableIndex = -1;
+
+	pages.forEach((item, index) => {
+		if (item.editable === false) {
+			if (firstNonEditableIndex === -1) {
+				firstNonEditableIndex = index;
+			}
+
+			lastNonEditableIndex = index;
+		}
+	});
+
+	return { firstNonEditableIndex, lastNonEditableIndex };
 };

@@ -1,11 +1,9 @@
-
-/* eslint-disable no-unused-vars */
-import { App } from 'vue';
 import type {
 	FieldValidator,
 	FormValidationResult,
 	GenericObject,
 } from 'vee-validate';
+import type { App, MaybeRef } from 'vue';
 import type {
 	VBtn,
 	// VIcon,
@@ -68,7 +66,6 @@ export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'so
 	* VCheckbox
 	* VCombobox
 	* VColorField
-	// * VFancyRadio
 	* VFileInput
 	* VSelect
 	* VSwitch
@@ -160,7 +157,7 @@ export interface Page {
 	editable?: VStepperItem['editable'];
 	error?: boolean;
 	fields?: Field[];
-	isReview?: boolean;
+	isSummary?: boolean;
 	pageFieldColumns?: ResponsiveColumns;
 	text?: string;
 	title?: string;
@@ -181,12 +178,15 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	color?: string | undefined;
 	density?: GlobalDensity;
 	direction?: 'horizontal' | 'vertical';
+	editable?: VStepperItem['editable'];
 	errorIcon?: VStepperItem['errorIcon'];
 	fieldColumns?: ResponsiveColumns | undefined;
 	headerTooltips?: boolean;
 	hideDetails?: GlobalHideDetails;
+	jumpAhead?: boolean;
 	keepValuesOnUnmount?: boolean,
 	navButtonSize?: VBtn['size'];
+	navButtonVariant?: VBtn['variant'];
 	summaryColumns?: ResponsiveColumns;
 	title?: string;
 	tooltipLocation?: VTooltip['location'];
@@ -261,7 +261,7 @@ export interface UseDeepMerge {
 	(
 		A: Record<string, any>,
 		B: Record<string, any>,
-		C: Record<string, any>
+		C?: Record<string, any>
 	): Record<string, any>;
 }
 
@@ -287,6 +287,14 @@ export interface UseColumnErrorCheck {
 	): void;
 }
 
+export interface UseGetFirstAndLastEditableFalse {
+	(
+		pages: Page[]
+	): {
+		firstNonEditableIndex: number;
+		lastNonEditableIndex: number;
+	};
+}
 
 // ------------------------- Classes //
 export type ComputedClasses = Record<string, boolean>;
@@ -315,6 +323,42 @@ export interface UseColumnClasses {
 			propName?: string;
 		}
 	): ComputedClasses;
+}
+
+// ------------------------- Navigation //
+export interface UseHandleJumpAhead {
+	(options:
+		{
+			currentPageEditable: boolean;
+			currentPageIdx: MaybeRef<number>;
+			firstNonEditableIndex: number;
+			lastNonEditableIndex: number;
+			lastPageIdx: number;
+			nextPageEditable: boolean;
+			nextPageNotEditable: boolean;
+			pageIdx: number;
+			pageNotEditable: boolean;
+			previousPageEditable: boolean;
+			previousPageNotEditable: boolean;
+		}
+	): boolean;
+}
+
+export interface UseHandleNonJumpAhead {
+	(options:
+		{
+			currentPageEditable: boolean;
+			currentPageIdx: MaybeRef<number>;
+			firstNonEditableIndex: number;
+			lastNonEditableIndex: number;
+			lastPageIdx: number;
+			nextPageEditable: boolean;
+			nextPageNotEditable: boolean;
+			pageEditable: boolean;
+			pageIdx: number;
+			pageNotEditable: boolean;
+		}
+	): boolean;
 }
 
 

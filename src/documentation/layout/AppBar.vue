@@ -143,6 +143,7 @@ function getTheme(): void {
 function setTheme(): void {
 	themeName.value = store.setTheme(themeName.value as string);
 	theme.global.name.value = themeName.value;
+	emit('changedTheme', themeName.value);
 };
 
 function toggleDrawer(): void {

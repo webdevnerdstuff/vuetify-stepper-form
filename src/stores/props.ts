@@ -171,6 +171,12 @@ export const usePropsStore = defineStore('props', () => {
 			type: 'boolean',
 		},
 		{
+			default: false,
+			desc: 'Allows jumping ahead to pages that are not yet filled out.',
+			name: 'jumpAhead',
+			type: 'boolean',
+		},
+		{
 			default: 'undefined',
 			desc: vStepperPropDesc,
 			name: 'maxHeight',
@@ -205,6 +211,12 @@ export const usePropsStore = defineStore('props', () => {
 			desc: 'Sets the height and width of the navigation buttons. Default unit is px. Can also use the following predefined sizes: x-small, small, default, large, and x-large.',
 			name: 'navButtonSize',
 			type: "VBtn['size']",
+		},
+		{
+			default: 'tonal',
+			desc: 'Applies a distinct style to the navigation buttons.',
+			name: 'navButtonVariant',
+			type: "VBtn['variant']",
 		},
 		{
 			default: '$vuetify.stepper.next',

@@ -1,23 +1,28 @@
 <template>
 	<Field
-		v-slot="{ errorMessage, validate }"
+		v-slot="props"
 		v-model="modelValue"
 		:name="field.name"
+		:syncVModel="true"
+		type="checkbox"
+		:unchecked-value="field.falseValue"
 		:validate-on-blur="fieldValidateOn === 'blur'"
 		:validate-on-change="fieldValidateOn === 'change'"
 		:validate-on-input="fieldValidateOn === 'input'"
 		:validate-on-model-update="false"
+		:value="field.trueValue"
 	>
 		<v-switch
-			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
-			v-model="modelValue"
+			v-bind="{ ...(boundSettings as Omit<Settings, 'validateOn'>), ...props.field }"
+			:data-cy="`vsf-field-${field.name}`"
 			:density="fieldDensity"
 			:disabled="isValidating"
-			:error="errorMessage ? errorMessage?.length > 0 : false"
-			:error-messages="errorMessage"
-			@blur="onActions((validate as ValidateFieldResult), 'blur')"
-			@change="onActions((validate as ValidateFieldResult), 'change')"
-			@input="onActions((validate as ValidateFieldResult), 'input')"
+			:error="props.errorMessage ? props.errorMessage?.length > 0 : false"
+			:error-messages="props.errorMessage"
+			@blur="onActions((props.validate as ValidateFieldResult), 'blur')"
+			@change="onActions((props.validate as ValidateFieldResult), 'change')"
+			@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(props.validate, 'click') : undefined"
+			@input="onActions((props.validate as ValidateFieldResult), 'input')"
 		>
 			<template #label>
 				<FieldLabel
@@ -86,7 +91,9 @@ const bindSettings = computed(() => ({
 	...field,
 	color: field.color || settings.value.color,
 	density: field.density || settings.value.density,
+	falseValue: field.falseValue || false,
 	hideDetails: field.hideDetails || settings.value.hideDetails,
+	trueValue: field.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));

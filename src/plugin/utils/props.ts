@@ -3,6 +3,7 @@ export const AllProps = {
 	direction: 'horizontal' as const,
 	disabled: false,
 	editable: true,
+	jumpAhead: false,
 	keepValuesOnUnmount: false,
 	navButtonSize: 'large' as const,
 	tooltipLocation: 'bottom' as const,

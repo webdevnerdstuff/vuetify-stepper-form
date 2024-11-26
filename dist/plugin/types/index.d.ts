@@ -1,5 +1,5 @@
-import { App } from 'vue';
 import { FieldValidator, FormValidationResult, GenericObject } from 'vee-validate';
+import { App } from 'vue';
 import { VBtn, VStepper, VStepperItem, VStepperWindowItem, VTooltip } from 'vuetify/components';
 import { ValidationRule } from 'vuetify/composables/validation';
 import { Schema } from 'yup';
@@ -65,7 +65,7 @@ export interface Page {
     editable?: VStepperItem['editable'];
     error?: boolean;
     fields?: Field[];
-    isReview?: boolean;
+    isSummary?: boolean;
     pageFieldColumns?: ResponsiveColumns;
     text?: string;
     title?: string;

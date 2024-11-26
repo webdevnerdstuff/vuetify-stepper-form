@@ -1,5 +1,5 @@
 
-import {
+import type {
 	UseOnActions,
 } from '../types/index';
 

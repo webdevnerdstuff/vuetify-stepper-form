@@ -11,11 +11,22 @@ export default tseslint.config(
 	...wdnsConfig,
 	{
 		ignores: [
+			'**/*.cy.ts',
+			'**/cypress/**',
+			'cypress.config.ts',
+			'src/playground/configs/templates/PlaygroundPage.vue',
+			'src/types/cypress.d.ts',
 			'vite.build.config.mts',
 			'vite.config.mts',
-			'src/playground/configs/templates/PlaygroundPage.vue',
+			'vite.cypress.config.ts',
 		],
 	},
+
+	{
+		name: 'app/files-to-ignore',
+		ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
+	},
+
 	{
 		name: 'app/files-to-lint',
 		files: ['**/*.{ts,mts,tsx,vue}'],
@@ -25,7 +36,7 @@ export default tseslint.config(
 			sourceType: 'module',
 			parserOptions: {
 				parser: tseslint.parser,
-				project: ['./tsconfig.json', './tsconfig.node.json'],
+				project: ['./tsconfig.json', './tsconfig.node.json', 'tsconfig.app.json'],
 				extraFileExtensions: ['.vue'],
 				sourceType: 'module',
 			},

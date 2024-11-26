@@ -1,5 +1,3 @@
-import { Component } from 'vue';
-import type CommonField from './CommonField.vue';
 import type {
 	Field,
 	GlobalChips,
@@ -9,6 +7,8 @@ import type {
 	GlobalVariant,
 	SharedProps,
 } from '@/plugin/types';
+import type { Component } from 'vue';
+import CommonField from './CommonField.vue';
 
 
 interface InternalField extends Omit<Field,

@@ -34,7 +34,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import { provide } from 'vue';
 import AppBar from '@/documentation/layout/AppBar.vue';
 import PlaygroundPage from '@/playground/PlaygroundPage.vue';

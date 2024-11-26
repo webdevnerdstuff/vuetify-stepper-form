@@ -2,6 +2,7 @@ import { Page, ResponsiveColumns } from '../../types/index';
 export interface PageContainerProps {
     fieldColumns: ResponsiveColumns | undefined;
     page: Page;
+    pageIndex: number;
 }
 declare let __VLS_typeProps: PageContainerProps;
 type __VLS_PublicProps = {
