@@ -35,7 +35,7 @@ jobs:
       - name: Build Docs
         run: pnpm build:docs
 
-      - name: Display structure of downloaded files
+      - name: Display structure of built files
         run: ls -R ./docs
 
       - name: Setup Pages
@@ -51,7 +51,7 @@ jobs:
         id: deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./dist
 
   deploy:
     environment:
@@ -79,8 +79,6 @@ jobs:
 
       - name: Download the build folder
         uses: actions/download-artifact@v4
-        with:
-          path: ./docs
 
       - name: Display structure of downloaded files
         run: ls -R ./docs
