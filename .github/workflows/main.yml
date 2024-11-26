@@ -38,6 +38,7 @@ jobs:
           name: github-pages
           path: ./docs
 
+  # Deploy job
   deploy:
     environment:
       name: github-pages
