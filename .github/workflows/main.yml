@@ -26,11 +26,14 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --g gh-pages
 
       - name: Make Docs Directory
         run: |
           mkdir docs
+
+      - name: Build Docs
+        run: pnpm build:docs
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -78,9 +81,6 @@ jobs:
 
       - name: Display structure of downloaded files
         run: ls -R ./docs
-
-      - name: Install dependencies
-        run: npm install --g gh-pages
 
       - name: Deploy to GitHub Pages
         id: deployment
