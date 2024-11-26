@@ -48,9 +48,9 @@ jobs:
           destination: ./docs
 
       - name: Upload artifact
-        id: deployment
         uses: actions/upload-pages-artifact@v3
         with:
+          name: build
           path: ./docs
 
   deploy:
@@ -80,6 +80,7 @@ jobs:
       - name: Download the build folder
         uses: actions/download-artifact@v4
         with:
+          name: build
           path: ./docs
 
       - name: Display structure of downloaded files
