@@ -156,7 +156,7 @@ const pageTypings = `interface Page {
   editable?: VStepperItem['editable'];
   error?: boolean;
   fields: Field[];
-  isReview?: boolean;
+  isSummary?: boolean;
   text?: string;
   title?: string;
   visible?: boolean; // Internal use only

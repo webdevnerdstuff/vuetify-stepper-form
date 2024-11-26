@@ -1,8 +1,8 @@
-import type VSFCustom from './VSFCustom.vue';
 import type {
 	Field,
 	SharedProps,
 } from '@/plugin/types';
+import VSFCustom from './VSFCustom.vue';
 
 
 interface InternalField extends Omit<Field,

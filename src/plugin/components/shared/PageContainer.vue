@@ -11,6 +11,7 @@
 			<input
 				v-if="field.type === 'hidden' || !field.type"
 				v-model="modelValue[field.name]"
+				:data-cy="`vsf-field-${field.name}`"
 				:name="field.name"
 				type="hidden"
 			/>
@@ -20,7 +21,10 @@
 					v-if="field.text"
 					cols="12"
 				>
-					<div v-html="field.text" />
+					<div
+						data-cy="vsf-field-text"
+						v-html="field.text"
+					/>
 				</v-col>
 
 				<v-col :class="getColumnClasses(field)">
@@ -111,6 +115,7 @@ import {
 	VTextField,
 	VTextarea,
 } from 'vuetify/components';
+import { VDateInput } from 'vuetify/labs/VDateInput';
 import type {
 	ComputedClasses,
 	Field,
@@ -124,8 +129,12 @@ import * as Fields from '../fields/index';
 export interface PageContainerProps {
 	fieldColumns: ResponsiveColumns | undefined;
 	page: Page;
+	pageIndex: number;
 }
 
+defineOptions({
+	inheritAttrs: false,
+});
 const emit = defineEmits(['validate']);
 const slots = defineSlots();
 const { fieldColumns, page } = defineProps<PageContainerProps>();
@@ -153,6 +162,8 @@ function getComponent(fieldType: string): Component | null {
 			return markRaw(VColorField);
 		case 'combobox':
 			return markRaw(VCombobox);
+		case 'date':
+			return markRaw(VDateInput);
 		case 'file':
 			return markRaw(VFileInput);
 		case 'select':

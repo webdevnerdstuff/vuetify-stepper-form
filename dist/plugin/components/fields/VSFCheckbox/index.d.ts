@@ -1,6 +1,6 @@
-import { default as VSFCheckbox } from './VSFCheckbox.vue';
 import { Field, SharedProps } from '../../../types';
 import { VCheckbox } from 'vuetify/components';
+import { default as VSFCheckbox } from './VSFCheckbox.vue';
 interface InternalField extends Field {
     color?: VCheckbox['color'];
     density?: VCheckbox['density'];

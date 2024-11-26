@@ -1,33 +1,25 @@
 <template>
-	<Field
+	<v-checkbox
 		v-if="!field?.multiple"
-		v-slot="{ errorMessage, validate }"
-		v-model="modelValue"
-		:name="field.name"
-		:validate-on-blur="fieldValidateOn === 'blur'"
-		:validate-on-change="fieldValidateOn === 'change'"
-		:validate-on-input="fieldValidateOn === 'input'"
-		:validate-on-model-update="false"
+		v-model="value"
+		v-bind="{ ...(boundSettings as Omit<Settings, 'validateOn'>) }"
+		:data-cy="`vsf-field-${field.name}`"
+		:density="fieldDensity"
+		:disabled="isValidating"
+		:error="errorMessage ? errorMessage?.length > 0 : false"
+		:error-messages="errorMessage"
+		@blur="onActions('blur')"
+		@change="onActions('change')"
+		@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click') : undefined"
+		@input="onActions('input')"
 	>
-		<v-checkbox
-			v-model="modelValue"
-			v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
-			:density="fieldDensity"
-			:disabled="isValidating"
-			:error="errorMessage ? errorMessage?.length > 0 : false"
-			:error-messages="errorMessage"
-			@blur="onActions(validate, 'blur')"
-			@change="onActions(validate, 'change')"
-			@input="onActions(validate, 'input')"
-		>
-			<template #label>
-				<FieldLabel
-					:label="field.label"
-					:required="fieldRequired"
-				/>
-			</template>
-		</v-checkbox>
-	</Field>
+		<template #label>
+			<FieldLabel
+				:label="field.label"
+				:required="fieldRequired"
+			/>
+		</template>
+	</v-checkbox>
 
 	<div
 		v-else
@@ -52,69 +44,58 @@
 				/>
 			</v-label>
 
-			<Field
-				v-slot="{ errorMessage, validate }"
-				v-model="modelValue"
-				:name="field.name"
-				:validate-on-blur="fieldValidateOn === 'blur'"
-				:validate-on-change="fieldValidateOn === 'change'"
-				:validate-on-input="fieldValidateOn === 'input'"
-				:validate-on-model-update="false"
+			<div
+				:id="field?.id"
+				:class="controlGroupClasses"
+				:style="checkboxContainerStyle"
 			>
-				<div
-					:id="field?.id"
-					:class="{
-						'v-selection-control-group': field.inline,
-						'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
-					}"
-					:style="checkboxContainerStyle"
-				>
-					<div :class="{
-						'v-input__control': field.inline,
-					}">
-						<template
-							v-for="option in field?.options"
-							:key="option.value"
-						>
-							<v-checkbox
-								v-bind="(boundSettings as Omit<Settings, 'validateOn'>)"
-								:id="option.id"
-								v-model="modelValue"
-								:density="fieldDensity"
-								:disabled="isValidating"
-								:error="errorMessage ? errorMessage?.length > 0 : false"
-								:error-messages="errorMessage"
-								:hide-details="true"
-								:label="option.label"
-								:style="checkboxStyle"
-								:true-value="option.value"
-								@blur="onActions(validate, 'blur')"
-								@change="onActions(validate, 'change')"
-								@input="onActions(validate, 'input')"
-								@update:focused="updateFocused($event)"
-							/>
-						</template>
-					</div>
-					<div
-						v-if="hasDetails"
-						class="v-input__details"
+				<div :class="{
+					'v-input__control': field.inline,
+				}">
+					<template
+						v-for="option in field?.options"
+						:key="option.value"
 					>
-						<VMessages
-							:active="activeMessages(errorMessage)"
-							:color="errorMessage ? 'error' : undefined"
-							:messages="fieldMessages(errorMessage)"
-						>
-						</VMessages>
-					</div>
+						<v-checkbox
+							v-bind="{ ...(boundSettings as Omit<Settings, 'validateOn'>) }"
+							:id="option.id"
+							v-model="value"
+							:data-cy="`vsf-field-${field.name}`"
+							:density="fieldDensity"
+							:disabled="isValidating"
+							:error="errorMessage ? errorMessage?.length > 0 : false"
+							:error-messages="errorMessage"
+							:hide-details="true"
+							:label="option.label"
+							:style="checkboxStyle"
+							:true-value="option.value"
+							@blur="onActions('blur')"
+							@change="onActions('change')"
+							@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click') : undefined"
+							@input="onActions('input')"
+							@update:focused="updateFocused($event)"
+						/>
+					</template>
 				</div>
-			</Field>
+				<div
+					v-if="hasDetails"
+					class="v-input__details"
+				>
+					<VMessages
+						:active="activeMessages(errorMessage)"
+						:color="errorMessage ? 'error' : undefined"
+						:messages="fieldMessages(errorMessage)"
+					>
+					</VMessages>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 
 <script lang="ts" setup>
-import { Field } from 'vee-validate';
+import { useField } from 'vee-validate';
 import { VMessages } from 'vuetify/components';
 import type { VSFCheckboxProps } from './index';
 import type { FieldLabelProps } from '../../shared/FieldLabel.vue';
@@ -138,9 +119,23 @@ const fieldRequired = computed<FieldLabelProps['required']>(() => {
 const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
+
+const { errorMessage, setValue, validate, value } = useField(
+	field.name,
+	undefined,
+	{
+		initialValue: modelValue.value,
+		validateOnBlur: fieldValidateOn.value === 'blur',
+		validateOnChange: fieldValidateOn.value === 'change',
+		validateOnInput: fieldValidateOn.value === 'input',
+		validateOnModelUpdate: fieldValidateOn.value != null,
+	},
+);
+
 onUnmounted(() => {
 	if (!settings.value.keepValuesOnUnmount) {
 		modelValue.value = originalValue;
+		setValue(originalValue);
 	}
 });
 
@@ -148,9 +143,11 @@ onUnmounted(() => {
 // ------------------------- Validate On Actions //
 const isValidating = ref<boolean>(field?.disabled as boolean);
 
-async function onActions(validate: FieldValidateResult, action: ValidateAction): Promise<void> {
+async function onActions(action: ValidateAction): Promise<void> {
 	if (!isValidating.value) {
 		isValidating.value = true;
+
+		modelValue.value = value.value;
 
 		await useOnActions({
 			action: field?.autoPage ? 'click' : action,
@@ -172,6 +169,7 @@ const bindSettings = computed(() => ({
 	density: field.density || settings.value.density,
 	falseValue: field.falseValue || undefined,
 	hideDetails: field.hideDetails || settings.value.hideDetails,
+	trueValue: field.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>, [
@@ -254,6 +252,11 @@ const checkboxStyle = computed<CSSProperties>(() => {
 
 	return styles as CSSProperties;
 });
+
+const controlGroupClasses = computed(() => ({
+	'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
+	'v-selection-control-group': field.inline,
+}));
 </script>
 
 <style lang="scss" scoped></style>

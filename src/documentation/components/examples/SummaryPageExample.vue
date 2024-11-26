@@ -48,7 +48,7 @@ const pages = [
 		title: 'Page 2',
 	},
 	{
-		isReview: true,
+		isSummary: true,
 		text: 'Here\'s the data you\'ve entered. Feel free to review it.',
 		title: 'Summary',
 	},
@@ -102,7 +102,7 @@ const pages = [
     title: 'Page 2',
   },
   {
-    isReview: true,
+    isSummary: true,
     text: 'Here\'s the data you\'ve entered. Feel free to review it.',
     title: 'Summary',
   },

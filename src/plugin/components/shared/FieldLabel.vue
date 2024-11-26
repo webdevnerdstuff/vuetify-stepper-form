@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div data-cy="vsf-field-label">
 		<span v-html="label" /> <span
 			v-if="required"
 			class="text-error ms-1"
