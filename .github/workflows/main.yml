@@ -49,13 +49,18 @@ jobs:
         node-version: [20]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
-
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Download the build folder
         uses: actions/download-artifact@v4
@@ -64,12 +69,8 @@ jobs:
           path: ./docs
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install --g gh-pages
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
 
       - name: Deploy to GitHub Pages
         id: deployment
