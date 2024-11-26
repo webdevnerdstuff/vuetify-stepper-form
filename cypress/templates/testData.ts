@@ -651,6 +651,7 @@ export {
 	fieldColumnsPages,
 	fieldColumnsPagesPageColumns,
 	finalAnswer,
+	isRequired,
 	items,
 	navigationTest,
 	stepperProps,

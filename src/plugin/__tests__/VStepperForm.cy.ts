@@ -1,4 +1,4 @@
-import type { Field } from '../../plugin/types';
+import type { Field, Page } from '../../plugin/types';
 import * as DATA from '@cypress/templates/testData';
 import VStepperForm from '../VStepperForm.vue';
 
@@ -552,6 +552,7 @@ describe('Stepper Form', () => {
 
 
 			// ~ -------------------------------------------------- Check the final answers on Summary Page //
+			// TODO //
 			// return false;
 			// Object.entries(finalAnswer).forEach(([key, ans]) => {
 			//   let finalAnswer = ans;
@@ -580,257 +581,256 @@ describe('Stepper Form', () => {
 				const eventPayload = args[0][0];
 				expect(eventPayload).to.deep.equal(DATA.finalAnswer);
 			});
-
 		});
 	});
 
-	// describe('Auto Page', () => {
-	// 	it('should automatically go to the next page', () => {
-	// 		cy.mount(VStepperForm as any, {
-	// 			props: {
-	// 				modelValue: answers,
-	// 				pages: [
-	// 					{
-	// 						fields: [
-	// 							defaultFields.firstName,
-	// 							{
-	// 								...defaultFields.lastName,
-	// 								autoPage: true,
-	// 							},
-	// 						],
-	// 						title: 'Page 1',
-	// 					},
-	// 					{
-	// 						fields: [
-	// 							defaultFields.address,
-	// 							defaultFields.city,
-	// 						],
-	// 						title: 'Page 2',
-	// 					},
-	// 					{
-	// 						isSummary: true,
-	// 						title: 'Summary',
-	// 					},
-	// 				],
-	// 			},
-	// 			global,
-	// 		});
+	describe('Auto Page', () => {
+		it('should automatically go to the next page', () => {
+			cy.mount(VStepperForm as any, {
+				props: {
+					modelValue: answers,
+					pages: [
+						{
+							fields: [
+								defaultFields.firstName,
+								{
+									...defaultFields.lastName,
+									autoPage: true,
+								},
+							],
+							title: 'Page 1',
+						},
+						{
+							fields: [
+								defaultFields.address,
+								defaultFields.city,
+							],
+							title: 'Page 2',
+						},
+						{
+							isSummary: true,
+							title: 'Summary',
+						},
+					],
+				},
+				global,
+			});
 
-	// 		cy.getDataCy('vsf-field-address')
-	// 			.should('not.exist');
-	// 		cy.getDataCy('vsf-field-city')
-	// 			.should('not.exist');
+			cy.getDataCy('vsf-field-address')
+				.should('not.exist');
+			cy.getDataCy('vsf-field-city')
+				.should('not.exist');
 
-	// 		cy.getDataCy(`vsf-field-lastName`)
-	// 			.type('Rabbit')
-	// 			.trigger('blur');
+			cy.getDataCy(`vsf-field-lastName`)
+				.type('Rabbit')
+				.trigger('blur');
 
-	// 		// Moved onto the next page - find fields //
-	// 		cy.getDataCy('vsf-field-address')
-	// 			.should('exist')
-	// 			.and('be.visible');
+			// Moved onto the next page - find fields //
+			cy.getDataCy('vsf-field-address')
+				.should('exist')
+				.and('be.visible');
 
-	// 		cy.getDataCy('vsf-field-city')
-	// 			.should('exist')
-	// 			.and('be.visible');
-	// 	});
-	// });
+			cy.getDataCy('vsf-field-city')
+				.should('exist')
+				.and('be.visible');
+		});
+	});
 
-	// describe('Header Tooltip', () => {
-	// 	beforeEach(() => {
-	// 		cy.mount(VStepperForm as any, {
-	// 			props: {
-	// 				headerTooltips: true,
-	// 				modelValue: answers,
-	// 				pages: [
-	// 					{
-	// 						fields: [
-	// 							defaultFields.firstName,
-	// 							defaultFields.lastName,
-	// 						],
-	// 						title: 'Page 1',
-	// 					},
-	// 					{
-	// 						fields: [
-	// 							defaultFields.address,
-	// 							defaultFields.city,
-	// 						],
-	// 						title: 'Page 2',
-	// 					},
-	// 					{
-	// 						isSummary: true,
-	// 						title: 'Summary',
-	// 					},
-	// 				],
-	// 				tooltipLocation: 'right',
-	// 				tooltipTransition: 'fab-transition',
-	// 			},
-	// 			global,
-	// 		});
+	describe('Header Tooltip', () => {
+		beforeEach(() => {
+			cy.mount(VStepperForm as any, {
+				props: {
+					headerTooltips: true,
+					modelValue: answers,
+					pages: [
+						{
+							fields: [
+								defaultFields.firstName,
+								defaultFields.lastName,
+							],
+							title: 'Page 1',
+						},
+						{
+							fields: [
+								defaultFields.address,
+								defaultFields.city,
+							],
+							title: 'Page 2',
+						},
+						{
+							isSummary: true,
+							title: 'Summary',
+						},
+					],
+					tooltipLocation: 'right',
+					tooltipTransition: 'fab-transition',
+				},
+				global,
+			});
 
-	// 		// Stepper Form //
-	// 		cy.get('[data-cy="vsf-stepper-form"]').as('stepperForm');
-	// 		cy.get('@stepperForm')
-	// 			.should('exist')
-	// 			.and('be.visible');
+			// Stepper Form //
+			cy.get('[data-cy="vsf-stepper-form"]').as('stepperForm');
+			cy.get('@stepperForm')
+				.should('exist')
+				.and('be.visible');
 
-	// 		cy.getDataCy('vsf-stepper-header')
-	// 			.find('.v-stepper-item')
-	// 			.as('stepperHeaderItems');
+			cy.getDataCy('vsf-stepper-header')
+				.find('.v-stepper-item')
+				.as('stepperHeaderItems');
 
-	// 		cy.getDataCy('vsf-next-button').as('nextButton');
-	// 	});
+			cy.getDataCy('vsf-next-button').as('nextButton');
+		});
 
-	// 	function checkIfTooltipExists(id: string) {
-	// 		return cy.get(`#${id}`)
-	// 			.should('exist')
-	// 			.and('be.visible')
-	// 			.and('have.class', 'v-overlay--active');
-	// 	}
+		function checkIfTooltipExists(id: string) {
+			return cy.get(`#${id}`)
+				.should('exist')
+				.and('be.visible')
+				.and('have.class', 'v-overlay--active');
+		}
 
-	// 	it('should check if tooltip exists and contains page field labels', () => {
-	// 		cy.getDataCy('vsf-next-button').as('nextButton');
-	// 		cy.get('@nextButton').click();
+		it('should check if tooltip exists and contains page field labels', () => {
+			cy.getDataCy('vsf-next-button').as('nextButton');
+			cy.get('@nextButton').click();
 
-	// 		cy.get('@stepperHeaderItems')
-	// 			.first()
-	// 			.realHover()
-	// 			.find('.v-stepper-item__content')
-	// 			.should('exist')
-	// 			.then((el) => {
-	// 				const tooltipId = el.attr('aria-describedby') || '';
+			cy.get('@stepperHeaderItems')
+				.first()
+				.realHover()
+				.find('.v-stepper-item__content')
+				.should('exist')
+				.then((el) => {
+					const tooltipId = el.attr('aria-describedby') || '';
 
-	// 				checkIfTooltipExists(tooltipId)
-	// 					.and('contain', 'First Name')
-	// 					.and('contain', 'Last Name');
-	// 			});
+					checkIfTooltipExists(tooltipId)
+						.and('contain', 'First Name')
+						.and('contain', 'Last Name');
+				});
 
-	// 		cy.get('@stepperHeaderItems')
-	// 			.eq(1)
-	// 			.realHover()
-	// 			.find('.v-stepper-item__content')
-	// 			.should('exist')
-	// 			.then((el) => {
-	// 				const tooltipId = el.attr('aria-describedby') || '';
+			cy.get('@stepperHeaderItems')
+				.eq(1)
+				.realHover()
+				.find('.v-stepper-item__content')
+				.should('exist')
+				.then((el) => {
+					const tooltipId = el.attr('aria-describedby') || '';
 
-	// 				checkIfTooltipExists(tooltipId)
-	// 					.and('contain', 'Address')
-	// 					.and('contain', 'City');
-	// 			});
+					checkIfTooltipExists(tooltipId)
+						.and('contain', 'Address')
+						.and('contain', 'City');
+				});
 
-	// 		cy.get('@stepperHeaderItems')
-	// 			.last()
-	// 			.realHover()
-	// 			.find('.v-stepper-item__content')
-	// 			.should('exist')
-	// 			.then((el) => {
-	// 				const tooltipId = el.attr('aria-describedby');
+			cy.get('@stepperHeaderItems')
+				.last()
+				.realHover()
+				.find('.v-stepper-item__content')
+				.should('exist')
+				.then((el) => {
+					const tooltipId = el.attr('aria-describedby');
 
-	// 				cy.get(`#${tooltipId}`)
-	// 					.should('not.exist');
-	// 			});
-	// 	});
+					cy.get(`#${tooltipId}`)
+						.should('not.exist');
+				});
+		});
 
-	// 	it('should check tooltip location', () => {
-	// 		cy.getDataCy('vsf-next-button').as('nextButton');
-	// 		cy.get('@nextButton').click();
+		it('should check tooltip location', () => {
+			cy.getDataCy('vsf-next-button').as('nextButton');
+			cy.get('@nextButton').click();
 
-	// 		cy.get('@stepperHeaderItems')
-	// 			.first()
-	// 			.realHover()
-	// 			.find('.v-stepper-item__content')
-	// 			.should('exist')
-	// 			.then((el) => {
-	// 				const tooltipId = el.attr('aria-describedby') || '';
+			cy.get('@stepperHeaderItems')
+				.first()
+				.realHover()
+				.find('.v-stepper-item__content')
+				.should('exist')
+				.then((el) => {
+					const tooltipId = el.attr('aria-describedby') || '';
 
-	// 				cy.get(`#${tooltipId}`)
-	// 					.should('exist')
-	// 					.and('be.visible')
-	// 					.find('.v-overlay__content')
-	// 					.then((el) => {
-	// 						const styleAttr = el.attr('style') || '';
+					cy.get(`#${tooltipId}`)
+						.should('exist')
+						.and('be.visible')
+						.find('.v-overlay__content')
+						.then((el) => {
+							const styleAttr = el.attr('style') || '';
 
-	// 						cy.wrap(styleAttr)
-	// 							.should('contain', '--v-overlay-anchor-origin: right center');
-	// 					});
-	// 			});
-	// 	});
-	// });
+							cy.wrap(styleAttr)
+								.should('contain', '--v-overlay-anchor-origin: right center');
+						});
+				});
+		});
+	});
 
-	// describe('Field Columns', () => {
-	// 	const stepperFieldColumns = { lg: 6, md: 8, sm: 10, xl: 4 };
-	// 	const summaryColumns = { lg: 3, md: 4, sm: 5, xl: 6 };
-	// 	const fieldColumnsPagesPageColumns = DATA.fieldColumnsPagesPageColumns;
-	// 	const fieldColumnPages: Page[] = DATA.fieldColumnsPages;
+	describe('Field Columns', () => {
+		const stepperFieldColumns = { lg: 6, md: 8, sm: 10, xl: 4 };
+		const summaryColumns = { lg: 3, md: 4, sm: 5, xl: 6 };
+		const fieldColumnsPagesPageColumns = DATA.fieldColumnsPagesPageColumns;
+		const fieldColumnPages: Page[] = DATA.fieldColumnsPages;
 
-	// 	beforeEach(() => {
-	// 		cy.mount(VStepperForm as any, {
-	// 			props: {
-	// 				modelValue: answers,
-	// 				pages: fieldColumnPages,
-	// 			},
-	// 			global: {
-	// 				provide: {
-	// 					globalOptions: {
-	// 						fieldColumns: stepperFieldColumns,
-	// 						summaryColumns,
-	// 					},
-	// 				},
-	// 			},
-	// 		});
+		beforeEach(() => {
+			cy.mount(VStepperForm as any, {
+				props: {
+					modelValue: answers,
+					pages: fieldColumnPages,
+				},
+				global: {
+					provide: {
+						globalOptions: {
+							fieldColumns: stepperFieldColumns,
+							summaryColumns,
+						},
+					},
+				},
+			});
 
-	// 		cy.getDataCy('vsf-next-button').as('nextButton');
-	// 	});
+			cy.getDataCy('vsf-next-button').as('nextButton');
+		});
 
-	// 	function shouldHaveColumns(fieldName: string, columns: Page['pageFieldColumns']) {
-	// 		cy.getDataCy(`vsf-field-${fieldName}`)
-	// 			.parent()
-	// 			.should('have.class', 'v-col-12')
-	// 			.and('have.class', `v-col-sm-${columns?.sm}`)
-	// 			.and('have.class', `v-col-md-${columns?.md}`)
-	// 			.and('have.class', `v-col-lg-${columns?.lg}`)
-	// 			.and('have.class', `v-col-xl-${columns?.xl}`);
-	// 	}
+		function shouldHaveColumns(fieldName: string, columns: Page['pageFieldColumns']) {
+			cy.getDataCy(`vsf-field-${fieldName}`)
+				.parent()
+				.should('have.class', 'v-col-12')
+				.and('have.class', `v-col-sm-${columns?.sm}`)
+				.and('have.class', `v-col-md-${columns?.md}`)
+				.and('have.class', `v-col-lg-${columns?.lg}`)
+				.and('have.class', `v-col-xl-${columns?.xl}`);
+		}
 
-	// 	it('should check the stepper field columns prop', () => {
-	// 		shouldHaveColumns('firstName', stepperFieldColumns);
-	// 	});
+		it('should check the stepper field columns prop', () => {
+			shouldHaveColumns('firstName', stepperFieldColumns);
+		});
 
-	// 	it('should check the page columns', () => {
-	// 		cy.get('@nextButton').click();
+		it('should check the page columns', () => {
+			cy.get('@nextButton').click();
 
-	// 		shouldHaveColumns('lastName', fieldColumnsPagesPageColumns);
-	// 		shouldHaveColumns('email', fieldColumnsPagesPageColumns);
-	// 	});
+			shouldHaveColumns('lastName', fieldColumnsPagesPageColumns);
+			shouldHaveColumns('email', fieldColumnsPagesPageColumns);
+		});
 
-	// 	it('should check the field columns with custom columns', () => {
-	// 		cy.get('@nextButton')
-	// 			.click()
-	// 			.click();
+		it('should check the field columns with custom columns', () => {
+			cy.get('@nextButton')
+				.click()
+				.click();
 
-	// 		const page = fieldColumnPages.find((page) => page.title === 'Page 3');
+			const page = fieldColumnPages.find((page) => page.title === 'Page 3');
 
-	// 		if (page && page.fields) {
-	// 			page.fields.forEach((field) => {
-	// 				shouldHaveColumns(field.name, field.columns);
-	// 			});
-	// 		}
-	// 	});
+			if (page && page.fields) {
+				page.fields.forEach((field) => {
+					shouldHaveColumns(field.name, field.columns);
+				});
+			}
+		});
 
-	// 	it('should check the summary page columns', () => {
-	// 		cy.get('@nextButton')
-	// 			.click()
-	// 			.click()
-	// 			.click();
+		it('should check the summary page columns', () => {
+			cy.get('@nextButton')
+				.click()
+				.click()
+				.click();
 
-	// 		fieldColumnPages.forEach((page) => {
-	// 			if (page.isSummary) {
+			fieldColumnPages.forEach((page) => {
+				if (page.isSummary) {
 
-	// 				page.fields?.forEach((field) => {
-	// 					shouldHaveColumns(field.name, summaryColumns);
-	// 				});
-	// 			}
-	// 		});
-	// 	});
-	// });
+					page.fields?.forEach((field) => {
+						shouldHaveColumns(field.name, summaryColumns);
+					});
+				}
+			});
+		});
+	});
 });
