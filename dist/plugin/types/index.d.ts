@@ -1,5 +1,5 @@
 import { FieldValidator, FormValidationResult, GenericObject } from 'vee-validate';
-import { App } from 'vue';
+import { App, MaybeRef } from 'vue';
 import { VBtn, VStepper, VStepperItem, VStepperWindowItem, VTooltip } from 'vuetify/components';
 import { ValidationRule } from 'vuetify/composables/validation';
 import { Schema } from 'yup';
@@ -80,12 +80,15 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
     color?: string | undefined;
     density?: GlobalDensity;
     direction?: 'horizontal' | 'vertical';
+    editable?: VStepperItem['editable'];
     errorIcon?: VStepperItem['errorIcon'];
     fieldColumns?: ResponsiveColumns | undefined;
     headerTooltips?: boolean;
     hideDetails?: GlobalHideDetails;
+    jumpAhead?: boolean;
     keepValuesOnUnmount?: boolean;
     navButtonSize?: VBtn['size'];
+    navButtonVariant?: VBtn['variant'];
     summaryColumns?: ResponsiveColumns;
     title?: string;
     tooltipLocation?: VTooltip['location'];
@@ -120,7 +123,7 @@ export interface UseBuildSettings {
     (props: Settings): Settings;
 }
 export interface UseDeepMerge {
-    (A: Record<string, any>, B: Record<string, any>, C: Record<string, any>): Record<string, any>;
+    (A: Record<string, any>, B: Record<string, any>, C?: Record<string, any>): Record<string, any>;
 }
 export interface UseAutoPage {
     (options: {
@@ -137,6 +140,12 @@ export interface UseColumnErrorCheck {
         columns: ResponsiveColumns | undefined;
         propName?: string;
     }): void;
+}
+export interface UseGetFirstAndLastEditableFalse {
+    (pages: Page[]): {
+        firstNonEditableIndex: number;
+        lastNonEditableIndex: number;
+    };
 }
 export type ComputedClasses = Record<string, boolean>;
 export interface UseContainerClasses {
@@ -155,6 +164,35 @@ export interface UseColumnClasses {
         fieldColumns?: ResponsiveColumns | undefined;
         propName?: string;
     }): ComputedClasses;
+}
+export interface UseHandleJumpAhead {
+    (options: {
+        currentPageEditable: boolean;
+        currentPageIdx: MaybeRef<number>;
+        firstNonEditableIndex: number;
+        lastNonEditableIndex: number;
+        lastPageIdx: number;
+        nextPageEditable: boolean;
+        nextPageNotEditable: boolean;
+        pageIdx: number;
+        pageNotEditable: boolean;
+        previousPageEditable: boolean;
+        previousPageNotEditable: boolean;
+    }): boolean;
+}
+export interface UseHandleNonJumpAhead {
+    (options: {
+        currentPageEditable: boolean;
+        currentPageIdx: MaybeRef<number>;
+        firstNonEditableIndex: number;
+        lastNonEditableIndex: number;
+        lastPageIdx: number;
+        nextPageEditable: boolean;
+        nextPageNotEditable: boolean;
+        pageEditable: boolean;
+        pageIdx: number;
+        pageNotEditable: boolean;
+    }): boolean;
 }
 declare module 'vue' {
     interface ComponentCustomProperties {

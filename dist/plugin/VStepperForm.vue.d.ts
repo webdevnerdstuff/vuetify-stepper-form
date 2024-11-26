@@ -6,7 +6,7 @@ type __VLS_PublicProps = {
 declare function __VLS_template(): {
     slots: Partial<Record<NonNullable<string | number>, (_: any) => any>>;
     refs: {
-        stepperFormRef: any;
+        stepperFormRef: HTMLFormElement;
     };
     attrs: Partial<{}>;
 };
@@ -14,9 +14,10 @@ type __VLS_TemplateResult = ReturnType<typeof __VLS_template>;
 declare const __VLS_component: import('vue').DefineComponent<__VLS_PublicProps, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<__VLS_PublicProps> & Readonly<{}>, {
     width: string;
     readonly disabled: boolean;
-    readonly editable: boolean;
+    editable: import('vuetify/lib/components/index.mjs').VStepperItem["editable"];
     autoPageDelay: number;
     direction: "horizontal" | "vertical";
+    jumpAhead: boolean;
     keepValuesOnUnmount: boolean;
     navButtonSize: import('vuetify/lib/components/index.mjs').VBtn["size"];
     tooltipLocation: import('vuetify/lib/components/index.mjs').VTooltip["location"];

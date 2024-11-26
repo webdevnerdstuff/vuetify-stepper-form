@@ -32,11 +32,6 @@ The Vuetify Stepper Form plugin provides a structured way to create multi-step f
 [VeeValidate](https://vee-validate.logaretm.com/v4/)
 
 
-## Change Log
- 
-[CHANGELOG](https://github.com/webdevnerdstuff/vuetify-stepper-form/blob/master/CHANGELOG.md)
-
-
 ## License
 
 Copyright (c) 2023 WebDevNerdStuff  
