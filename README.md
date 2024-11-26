@@ -3,7 +3,7 @@
 </p>
 
 <p>
-  <h1 align="center">Vuetify Stepper Form (Beta)</h1>
+  <h1 align="center">Vuetify Stepper Form</h1>
 </p>
 
 <p align="center">
