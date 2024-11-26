@@ -1,6 +1,8 @@
 name: Cypress Tests with Dependency and Artifact Caching
 
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
   install:
