@@ -26,7 +26,7 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install --g gh-pages
+        run: pnpm install
 
       - name: Make Docs Directory
         run: |
