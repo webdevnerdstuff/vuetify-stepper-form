@@ -35,10 +35,9 @@ jobs:
         run: pnpm build:docs
 
       - name: Save build folder
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           name: build
-          if-no-files-found: error
           path: ./docs
 
   deploy:
