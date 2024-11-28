@@ -19,7 +19,7 @@ import { VStepper as zl, VStepperHeader as Kl, VStepperItem as ql, VStepperWindo
 import { VTooltip as Zl } from "vuetify/lib/components/VTooltip/index.mjs";
 /**
  * @name @wdns/vuetify-stepper-form
- * @version 1.0.1
+ * @version 1.0.2
  * @description The Vuetify Stepper Form plugin provides a structured way to create multi-step forms using Vue 3, TypeScript, and Vuetify. It features a stepper layout that allows users to navigate between steps with form validation. The plugin is customizable and streamlines building dynamic, interactive forms that guide users through sequential steps.
  * @author WebDevNerdStuff & Bunnies... lots and lots of bunnies! <webdevnerdstuff@gmail.com> (https://webdevnerdstuff.com)
  * @copyright Copyright 2024, WebDevNerdStuff
@@ -2735,7 +2735,7 @@ const cl = (e) => {
 function rs(e = {}) {
   return { install: (t) => {
     const a = Pn(e, Eo);
-    t.provide(Oo, a), t.config.idPrefix = "vsf", t.component("VStepperForm", ca(() => Promise.resolve().then(() => Hr))), t.component("FieldLabel", ca(() => import("./FieldLabel-C78b4p01.mjs")));
+    t.provide(Oo, a), t.config.idPrefix = "vsf", t.component("VStepperForm", ca(() => Promise.resolve().then(() => Hr))), t.component("FieldLabel", ca(() => import("./FieldLabel-7fESx4JQ.mjs")));
   } };
 }
 export {
