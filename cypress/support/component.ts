@@ -7,6 +7,7 @@ import VStepperForm from '../../src/plugin/VStepperForm.vue';
 import * as DATA from '../templates/testData';
 import type { Component } from 'vue';
 import "cypress-real-events";
+import { pluginOptionsInjectionKey } from '../../src/plugin/utils/globals';
 
 
 // declare global {
@@ -95,7 +96,7 @@ Cypress.Commands.add('mountComponent', (options: MountComponentOptions = {}) => 
 				validationSchema: stepperProps.validationSchema ?? undefined,
 				...stepperProps,
 			},
-			global: { provide: { globalOptions: { ...globalOptions, ...globalProps }, }, },
+			global: { provide: { [pluginOptionsInjectionKey]: { ...globalOptions, ...globalProps }, }, },
 		}).as('wrapper');
 	});
 });

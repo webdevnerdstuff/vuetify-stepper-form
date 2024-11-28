@@ -1,6 +1,7 @@
 import type { Field, Page } from '../../plugin/types';
 import * as DATA from '@cypress/templates/testData';
 import VStepperForm from '../VStepperForm.vue';
+import { pluginOptionsInjectionKey } from '../../plugin/utils/globals';
 
 
 const finalAnswer = DATA.finalAnswer;
@@ -65,7 +66,7 @@ const pages = [
 
 const global = {
 	provide: {
-		globalOptions: {
+		[pluginOptionsInjectionKey]: {
 			color: 'primary',
 			validateOn: 'blur',
 			fieldColumns: {
@@ -771,7 +772,7 @@ describe('Stepper Form', () => {
 				},
 				global: {
 					provide: {
-						globalOptions: {
+						[pluginOptionsInjectionKey]: {
 							fieldColumns: stepperFieldColumns,
 							summaryColumns,
 						},

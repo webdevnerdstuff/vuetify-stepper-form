@@ -10,8 +10,11 @@ import PlaygroundApp from './PlaygroundApp.vue';
 
 const app = createApp(PlaygroundApp);
 
+app.use(createVStepperForm({
+	variant: 'outlined',
+},
+));
 app.use(createVCodeBlock());
-app.use(createVStepperForm());
 app.use(createPinia());
 app.component('font-awesome-icon', FontAwesomeIcon);
 

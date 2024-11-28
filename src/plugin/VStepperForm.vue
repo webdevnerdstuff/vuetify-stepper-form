@@ -170,6 +170,7 @@ import type {
 	ComputedClasses,
 	Field,
 	Page,
+	PluginOptions,
 	Props,
 } from '@/plugin/types';
 import type { PrivateFormContext } from 'vee-validate';
@@ -191,6 +192,7 @@ import {
 	useHandleNonJumpAhead,
 } from './composables/navigation';
 import componentEmits from './utils/emits';
+import { pluginOptionsInjectionKey } from './utils/globals';
 import { AllProps } from './utils/props';
 
 
@@ -198,7 +200,8 @@ const attrs = useAttrs();
 const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
-const injectedOptions = inject<Ref<Settings>>('globalOptions')!;
+const injectedOptions = inject<PluginOptions>(pluginOptionsInjectionKey)!;
+
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);

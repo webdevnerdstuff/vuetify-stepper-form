@@ -5,6 +5,7 @@ import {
 	object as yupObject,
 } from 'yup';
 import { useDeepMerge } from '../../src/plugin/composables/helpers';
+import { pluginOptionsInjectionKey } from '../../src/plugin/utils/globals';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Shared //
@@ -592,7 +593,7 @@ const navigationTest = {
 	},
 	global: {
 		provide: {
-			globalOptions: {
+			[pluginOptionsInjectionKey]: {
 				color: 'primary',
 				validateOn: 'blur',
 				variant: 'outlined',
