@@ -53,6 +53,7 @@ declare function __VLS_template(): {
         blur: () => Promise<void>;
         change: () => Promise<void>;
         input: () => Promise<void>;
+        onUpdate: (value: any) => void;
         field: {
             options: KeyStringAny<any> | undefined;
             required: boolean | undefined;
@@ -101,7 +102,6 @@ declare function __VLS_template(): {
             variant?: string | undefined;
             transition?: import('vuetify/lib/components/index.mjs').VStepperWindowItem["transition"] | undefined;
             errorMessages: any;
-            modelValue: any;
         };
     }) => any>>;
     refs: {};
