@@ -5,37 +5,12 @@
 		@submit="submitForm"
 	>
 		<template
-			v-if="answerAndPagesKey === 'allFields'"
-			#[`field.customBar`]="{ errorMessage, field, blur, change, input, FieldLabel }"
+			v-if="answerAndPagesKey === 'allFields' || answerAndPagesKey === 'testsData'"
+			#[`field.slotField`]="props"
 		>
 			<v-text-field
-				v-model="allFieldsExample.answers.customBar"
-				v-bind="field"
-				:error="errorMessage"
-				:error-messages="errorMessage"
-				@blur="blur"
-				@change="change"
-				@input="input"
-			>
-				<template #label>
-					<component
-						:is="FieldLabel"
-						:label="field.label"
-						:required="!!field.required"
-					/>
-				</template>
-			</v-text-field>
-		</template>
-
-		<template
-			v-if="answerAndPagesKey === 'allFields'"
-			#[`field.custoFoo`]="props"
-		>
-			<v-select
-				v-model="allFieldsExample.answers.custoFoo"
+				v-model="allFieldsExample.answers.slotField"
 				v-bind="props.field"
-				:error="props.errorMessage"
-				:error-messages="props.errorMessage"
 				@blur="props.blur()"
 				@change="props.change()"
 				@input="props.input()"
@@ -44,39 +19,13 @@
 					<component
 						:is="props.FieldLabel"
 						:label="props.field.label"
-						:required="!!props.field.required"
+						:required="props.field.required"
 					/>
 				</template>
-			</v-select>
+			</v-text-field>
 		</template>
 
 	</VStepperForm>
-
-	<v-container>
-		<v-row>
-			<v-col
-				cols="6"
-				style="display: none;"
-			>
-				<v-select
-					v-model="variantModel"
-					item-value="value"
-					:items="fieldVariants"
-					label="Field Variants"
-				/>
-			</v-col>
-			<v-col
-				class="offset-3"
-				cols="6"
-			>
-				<v-select
-					v-model="buttonVariantModel"
-					:items="buttonVariants"
-					label="Button Variant"
-				/>
-			</v-col>
-		</v-row>
-	</v-container>
 
 	<v-container>
 		<VCodeBlock
@@ -95,7 +44,9 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// ? Ignore the testData import error, it's a false positive due to tsconfig settings //
+import * as DATA from '@cypress/templates/testData';
 import { toTypedSchema } from '@vee-validate/zod';
 import { VCodeBlock } from '@wdns/vue-code-block';
 import { reactive, ref } from 'vue';
@@ -111,382 +62,104 @@ import AnswersDialog from '../documentation/components/AnswersDialog.vue';
 
 const keys = [
 	'allFields',
-	'conditional',
+	'conditionalField',
 	'conditionalPage',
-	'pages',
-	'validation',
 ];
 
+// ? Change the key to test different examples //
 const answerAndPagesKey = keys[0];
 
-const buttonVariants = [
-	{
-		title: 'None',
-		value: undefined,
-	},
-	{
-		title: 'Text',
-		value: 'text',
-	},
-	{
-		title: 'Flat',
-		value: 'flat',
-	},
-	{
-		title: 'Elevated',
-		value: 'elevated',
-	},
-	{
-		title: 'Tonal',
-		value: 'tonal',
-	},
-	{
-		title: 'Outlined',
-		value: 'outlined',
-	},
-	{
-		title: 'Plain',
-		value: 'plain',
-	},
-];
-const buttonVariantModel = ref('outlined');
-const fieldVariants = [
-	{
-		title: 'None',
-		value: '',
-	},
-	{
-		title: 'Filled',
-		value: 'filled',
-	},
-	{
-		title: 'Outlined',
-		value: 'outlined',
-	},
-	{
-		title: 'Underlined',
-		value: 'underlined',
-	},
-	{
-		title: 'Plain',
-		value: 'plain',
-	},
-	{
-		title: 'Solo',
-		value: 'solo',
-	},
-	{
-		title: 'Solo Inverted',
-		value: 'solo-inverted',
-	},
-	{
-		title: 'Solo Filled',
-		value: 'solo-filled',
-	},
-];
-const variantModel = ref('outlined');
 const dialog = ref(false);
+const testFields = DATA.defaultFields;
 
 
-// & -------------------------------------------------- Checkboxes //
-// ------------------------- Checkbox Multiple //
-const checkboxMultipleProps = {
-	// density: 'compact' as const,
-	// id: 'some-id',
-	// indeterminate: true,
-	// indeterminateIcon: 'mdi:mdi-help-box',
-	// inlineSpacing: '40px', 											// * Custom Prop
-	// inline: true,
-	label: 'Multiple Checkbox Question',
-	// labelPositionLeft: true,												// * Custom Prop
-	multiple: true,
-	name: 'checkboxMultiple',
-	options: [
-		{
-			id: 'option1-id',
-			label: 'Option 1',
-			value: 'option1',
-		},
-		{
-			id: 'option2-id',
-			label: 'Option 2',
-			value: 'option2',
-		},
-		{
-			id: 'option3-id',
-			label: 'Option 3',
-			value: 'option3',
-		},
-	],
-	// trueIcon: 'mdi:mdi-plus',
-	// trueValue: 'yes',
-	type: 'checkbox' as const,							// *
+// ~ -------------------------------------------------- Fields //
+// & ------------------------- Text //
+const textFieldProps = {
+	...testFields.firstName,
+	type: 'text' as const,
 };
-// ------------------------- Checkbox Single //
-const checkboxSingleProps = {
-	// density: 'compact' as const,
-	// id: 'some-id',
-	// indeterminate: true,
-	// indeterminateIcon: 'mdi:mdi-help-box',
-	label: 'Checkbox Question',
-	name: 'checkbooSingle',
-	// trueIcon: 'mdi:mdi-plus',
-	// trueValue: 'yes',
-	type: 'checkbox' as const,
+const fileInputProps = {
+	label: 'File',
+	name: 'file',
+	type: 'file' as const,
 };
-
-// & -------------------------------------------------- Textarea //
+const textFieldEmailProps = {
+	...testFields.email,
+	type: 'email' as const,
+};
+const textFieldNumberProps = {
+	...testFields.number,
+	type: 'number' as const,
+};
+const textFieldPasswordProps = {
+	...testFields.password,
+	type: 'password' as const,
+};
+const textFieldUrlProps = {
+	...testFields.url,
+	type: 'url' as const,
+};
+const textFieldPhoneProps = {
+	...testFields.phone,
+	type: 'tel' as const,
+};
+const colorFieldProps = {
+	...testFields.color,
+	pip: true,
+	readonlyInput: true,
+	type: 'color' as const,
+};
 const textareaProps = {
-	// autoGrow: true,
-	// counterValue: 100,											// ! Not working
-	// dirty: true,
-	label: 'Description',
-	name: 'desc',
-	// noResize: true,
+	...testFields.textarea,
 	type: 'textarea' as const,
 };
 
-// & -------------------------------------------------- Text Field //
-const textFieldProps = {
-	label: 'Name',
-	name: 'name',
-	type: 'text' as const,
-	variant: 'outlined',
-};
-// ------------------------- Color Field //
-const colorFieldMasterProps = {
-	// canvasHeight: 500,
-	// cardFieldWidth: true,
-	// cardOffsetX: 200,
-	// cardOffsetY: 200,
-	// cardPadding: 200,
-	// cardProps: { elevation: 0 },
-	// dotSize: 50,
-	// iconHoverColor: 'secondary',
-	// iconSize: 50,
-	// open: 'top right',
-	pip: true,
-	// pipBorder: '5px solid #0f0',
-	// pipBorderRadius: '3px',
-	// pipIcon: 'mdi:mdi-cog',
-	// pipSlot: 'append-inner',
-	readonlyInput: true,
-	// swatches: [['#FF0000']],
-	// swatchesMaxHeight: 20,
-	// type: 'color' as const,
-};
-const colorFieldProps = {
-	// ...colorFieldMasterProps,
-	label: 'Color',
-	name: 'color',
-	type: 'color' as const,
-	variant: 'outlined',
-};
-// ------------------------- File Input //
-const fileInputProps = {
-	// accept: 'image/png',
-	// counterSizeString: '$vuetify.fileInput.counterSize',
-	// counterString: '$vuetify.fileInput.counter',
-	// counterValue: 100,
-	// direction: 'horizontal',
-	// dirty: true,
-	// hideInput: true,
-	label: 'File',
-	name: 'file',
-	// persistentClear: true,					// * only when a file is selected
-	// persistentPlaceholder: true,
-	// placeholder: 'Enter your name',
-	// showSize: true,
-	type: 'file' as const,
-};
-// ------------------------- Image Input TBD //
-const fileImageProps = {
-	label: 'Image',
-	name: 'image',
-	type: 'image' as const,
-};
-// ------------------------- Email //
-const textFieldEmailProps = {
-	hint: 'Enter your email',
-	label: 'E-mail',
-	name: 'email',
-	type: 'email' as const,
-};
-// ------------------------- Number //
-const textFieldNumberProps = {
-	label: 'Number',
-	name: 'number',
-	type: 'number' as const,
-};
-// ------------------------- Password //
-const textFieldPasswordProps = {
-	label: 'Password',
-	name: 'password',
-	type: 'password' as const,
-};
-// ------------------------- URL //
-const textFieldUrlProps = {
-	label: 'URL',
-	name: 'url',
-	type: 'url' as const,
-};
-// ------------------------- Phone //
-const textFieldPhoneProps = {
-	label: 'Phone',
-	name: 'tel',
-	type: 'tel' as const,
-};
-
-// & -------------------------------------------------- Select //
+// ------------------------- Select //
 const selectProps = {
+	...testFields.select,
 	clearable: true,
-	color: 'primary',
-	// focused: true,								// ?
-	itemProps: () => ({
-		'data-foo': 'hello world',
-	}),
-	items: [
-		{
-			title: 'Foo',
-			value: 'foo',
-		},
-		{
-			title: 'Bar',
-			// label: 'foo <br /> bar',
-			value: 'bar',
-		},
-		{
-			title: 'Maybe',
-			value: 'maybe',
-		},
-		{
-			title: 'Sure',
-			value: 'sure',
-		},
-	],
-	// listProps: () => ({}),				// ?
-	label: 'Select Question',
-	// menuProps: () => ({}),				// ?
-	name: 'selectField',
 	type: 'select' as const,
-	variant: 'outlined',
-	// valueComparator: (a, b) => (a === b),			// ? Not sure what this does. Not applicable
 };
-// ------------------------- Autocomplete //
+const selectMultipleProps = {
+	...testFields.selectMultiple,
+	clearable: true,
+	type: 'select' as const,
+};
 const autocompleteProps = {
-	// autoSelectFirst: true,												// ?
+	...testFields.autocomplete,
 	chips: true,
 	clearable: true,
-	// closeText: 'Foobar', 												// ?
-	color: 'primary',
-	// centerAffix: true,														// ? Broken? & Not needed
-	// customFilter: () => {},											// ? Not tested
-	// eager: true,																	// ?
-	// filterMode: 'every' as const,								// ? Not tested
-	// focused: true,																// ?
-	// hideSpinButtons: true,												// ? Not applicable
-	items: [
-		{
-			title: 'Foo',
-			value: 'foo',
-		},
-		{
-			title: 'Bar',
-			// label: 'foo <br /> bar',
-			value: 'bar',
-		},
-		{
-			title: 'Maybe',
-			value: 'maybe',
-		},
-		{
-			title: 'Sure',
-			value: 'sure',
-		},
-	],
-	label: 'Autocomplete Question',
-	// listProps: () => ({}),												// ! Not applicable
-	// menuProps: () => ({}),												// ! Not applicable
 	multiple: true,
-	name: 'autocomplete',
-	// openText: 'Open Me',													// ?
 	type: 'autocomplete' as const,
-	// validateOn: 'blur', 													// ! Need to build this out
-	// valueComparator: (a, b) => (a === b),				// ? Not sure what this does. Not applicable
-	variant: 'outlined',
 };
-// ------------------------- Combobox //
-// ! Needs more testing - Missing error messages //
 const comboboxProps = {
-	chips: true,
-	clearable: true,
-	color: 'primary',
-	items: [
-		{
-			title: 'Foo',
-			value: 'foo',
-		},
-		{
-			title: 'Bar',
-			// label: 'foo <br /> bar',
-			value: 'bar',
-		},
-		{
-			title: 'Maybe',
-			value: 'maybe',
-		},
-		{
-			title: 'Sure',
-			value: 'sure',
-		},
-	],
-	label: 'Combobox Question',
-	multiple: true,
-	name: 'combobox',
-	placeholder: 'Select an item',
+	...testFields.combobox,
 	type: 'combobox' as const,
-	variant: 'outlined',
 };
 
-// & -------------------------------------------------- Switch //
-const switchProps = {
-	// density: 'compact' as const,
-	// centerAffix: true,
-	// defaultsTarget: '',
-	// focused: true,
-	// indeterminate: '',
-	// inline: true,
-	// inset: true,
-	label: 'Switch Question',
-	// minWidth: '600px',
-	// multiple: true,							// * Works but not sure why you would use it, results in an array answer
-	name: 'switchQuestion',
-	ripple: false,
-	type: 'switch' as const,
-	// value: 'stuff',
-	// valueComparator: () => {},
+// & ------------------------- Checkbox //
+// ------------------------- Checkbox Multiple //
+const checkboxMultipleProps = {
+	...testFields.checkboxMultiple,
+	// ? Custom Prop - inlineSpacing //
+	// inlineSpacing: '40px',
+	// ? Custom Prop - labelPositionLeft //
+	// labelPositionLeft: true,
+	type: 'checkbox' as const,
+};
+const checkboxSingleProps = {
+	...testFields.checkbox,
+	type: 'checkbox' as const,
 };
 
-// & -------------------------------------------------- Radio //
+// & ------------------------- Radio //
 const radioProps = {
-	// appendIcon: 'mdi:mdi-cog', 								// * Radio group prop
-	// defaultsTarget: '',
-	// direction: 'vertical', 										// ? Might need a min width for this
-	// errorMessages: ['Error 1', 'Error 2'],			// * Radio group prop
-	// falseValue: 'no',
-	// groupId: 'foobar',													// * Radio group container custom prop
-	// hideDetails: true,													// * Radio group prop
-	// hint: 'Radio stuff', 											// * Radio group prop
-	// id: 'some-id',
-	// inlineSpacing: '40px', 										// * Custom Prop
-	label: 'Radio Question',
-	// labelPositionLeft: true,										// * Custom Prop
-	// maxWidth: '50px',													// * Radio group prop
-	// messages: 'Msg',														// * Radio group prop
-	// messages: ['Msg 1', 'Msg 2'],							// * Radio group prop
-	// minWidth: '600px',													// * Radio group prop. Needs to have width prop set
-	// multiple: true, 														// ? Maybe fix this
-	name: 'radio',
+	...testFields.radio,
+	// ? Custom Prop - inlineSpacing //
+	// inlineSpacing: '40px',
+	// ? Custom Prop - labelPositionLeft //
+	// labelPositionLeft: true,
 	options: [
 		{
 			label: 'Option 1',
@@ -501,88 +174,47 @@ const radioProps = {
 			value: 'option3',
 		},
 	],
-	// persistentHint: true, 											// * Radio group prop
-	theme: 'light', 															// * Radio group prop
-	// trueValue: 'yes',
 	type: 'radio' as const,
-	// value: 'stuff',														// ?
-	// valueComparator: () => { },								// ?
 };
-// & ------------------------- Fancy Radio //
-const fancyRadioProps = {
-	color: 'primary',
-	// density: 'comfortable' as const,
-	falseValue: 'no',
-	// height: '100px',
-	label: 'Fancy Radio Question',
-	name: 'fancyRadio',
-	options: [
-		{
-			id: 'yes-id',
-			label: 'Yes',
-			value: 'yes',
-		},
-		{
-			id: 'no-id',
-			label: 'No',
-			// label: 'foo <br /> bar',
-			value: 'no',
-		},
-		{
-			label: 'Maybe',
-			value: 'maybe',
-		},
-		{
-			label: 'Sure',
-			value: 'sure',
-		},
-	],
-	trueValue: 'yes',
-	type: 'fancyRadio' as const,
-	// validateOn: 'change',
-	variant: 'outlined',
-	// width: '200px',
-};
-// & ------------------------- Button Field //
+
+// & Button Field - Custom Field //
 const buttonFieldProps = {
-	// active: false, // ? Not supported
-	// activeColor: 'primary-darken-1', // **
-	align: 'center', // **
-	// appendIcon: '$vuetify', // **
-	// baseColor: 'secondary', // **
-	// block: true, // * Make adjustments
-	// border: 'xl', // ?
-	color: 'primary', // **
-	density: 'expanded' as const, // **
-	// disabled: true, // **
-	// elevation: 10, // **
-	// error: true, // ? Not really a button prop
-	// errorMessage: ['Error 1', 'Error 2'], // * Works via the Field validation
+	// activeColor: 'primary-darken-1',
+	align: 'center',
+	// appendIcon: '$vuetify',
+	// baseColor: 'secondary',
+	// block: true,
+	border: 'xl',
+	color: 'primary',
+	density: 'expanded' as const,
+	// disabled: true,
+	// elevation: 10,
 	// exact: true,
 	// flat: true,
-	// gap: '2', // **
-	// height: '400px', // **
-	// hideDetails: true, // **
-	// hint: 'yo', // *
-	// href: 'https://google.com', // ** Not allowed
-	// icon: '$vuetify', // **
-	// id: 'buttonField-id', // **
+	// gap: '2',
+	// height: '400px',
+	// hideDetails: true,
+	// hint: 'yo',
+	// ? Not allowed - href //
+	// href: '',
+	// icon: '$vuetify',
+	// id: 'buttonField-id',
 	label: 'Button Field Question',
-	// loading: true, // **
-	maxErrors: 1,
-	// maxHeight: '100px', // *
-	// maxWidth: '100px', // **
-	// messages: 'Msg', // *
-	// messages: ['Msg 1', 'Msg 2'], // *
-	// minHeight: '800px', //*
-	// minWidth: '300px', // * Set default min width to 100px
-	multiple: true, // **
-	name: 'buttonField', // **
+	// loading: true,
+	// maxErrors: 1,
+	// maxHeight: '100px',
+	// maxWidth: '100px',
+	// messages: 'Msg',
+	// messages: ['Msg 1', 'Msg 2'],
+	// minHeight: '800px',
+	// minWidth: '300px',
+	multiple: true,
+	name: 'buttonField',
 	options: [
 		{
 			// class: 'text-h5',
-			// icon: 'mdi:mdi-cog', // *
-			// id: 'yes-id', // *
+			// icon: 'mdi:mdi-cog',
+			// id: 'yes-id',
 			label: 'Yes',
 			// prependIcon: 'mdi:mdi-cog',
 			value: 'yes',
@@ -590,88 +222,65 @@ const buttonFieldProps = {
 		},
 		{
 			// appendIcon: 'mdi:mdi-circle',
-			// icon: 'mdi:mdi-circle', // *
-			// id: 'no-id', // *
+			// icon: 'mdi:mdi-circle',
+			// id: 'no-id',
 			// label: 'foo <br /> bar',
 			label: 'No',
 			// prependIcon: 'mdi:mdi-circle',
 			value: 'no',
 		},
 		{
-			// icon: 'mdi:mdi-square', // *
+			// icon: 'mdi:mdi-square',
 			label: 'Maybe',
 			value: 'maybe',
 		},
 		{
-			// icon: 'mdi:mdi-triangle', // *
+			// icon: 'mdi:mdi-triangle',
 			label: 'Sure',
 			value: 'sure',
 		},
 	],
-	// persistentHint: true, // *
-	// position: 'fixed',
-	// prependIcon: '$vuetify', // **
-	// readonly: true, // **
-	// replace: true,
+	// persistentHint: true,
+	// prependIcon: '$vuetify',
+	// readonly: true,
 	required: true,
-	// ripple: false, // **
-	// rounded: true, // **
-	// selectedClass: 'selectred-foo', // **
+	// ripple: false,
+	// rounded: true,
+	// selectedClass: 'selected-foo',
 	// size: 'large',
 	// slim: false,
-	// stacked: true, // **
+	// stacked: true,
 	// symbol: true,
-	// tag: 'a', // *
+	// tag: 'a',
 	// text: 'foo',
-	// theme: 'light', // **
-	// tile: true, // **
-	// to: 'https://google.com', // ** Not allowed
+	// theme: 'light',
+	// tile: true,
 	type: 'buttons' as const,
-	// value: 'yes',
 	// validateOn: 'change',
-	// variant: 'outlined', // **
-	// width: '500px', // **
+	// value: 'yes',
+	// variant: 'outlined',
+	// width: '500px',
 };
 
-// & -------------------------------------------------- Custom Slots //
+// & ------------------------- Switch //
+const switchProps = {
+	...testFields.switch,
+	type: 'switch' as const,
+};
+
+// & ------------------------- Field Slots //
 const customSlots = [
 	{
-		label: 'Custom Question Slot Bar',
-		name: 'customBar',
-		type: 'field' as const,
-		variant: 'outlined' as const,
-	},
-	{
-		color: 'primary',
-		items: [
-			{
-				title: 'Foo',
-				value: 'foo',
-			},
-			{
-				title: 'Bar',
-				// label: 'foo <br /> bar',
-				value: 'bar',
-			},
-			{
-				title: 'Maybe',
-				value: 'maybe',
-			},
-			{
-				title: 'Sure',
-				value: 'sure',
-			},
-		],
-		label: 'Custom Question Slot Foo',
-		name: 'custoFoo',
+		label: 'Slot Field',
+		name: 'slotField',
 		required: true,
-		type: 'field' as const,
-		variant: 'outlined' as const,
+		type: 'field',
 	},
 ];
 
 
-// ~ -------------------------------------------------- All Fields Example //
+// ~ -------------------------------------------------- Examples //
+// & ------------------------- All Fields Example //
 const allFieldsExample = reactive({
 	answers: {
 		autocomplete: undefined,
@@ -687,12 +296,10 @@ const allFieldsExample = reactive({
 		// combobox: 'foo',
 		combobox: null,
 		// combobox: { title: 'Foo', value: 'foo' },
-		custoFoo: null,
+
 		customBar: null,
 		desc: 'Hello World',
-		email: 'test@test.com',
-		fancyRadio: null,
-		// fancyRadio: 'yes',
+		email: null,
 		file: null,
 		name: null,
 		// radio: 'option1',
@@ -700,147 +307,100 @@ const allFieldsExample = reactive({
 		// radioMultiple: ['option1', 'option3'],
 		// selectField: null,
 		selectField: 'foo',
+		slotField: null,
 		switchQuestion: true,
 		// switchQuestion: 'yes',
 	},
 	formSettings: {
-
+		fieldColumns: {
+			lg: 12,
+			md: 6,
+			sm: 12,
+			xl: 6,
+		},
+		// headerTooltips: true,
+		jumpAhead: true,
+		summaryColumns: { sm: 6 },
+		// tooltipLocation: 'bottom',
+		// tooltipTransition: 'fab-transition',
+		title: 'All Fields Example',
 	},
 	pages: [
 		{
 			fields: [
-				{ ...buttonFieldProps },
-				// {
-				// 	...comboboxProps,
-				// 	columns: {
-				// 		lg: 12,
-				// 		md: 12,
-				// 		sm: 12,
-				// 		xl: 12,
-				// 	},
-				// },
-				// {
-				// 	...checkboxMultipleProps,
-				// 	columns: {
-				// 		xl: 12,
-				// 	},
-				// },
-				// { ...checkboxSingleProps },
-				// { ...colorFieldProps },
-				// {
-				// 	...fileInputProps,
-				// 	columns: {
-				// 		md: 6,
-				// 		sm: 12,
-				// 		xl: 6,
-				// 	},
-				// },
-				// {
-				// 	...textFieldEmailProps,
-				// 	columns: {
-				// 		md: 12,
-				// 		sm: 12,
-				// 		xl: 12,
-				// 	},
-				// },
-				// {
-				// 	...textFieldProps,
-				// 	columns: {
-				// 		// 	lg: 12,
-				// 		// md: 6,
-				// 		// sm: 1,
-				// 		// 	xl: 12,
-				// 	},
-				// },
-				// { ...textFieldNumberProps },
-				// {
-				// 	...textFieldPasswordProps,
-				// 	// when: (answers: any) => {
-				// 	// 	return answers?.email === 'test@test.com';
-				// 	// },
-				// },
-				// { ...textFieldUrlProps },
-				// { ...textFieldPhoneProps },
-				// { ...textareaProps },
-				// { ...radioProps },
-				// { ...fancyRadioProps },
-				// { ...selectProps },
-				// { ...autocompleteProps },
-				// { ...switchProps },
-				// ...customSlots,
-				// { ...fileImageProps },
+				{ ...textFieldProps },
+				{ ...fileInputProps },
+				{ ...textFieldEmailProps },
+				{ ...textFieldNumberProps },
+				{ ...textFieldPasswordProps },
+				{ ...textFieldUrlProps },
+				{ ...textFieldPhoneProps },
+				{ ...textareaProps },
+				{ ...selectProps },
+				{ ...selectMultipleProps },
 			],
+			title: 'Common Fields',
+		},
+		{
+			fields: [
+				{ ...autocompleteProps },
+				{ ...comboboxProps },
+				{ ...colorFieldProps },
+
+			],
+			title: 'Less Common Fields',
+		},
+		{
+			fields: [
+				{ ...checkboxMultipleProps },
+				{ ...checkboxSingleProps },
+				{ ...buttonFieldProps },
+				{ ...radioProps },
+				{ ...switchProps },
+			],
+			title: 'Radio/Checkbox/Switch Fields',
+		},
+		{
+			fields: [
+				...customSlots,
+			],
+			title: 'Slot Fields',
+		},
+		{
+			isSummary: true,
+			text: 'Here\'s the data you\'ve entered. Feel free to review it.',
+			title: 'Summary',
 		},
 	],
 	validation: yupObject({
+		// firstName: yupString().required(isRequired('First Name')),
 		// autocomplete: yupString().required(isRequired('Autocomplete')),
-		// autocomplete: yupArray().required(isRequired('Autocomplete')),
-		buttonField: yupArray().required(isRequired('Button Field')),
-		// buttonField: yupString().required(isRequired('Button Field')).matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
-		// checkbooSingle: yupString().required(isRequired('Checkbox Single'))
-		// 	.matches(/(^true)/, isRequired('Checkbox Single')),
+		// buttonField: yupString().required(isRequired('Button Field')),
 		// checkboxMultiple: yupArray().required(isRequired('Checkbox Multiple'))
 		// 	.min(1, 'Must select at least ${min} option.'),
-		// .matches(/(^false)/, 'Checkbox must be not false'),
+		// // .matches(/(^false)/, 'Checkbox must be not false'),
 		// color: yupString().required(isRequired('Color')),
 		// combobox: yupArray().required(isRequired('Combobox'))
 		// 	.length(1, 'Must select at least ${length} option.'),
-		// custoFoo: yupString().required(isRequired('Custom Foo')),
+		// slotField: yupString().required(isRequired('Custom Foo')),
 		// customBar: yupString().required(isRequired('Custom Bar')),
 		// desc: yupString().required(isRequired('Description')),
 		// email: yupString().email('Must be a valid Email').required(isRequired('Email')),
-		// fancyRadio: yupArray().required(isRequired('Fancy Radio')),
-		// fancyRadio: yupString().required(isRequired('Fancy Radio')),
 		// file: yupString().required(isRequired('File')),
 		// name: yupString().required(isRequired('Name')),
 		// number: yupNumber().required(isRequired('Number')),
 		// password: yupString().required(isRequired('Password'))
 		// 	.length(4, 'Password must have at least ${length} characters.'),
-		// radio: yupString().required(isRequired('Radio')).matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
+		// radio: yupString().required(isRequired('Radio')),
 		// selectField: yupString().required(isRequired('Select Field')),
-		// switchQuestion: yupString().required(isRequired('Switch Question')).matches(/(false)/),
+		// switchQuestion: yupString().required(isRequired('Switch Question')),
 		// tel: yupString().required(isRequired('Phone')),
 		// url: yupString().required(isRequired('URL')).url('Must be a valid URL'),
-	}),
-	validationYup: yupObject({
-		autocomplete: yupString().required(isRequired('Autocomplete')),
-		// autocomplete: yupArray().required(isRequired('Autocomplete')),
-		checkbooSingle: yupString().required(isRequired('Checkbox Single')),
-		checkboxMultiple: yupArray().required(isRequired('Checkbox Multiple'))
-			.length(1, 'Must select at least ${length} option.'),
-		// .matches(/(^false)/, 'Checkbox must be not false'),
-		color: yupString().required(isRequired('Color')),
-		combobox: yupArray().required(isRequired('Combobox'))
-			.length(1, 'Must select at least ${length} option.'),
-		custoFoo: yupString().required(isRequired('Custom Foo')),
-		customBar: yupString().required(isRequired('Custom Bar')),
-		desc: yupString().required(isRequired('Description')),
-		email: yupString().email('Must be a valid Email').required(isRequired('Email')),
-		// fancyRadio: yupArray().required(isRequired('Fancy Radio')),
-		// fancyRadio: yupString().required(isRequired('Fancy Radio')),
-		fancyRadio: yupString().required(isRequired('Fancy Radio')).matches(/(yes|no)/, 'Only "yes" or "no" is allowed'),
-		file: yupString().required(isRequired('File')),
-		name: yupString().required(isRequired('Name')),
-		number: yupNumber().required(isRequired('Number')),
-		password: yupString().required(isRequired('Password'))
-			.length(4, 'Password must have at least ${length} characters.'),
-		radio: yupString().required(isRequired('Radio')),
-		selectField: yupString().required(isRequired('Select Field')),
-		switchQuestion: yupString().required(isRequired('Switch Question')).matches(/(false)/),
-		tel: yupString().required(isRequired('Phone')),
-		url: yupString().required(isRequired('URL')).url('Must be a valid URL'),
+		// slotField: yupString().required(isRequired('Slot Field')),
 	}),
 	validationZod: toTypedSchema(zod.object({
 		autocomplete: zod.array(zod.string(), { message: isRequired('Autocomplete') })
 			.min(1, { message: isRequired('Autocomplete') }),
-		checkbooSingle: zod.any()
-			.refine((val) => val !== null && val !== false, { message: isRequired('Checkbox Single') })
-			.refine((val) => {
-				if (typeof val === 'string') {
-					return val.trim() !== '';
-				}
-				return val === true;
-			}, { message: 'Checkbox Single must be a non-empty string or true' }),
 		checkboxMultiple: zod.array(zod.string({ message: isRequired('Checkbox Multiple') }))
 			.min(2, { message: 'Must select at least 2 options' }),
 		color: zod.string({ message: isRequired('Color') }).min(1, { message: isRequired('Color') }),
@@ -849,14 +409,9 @@ const allFieldsExample = reactive({
 			value: zod.string().min(1, { message: 'Value cannot be empty' }),
 		}), { message: isRequired('Combobox') })
 			.min(1, { message: 'Must select at least 1 option' }),
-		custoFoo: zod.string({ message: isRequired('Custom Foo') }),
-		customBar: zod.string({ message: isRequired('Custom Bar') }),
 		desc: zod.string({ required_error: isRequired('Description') })
 			.min(1, { message: isRequired('Description') }),
 		email: zod.string({ message: isRequired('Email') }).email({ message: 'Must be a valid email' }),
-		fancyRadio: zod.string({ message: isRequired('Fancy Radio') }).refine((val) => {
-			return val === 'yes' || val === 'no';
-		}, { message: 'Only "yes" or "no" is allowed' }),
 		file: zod.string({ message: isRequired('File') }),
 		name: zod.string({ message: isRequired('Name') }),
 		number: zod
@@ -875,6 +430,7 @@ const allFieldsExample = reactive({
 			.min(4, { message: 'Password must have at least 4 characters' }),
 		radio: zod.string({ message: isRequired('Radio') }),
 		selectField: zod.string({ message: isRequired('Select Field') }),
+		slotField: zod.string({ message: isRequired('Slot Field') }),
 		switchQuestion: zod.boolean({ message: isRequired('Switch Question') })
 			.refine((val) => val === false, { message: 'Switch Question must be false' }),
 		tel: zod.string({ message: isRequired('Phone') }),
@@ -896,8 +452,7 @@ const allFieldsExample = reactive({
 	),
 });
 
-
-// ~ -------------------------------------------------- Conditional Example //
+// & ------------------------- Conditional Page Example //
 const conditionalPageExample = reactive({
 	answers: {
 		aConditional: null,
@@ -907,7 +462,7 @@ const conditionalPageExample = reactive({
 		fooQuestion: null,
 	},
 	formSettings: {
-
+		title: 'Conditional Page Example',
 	},
 	pages: [
 		{
@@ -930,7 +485,6 @@ const conditionalPageExample = reactive({
 					label: 'Select Letter',
 					name: 'conditionalParent',
 					type: 'select' as const,
-					variant: 'outlined',
 				},
 			],
 			title: 'Page 1',
@@ -941,7 +495,6 @@ const conditionalPageExample = reactive({
 					label: 'A Conditional',
 					name: 'aConditional',
 					type: 'text' as const,
-					variant: 'outlined',
 					// when: (answers: any) => {
 					// 	return answers?.conditionalParent === 'a';
 					// },
@@ -958,7 +511,6 @@ const conditionalPageExample = reactive({
 					label: 'B Conditional',
 					name: 'bConditional',
 					type: 'text' as const,
-					variant: 'outlined',
 					// when: (answers: any) => {
 					// 	return answers?.conditionalParent === 'b';
 					// },
@@ -975,7 +527,6 @@ const conditionalPageExample = reactive({
 					label: 'C Conditional',
 					name: 'cConditional',
 					type: 'text' as const,
-					variant: 'outlined',
 					// when: (answers: any) => {
 					// 	return answers?.conditionalParent === 'c';
 					// },
@@ -1006,8 +557,7 @@ const conditionalPageExample = reactive({
 	}),
 });
 
-
-// ~ -------------------------------------------------- Conditional Field Example //
+// & v Conditional Field Example //
 const conditionalExample = reactive({
 	answers: {
 		aConditional: null,
@@ -1017,7 +567,7 @@ const conditionalExample = reactive({
 		fooQuestion: null,
 	},
 	formSettings: {
-
+		title: 'Conditional Field Example',
 	},
 	pages: [
 		{
@@ -1040,13 +590,11 @@ const conditionalExample = reactive({
 					label: 'Select Letter',
 					name: 'conditionalParent',
 					type: 'select' as const,
-					variant: 'outlined',
 				},
 				{
 					label: 'A Conditional',
 					name: 'aConditional',
 					type: 'text' as const,
-					variant: 'outlined',
 					when: (answers: any) => {
 						return answers?.conditionalParent === 'a';
 					},
@@ -1056,7 +604,6 @@ const conditionalExample = reactive({
 					label: 'B Conditional',
 					name: 'bConditional',
 					type: 'text' as const,
-					variant: 'outlined',
 					when: (answers: any) => {
 						return answers?.conditionalParent === 'b';
 					},
@@ -1076,7 +623,6 @@ const conditionalExample = reactive({
 						},
 					],
 					type: 'text' as const,
-					variant: 'outlined',
 					when: (answers: any) => {
 						return answers?.conditionalParent === 'c';
 					},
@@ -1105,341 +651,104 @@ const conditionalExample = reactive({
 });
 
 
-// ~ -------------------------------------------------- Paged Example //
-const pagesExample = reactive({
-	answers: {
-		booleanQuestion: null,
-		firstName: null,
-		lastName: 'bar',
-		question3: 'baz',
-		question4: 'qux',
-	},
-	formSettings: {
-		headerTooltips: true,
-		summaryColumns: { sm: 6 },
-		tooltipLocation: 'bottom',
-		// tooltipTransition: 'fab-transition',
-	},
-	pages: [
-		{
-			// editable: false,
-			fields: [
-				{
-					color: 'success',
-					label: 'First Name',
-					name: 'firstName',
-					text: 'Enter your first name only',
-					type: 'text' as const,
-					variant: 'outlined',
-				},
-				{
-					// autoPage: true,
-					label: 'Last Name',
-					name: 'lastName',
-					text: 'Enter your last name only',
-					type: 'text' as const,
-					variant: 'outlined',
-				},
-				{
-					autoPage: true,
-					label: 'Boolean Question',
-					// multiple: true,
-					name: 'booleanQuestion',
-					options: [
-						{
-							label: 'Yes',
-							value: 'yes',
-						},
-						{
-							label: 'No',
-							value: 'no',
-						},
-					],
-					type: 'buttons' as const,
-					variant: 'outlined',
-				},
-			],
-			text: 'Page text prop',
-			// title: 'Page 1',
-		},
-		{
-			fields: [
-				{
-					label: 'Question 3',
-					name: 'question3',
-					text: 'Which one of these is your favorite?',
-					type: 'text' as const,
-					variant: 'outlined',
-				},
-				{
-					// autoPage: true,
-					// autoPageDelay: 1000,
-					align: 'center',
-					label: 'Question 3',
-					name: 'q3a',
-					options: [
-						{
-							label: 'Yes',
-							value: 'yes',
-						},
-						{
-							label: 'No',
-							value: 'no',
-						},
-						{
-							label: 'Maybe',
-							value: 'maybe',
-						},
-						{
-							label: 'Sure',
-							value: 'sure',
-						},
-					],
-					text: 'Which one of these is your favorite?',
-					type: 'buttons' as const,
-					variant: 'outlined',
-				},
-			],
-			title: 'Questions',
-			when: (answers: any) => {
-				return answers?.lastName === 'bob';
-			},
-		},
-		{
-			fields: [
-				{
-					label: 'Question 4',
-					name: 'question4',
-					type: 'text' as const,
-					variant: 'outlined',
-				},
-			],
-			title: 'More Questions',
-		},
-		{
-			isSummary: true,
-			text: 'Here\'s the data you\'ve entered. Feel free to review it.',
-			title: 'Summary',
-		},
-	],
-	validation: yupObject({
-		firstName: yupString().required('First Name is required'),
-		lastName: yupString().required('Last Name is required'),
-	}),
-});
-
-
-// ~ -------------------------------------------------- Validation Example //
-const validationExample = reactive({
-	answers: {
-		aConditional: null,
-		bConditional: null,
-		cConditional: null,
-		conditionalParent: null,
-		fooQuestion: null,
-	},
-	formSettings: {
-	},
-	pages: [
-		{
-			error: false,
-			fields: [
-				{
-					items: [
-						{
-							title: 'A',
-							value: 'a',
-						},
-						{
-							title: 'B',
-							value: 'b',
-						},
-						{
-							title: 'C',
-							value: 'c',
-						},
-					],
-					label: 'Select Letter',
-					name: 'conditionalParent',
-					rules: [
-						{
-							params: ['This field is required'],
-							type: 'required',
-						},
-					],
-					type: 'select' as const,
-					// validateOn: 'blur',
-					variant: 'outlined',
-				},
-				{
-					// autoPage: true,
-					clearable: true,
-					error: false,
-					label: 'Foo Question',
-					name: 'fooQuestion',
-					rules: [
-						{
-							params: ['This field is required'],
-							type: 'required',
-						},
-						{
-							params: [5, 'Foo Question needs to be at least 5 characters.'],
-							type: 'min',
-						},
-						{
-							params: [10, 'Foo Question cannot be more than 10 characters'],
-							type: 'max',
-						},
-					],
-					type: 'text' as const,
-					// validateOn: 'blur',
-					variant: 'underlined',
-				},
-			],
-			title: 'Validation Page',
-		},
-		{
-			fields: [
-				{
-					label: 'A Conditional',
-					name: 'aConditional',
-					rules: [
-						{
-							params: ['this field is required'],
-							type: 'required',
-						},
-					],
-					type: 'text' as const,
-					// validateOn: 'blur',
-					variant: 'outlined',
-				},
-			],
-		},
-	],
-	validation: yupObject({
-		aConditional: yupString().when('conditionalParent', {
-			is: (val: string) => val === 'a',
-			then: (schema) => schema.required('Schema A Conditional is required'),
-		}),
-		bConditional: yupString()
-			.min(5, 'Schema B Conditional must be at least 5 characters')
-			.when('conditionalParent', {
-				is: (val: string) => val === 'b',
-				then: (schema) => schema.required('Schema B Conditional is required'),
-			}),
-		cConditional: yupString().when('conditionalParent', {
-			is: (val: string) => val === 'c',
-			then: (schema) => schema.required('Schema C Conditional is required'),
-		}),
-		conditionalParent: yupString().required('Schema Conditional Parent is required'),
-	}),
-});
-
-
-// & -------------------------------------------------- Form Settings //
+// ~ -------------------------------------------------- Playground Specific Stuff //
 function isRequired(field: string) {
 	return `The ${field} field is required`;
 }
 
 const formAnswers = reactive({
-	allFields: allFieldsExample.answers,
-	conditional: conditionalExample.answers,
-	conditionalPage: conditionalPageExample.answers,
-	pages: pagesExample.answers,
-	validation: validationExample.answers,
+	allFields: { ...allFieldsExample.answers, ...DATA.answers },
+	conditionalField: { ...conditionalExample.answers, ...DATA.answers },
+	conditionalPage: { ...conditionalPageExample.answers, ...DATA.answers },
 });
 
 const formPages = {
 	allFields: allFieldsExample.pages,
-	conditional: conditionalExample.pages,
+	conditionalField: conditionalExample.pages,
 	conditionalPage: conditionalPageExample.pages,
-	pages: pagesExample.pages,
-	validation: validationExample.pages,
 };
 
 const formSchemas = {
 	allFields: allFieldsExample.validation,
-	conditional: conditionalExample.validation,
+	conditionalField: conditionalExample.validation,
 	conditionalPage: conditionalPageExample.validation,
-	pages: pagesExample.validation,
-	validation: validationExample.validation,
 };
 
 const formFormSettings = {
 	allFields: allFieldsExample.formSettings,
-	conditional: conditionalExample.formSettings,
+	conditionalField: conditionalExample.formSettings,
 	conditionalPage: conditionalPageExample.formSettings,
-	pages: pagesExample.formSettings,
-	validation: validationExample.formSettings,
 };
 
+const attributes = {
+	// class: 'my-custom-form-class',
+	// 'data-foo': 'foobar',
+};
+
+function submitForm(): void {
+	dialog.value = true;
+}
+
+provide('codeBlockSettings', {
+	plugin: 'prismjs',
+	theme: 'neon-bunny',
+});
+
+// ~ -------------------------------------------------- Form Settings //
 const formSettings = reactive({
 	...formFormSettings[String(answerAndPagesKey)],
-	// autoPage: true,																	// * Custom
-	// autoPageDelay: 2000,															// * Custom
-	// altLabels: true,																	// * VStepper
-	// bgColor: 'secondary',														// * VStepper
-	// border: 'lg',																		// * VStepper
-	// class: 'my-custom-form-class',										// * Attr
-	color: 'primary',																	// * Global, VStepper, VStepperItem
-	// completeIcon: 'fas fa-check',										// ? VStepper Not sure how this works yet
-	// 'data-foo': 'foobar', 														// * Attr
-	// density: 'default',															// * Global
-	// direction: 'vertical',														// ! VStepper, VStepperVertical (in labs)
-	// disabled: true,																	// * VStepper
-	// editIcon: 'fas fa-pencil',												// ! VStepper Works. Needs style adjustments in the plugin
-	// editable: false,																	// ! VStepper
-	// elevation: 10,																		// * VStepper
-	// errorIcon: 'fas fa-cog',													// * VStepper
+	...attributes,
+	// ? Custom to VStepperForm - autoPage //
+	// autoPage: true,
+	// ? Custom to VStepperForm - autoPageDelay //
+	// autoPageDelay: 2000,
+	// altLabels: true,
+	// bgColor: 'secondary',
+	// border: 'lg',
+	color: 'primary',
+	// density: 'default',
+	// ? VStepper, VStepperVertical (in labs) - Only horizontal is supported //
+	// direction: 'horizontal',
+	// disabled: true,
+	// editIcon: 'fas fa-pencil',
+	// editable: false,
+	// elevation: 10,
+	// errorIcon: 'fas fa-cog',
+	// ? Custom to VStepperForm - fieldColumns //
 	// fieldColumns: {
 	// 	lg: 12,
 	// 	md: 12,
 	// 	sm: 12,
 	// 	xl: 12,
 	// },
-	// flat: true,																			// * VStepper
-	// height: '900px',																	// * VStepper
-	// hideActions: true,																// * VStepperActions (VStepper prop
-	// hideDetails: true,																// * Global
-	// itemTitle: 'title',															// ! VStepper Not using
-	// itemValue: 'value',															// ! VStepper Not using
-	// items: [],																				// ! VStepper Not using
-	// location: 'top',																	// ! VStepper Not using
-	// mandatory: true,																	// ? VStepper Not sure how this works yet
-	// max: 10,																					// ! VStepper Not using. Not sure how this works.
-	// maxHeight: '50px',																// * VStepper
-	// maxWidth: '50px',																// * VStepper
-	// minHeight: '900px',															// * VStepper
-	// minWidth: '900px',																// * VStepper
-	// navButtonSize: 'small',													// * Custom, VStepperActions
-	// nextText: 'hop back',														// * VStepper
-	pages: formPages[String(answerAndPagesKey)],			// *
-	// position: 'fixed',																// ^ VStepper Not using
-	// prevText: 'hop forward',													// * VStepper
-	// rounded: 'pill',																	// * VStepper
-	// selectedClass: 'foobar',													// * VStepper
+	// flat: true,
+	// height: '900px',
+	// hideActions: true,
+	// hideDetails: true,
+	// maxHeight: '50px',
+	// maxWidth: '50px',
+	// minHeight: '900px',
+	// minWidth: '900px',
+	// ? Custom to VStepperForm - navButtonSize //
+	// navButtonSize: 'small',
+	// nextText: 'hop back',
+	pages: formPages[String(answerAndPagesKey)],
+	// prevText: 'hop forward',
+	// rounded: 'pill',
+	// selectedClass: 'foobar',
+	// ? Custom to VStepperForm - summaryColumns - PageReviewContainer //
 	// summaryColumns: { sm: 6 },												// * Custom, PageReviewContainer
-	// tag: 'div',																			// * VStepper
-	// theme: 'light',																	// * VStepper
-	// tile: true,																			// * VStepper
-	title: `${answerAndPagesKey} Form`,							// *
+	// tag: 'div',
+	// theme: 'light',
+	// tile: true,
 	// transition: 'fade-transition',										// * VStepperWindowItemProps
-	validateOn: 'blur' as const,											// * Global
-	// validateOnMount: true,														// * VeeValidate
-	validationSchema: formSchemas[String(answerAndPagesKey)],	// *
-	// variant: buttonVariantModel,											// * Global
-	// width: '50px',																		// * Global
+	validateOn: 'blur' as const,
+	// ? VeeValidate Prop //
+	// validateOnMount: true,
+	validationSchema: formSchemas[String(answerAndPagesKey)],
+	// variant: 'outlined',
+	// width: '50px',
 });
-
-function submitForm(): void {
-	dialog.value = true;
-}
-
-
-provide('codeBlockSettings', {
-	plugin: 'prismjs',
-	theme: 'neon-bunny',
-});;
 </script>
 
 <style lang="scss" scoped></style>

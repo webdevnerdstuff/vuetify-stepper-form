@@ -11,7 +11,7 @@ import PlaygroundApp from './PlaygroundApp.vue';
 const app = createApp(PlaygroundApp);
 
 app.use(createVStepperForm({
-	variant: 'outlined',
+	// variant: 'outlined',
 },
 ));
 app.use(createVCodeBlock());
