@@ -170,6 +170,7 @@ import type {
 	ComputedClasses,
 	Field,
 	Page,
+	PluginOptions,
 	Props,
 } from '@/plugin/types';
 import type { PrivateFormContext } from 'vee-validate';
@@ -191,6 +192,7 @@ import {
 	useHandleNonJumpAhead,
 } from './composables/navigation';
 import componentEmits from './utils/emits';
+import { pluginOptionsInjectionKey } from './utils/globals';
 import { AllProps } from './utils/props';
 
 
@@ -198,7 +200,8 @@ const attrs = useAttrs();
 const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
-const injectedOptions = inject<Ref<Settings>>('globalOptions')!;
+const injectedOptions = inject<PluginOptions>(pluginOptionsInjectionKey)!;
+
 
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
@@ -237,7 +240,7 @@ Object.values(pages).forEach((p: Page) => {
 	}
 });
 
-
+// TODO: Maybe add vertical stepper when out of Vuetify labs //
 // const StepperComponent = markRaw(props.direction === 'vertical' ? VStepperVertical : VStepper);
 // console.log('StepperComponent', StepperComponent);
 
@@ -260,10 +263,6 @@ onMounted(() => {
 
 // -------------------------------------------------- Data //
 const modelValue = defineModel<any>();
-
-watchDeep(modelValue, () => {
-	callbacks();
-});
 
 const stepperModel = ref(1);
 
@@ -372,7 +371,6 @@ function headerItemEnabled(page: Page): boolean {
 	const pageEditable = page.editable !== false;
 	const pageNotEditable = page.editable === false;
 	const currentPageEditable = currentPages[currentPageIdx.value]?.editable !== false;
-	// const currentPageNotEditable = currentPages[currentPageIdx.value]?.editable === false;
 	const lastPageIdx = currentPages.length - 1;
 
 	const previousPageIdx = pageIdx - 1;
@@ -382,31 +380,6 @@ function headerItemEnabled(page: Page): boolean {
 	const nextPageIdx = pageIdx + 1;
 	const nextPageEditable = currentPages[nextPageIdx]?.editable !== false;
 	const nextPageNotEditable = currentPages[nextPageIdx]?.editable === false;
-
-	// const debug = true;
-
-	// if (debug) {
-	// 	console.groupCollapsed('page', page.title);
-	// 	console.log('previousPageIdx\t', previousPageIdx);
-	// 	console.log('currentPageIdx\t', currentPageIdx.value);
-	// 	console.log('nextPageIdx\t\t', nextPageIdx);
-
-	// 	console.log('lastPageIdx\t\t', lastPageIdx);
-	// 	console.log('pageIdx\t\t\t', pageIdx);
-	// 	console.log('');
-	// 	console.log('pageEditable\t\t\t', pageEditable);
-	// 	console.log('pageNotEditable\t\t\t', pageNotEditable);
-	// 	console.log('currentPageEditable\t\t', currentPageEditable);
-	// 	console.log('currentPageNotEditable\t', currentPageNotEditable);
-	// 	console.log('previousPageEditable\t', previousPageEditable);
-	// 	console.log('previousPageNotEditable\t', previousPageNotEditable);
-	// 	console.log('nextPageEditable\t\t', nextPageEditable);
-	// 	console.log('nextPageNotEditable\t\t', nextPageNotEditable);
-	// 	console.log('');
-	// 	console.log('getFirstAndLastEditableFalse.value\t\t', { firstNonEditableIndex, lastNonEditableIndex });
-	// 	console.groupEnd();
-	// 	console.log('');
-	// }
 
 	// & Always True //
 	// Always set current page to editable //
@@ -470,6 +443,12 @@ const $useForm = useForm({
 	keepValuesOnUnmount: settings.value?.keepValuesOnUnmount,
 	validationSchema: validationSchema.value,
 	valueOnMount: settings.value?.validateOnMount,
+});
+
+// ? Make sure to update the modelValue when the form values change //
+watchDeep($useForm.values, () => {
+	modelValue.value = $useForm.values;
+	callbacks();
 });
 
 
@@ -612,7 +591,6 @@ function onFieldValidate(field: Field, next: () => void): void {
 	$useForm.validateField(field.name, {}, { name: field.name })
 		.then(() => {
 			checkForPageErrors($useForm.errorBag.value, 'field', shouldAutoPage);
-
 		});
 }
 
@@ -636,7 +614,7 @@ const computedPages = computed<Page[]>(() => {
 		localPage.visible = true;
 
 		if (localPage.when) {
-			const enabledPage: boolean = (localPage.when as (value: any) => boolean)(modelValue.value);
+			const enabledPage: boolean = (localPage.when as (value: any) => boolean)($useForm.values);
 
 			if (pages[pageIdx]) {
 				pages[pageIdx].visible = enabledPage;
@@ -648,11 +626,12 @@ const computedPages = computed<Page[]>(() => {
 });
 
 function whenCallback(): void {
-	Object.values(computedPages.value).forEach((page: Page, pageIdx: number) => {
+	Object.values(pages).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
 			Object.values(page.fields).forEach((field: Field, fieldIdx) => {
+
 				if (field.when) {
-					const enabledField: boolean = field.when(modelValue.value);
+					const enabledField: boolean = field.when($useForm.values);
 					const indexPage = computedPages.value[pageIdx];
 
 					if (indexPage?.fields && indexPage?.fields[fieldIdx]) {

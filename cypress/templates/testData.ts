@@ -5,6 +5,7 @@ import {
 	object as yupObject,
 } from 'yup';
 import { useDeepMerge } from '../../src/plugin/composables/helpers';
+import { pluginOptionsInjectionKey } from '../../src/plugin/utils/globals';
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Shared //
@@ -143,7 +144,6 @@ const defaultFields = {
 		name: 'combobox',
 		placeholder: 'Select an item',
 		type: 'combobox' as const,
-		variant: 'outlined',
 	},
 	color: {
 		label: 'Color',
@@ -592,7 +592,7 @@ const navigationTest = {
 	},
 	global: {
 		provide: {
-			globalOptions: {
+			[pluginOptionsInjectionKey]: {
 				color: 'primary',
 				validateOn: 'blur',
 				variant: 'outlined',

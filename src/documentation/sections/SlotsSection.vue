@@ -40,8 +40,11 @@
 									>[`field.${string}`]</a>
 								</span>
 							</td>
-							<td>
-								Slot that is used for adding your own fields
+							<td class="compact">
+								Slot for adding custom fields. Ensure to include the <code class="ic">onUpdate($event)</code> event
+								listener so the form can detect and handle updates properly. Refer to the <a
+									href="#examples-field-slots"
+								>Field Slot</a> example for usage.
 							</td>
 						</tr>
 						<tr>
@@ -86,6 +89,9 @@ const displaySlotsCode = `{
   change: () => void,
   input: () => void,
 
+  // Updating the model value
+  onUpdate: (value: any) => void,
+
   // Internal FieldLabel component
   FieldLabel: Component
 }`;
@@ -100,6 +106,10 @@ const displaySlotsCode = `{
 
 		> div {
 			padding: 0.5rem 0 !important;
+		}
+
+		&.compact {
+			line-height: 1.4 !important;
 		}
 	}
 }

@@ -2,6 +2,7 @@ import type { Field } from '../../../plugin/types';
 import * as DATA from '@cypress/templates/testData';
 import VStepperForm from '../../VStepperForm.vue';
 import { VTextField } from 'vuetify/components';
+import { pluginOptionsInjectionKey } from '../../../plugin/utils/globals';
 import {
 	string as yupString,
 	object as yupObject,
@@ -50,7 +51,7 @@ const pages = [
 
 const global = {
 	provide: {
-		globalOptions: {
+		[pluginOptionsInjectionKey]: {
 			color: 'primary',
 			validateOn: 'blur',
 			fieldColumns: {
@@ -109,8 +110,8 @@ describe('Stepper Form Slots', () => {
 							onBlur: slotProps.blur,
 							onChange: slotProps.change,
 							onInput: slotProps.input,
-							'onUpdate:modelValue': (value: any) => {
-								answers.value.firstSlot = value;
+							'onUpdate:modelValue': (value) => {
+								slotProps.onUpdate(value);
 							},
 							...slotProps.field,
 						},
@@ -126,8 +127,8 @@ describe('Stepper Form Slots', () => {
 							onBlur: slotProps.blur,
 							onChange: slotProps.change,
 							onInput: slotProps.input,
-							'onUpdate:modelValue': (value: any) => {
-								answers.value.secondSlot = value;
+							'onUpdate:modelValue': (value) => {
+								slotProps.onUpdate(value);
 							},
 							...slotProps.field,
 						},
@@ -143,8 +144,8 @@ describe('Stepper Form Slots', () => {
 							onBlur: slotProps.blur,
 							onChange: slotProps.change,
 							onInput: slotProps.input,
-							'onUpdate:modelValue': (value: any) => {
-								answers.value.thirdSlot = value;
+							'onUpdate:modelValue': (value) => {
+								slotProps.onUpdate(value);
 							},
 							...slotProps.field,
 						},

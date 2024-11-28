@@ -23,4 +23,6 @@ export default defineConfig({
 		viewportHeight: 800,
 		viewportWidth: 1920,
 	},
+
+	numTestsKeptInMemory: 0,
 });

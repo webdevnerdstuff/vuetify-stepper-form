@@ -2,16 +2,17 @@ import type { PluginOptions } from './types';
 import type { App, Plugin } from 'vue';
 import './styles/main.scss';
 import FieldLabel from './components/shared/FieldLabel.vue';
+import { useDeepMerge } from './composables/helpers';
+import { pluginOptionsInjectionKey } from './utils/globals';
 import { AllProps } from './utils/props';
 import VStepperForm from './VStepperForm.vue';
 
 
-const defaultOptions = AllProps;
-export const globalOptions = Symbol();
-
-export function createVStepperForm(options: PluginOptions = defaultOptions): Plugin {
+export function createVStepperForm(options: PluginOptions = {}): Plugin {
 	const install = (app: App) => {
-		app.provide(globalOptions, options);
+		const pluginOptions: PluginOptions = useDeepMerge(options, AllProps);
+
+		app.provide(pluginOptionsInjectionKey, pluginOptions);
 
 		// eslint-disable-next-line no-param-reassign
 		app.config.idPrefix = 'vsf';
