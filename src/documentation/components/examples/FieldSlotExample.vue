@@ -4,21 +4,18 @@
 		:pages="pages"
 		@submit="submitForm"
 	>
-		<template #[`field.foo`]="{ errorMessage, field, blur, change, input, FieldLabel }">
+		<template #[`field.foo`]="props">
 			<v-text-field
-				v-model="answers.foo"
-				v-bind="field"
-				:error="errorMessage"
-				:error-messages="errorMessage"
-				@blur="blur"
-				@change="change"
-				@input="input"
+				v-bind="props.field"
+				@blur="props.blur()"
+				@change="props.change()"
+				@input="props.input()"
+				@update:modelValue="props.onUpdate($event)"
 			>
 				<template #label>
 					<component
-						:is="FieldLabel"
-						:label="field.label"
-						:required="!!field.required"
+						:is="props.FieldLabel"
+						:label="props.field.label"
 					/>
 				</template>
 			</v-text-field>
@@ -26,19 +23,16 @@
 
 		<template #[`field.bar`]="props">
 			<v-text-field
-				v-model="answers.bar"
 				v-bind="props.field"
-				:error="props.errorMessage"
-				:error-messages="props.errorMessage"
 				@blur="props.blur()"
 				@change="props.change()"
 				@input="props.input()"
+				@update:modelValue="props.onUpdate($event)"
 			>
 				<template #label>
 					<component
 						:is="props.FieldLabel"
 						:label="props.field.label"
-						:required="!!props.field.required"
 					/>
 				</template>
 			</v-text-field>
@@ -91,21 +85,19 @@ const templateCode = `<template>
     title="Field Slots"
     @submit="submitForm"
   >
-    <template #[\`field.foo\`]="{ errorMessage, field, blur, change, input, FieldLabel }">
+    <template #[\`field.foo\`]="props">
       <v-text-field
-        v-model="answers.foo"
-        v-bind="field"
-        :error="errorMessage"
-        :error-messages="errorMessage"
-        @blur="blur"
-        @change="change"
-        @input="input"
+        v-bind="props.field"
+        @blur="props.blur()"
+        @change="props.change()"
+        @input="props.input()"
+        @update:modelValue="props.onUpdate($event)"
       >
         <template #label>
           <component
-            :is="FieldLabel"
-            :label="field.label"
-            :required="!!field.required"
+            :is="props.FieldLabel"
+            :label="props.field.label"
+            :required="!!props.field.required"
           />
         </template>
       </v-text-field>
@@ -113,13 +105,11 @@ const templateCode = `<template>
 
     <template #[\`field.bar\`]="props">
       <v-text-field
-        v-model="answers.bar"
         v-bind="props.field"
-        :error="props.errorMessage"
-        :error-messages="props.errorMessage"
         @blur="props.blur()"
         @change="props.change()"
         @input="props.input()"
+        @update:modelValue="props.onUpdate($event)"
       >
         <template #label>
           <component
