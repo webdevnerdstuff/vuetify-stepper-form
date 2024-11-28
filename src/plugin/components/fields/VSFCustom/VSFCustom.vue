@@ -13,9 +13,9 @@
 					blur: () => onActions('blur'),
 					change: () => onActions('change'),
 					input: () => onActions('input'),
+					onUpdate: (value: any) => { updateValue(value); },
 					field: {
 						errorMessages: $useField.errorMessage.value,
-						modelValue: $useField.value.value,
 						...boundSettings,
 					},
 					...useFieldBoundSettings,
@@ -42,10 +42,6 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFCustomProps>();
 
-watch(() => modelValue.value, (newVal) => {
-	$useField.setValue(newVal);
-});
-
 const { field } = props;
 const settings = inject<Ref<Settings>>('settings')!;
 
@@ -65,6 +61,7 @@ const $useField = useField(
 	},
 );
 
+
 // ------------------------- Validate On Actions //
 async function onActions(action: ValidateAction): Promise<void> {
 	await useOnActions({
@@ -74,6 +71,10 @@ async function onActions(action: ValidateAction): Promise<void> {
 		settingsValidateOn: settings.value.validateOn,
 		validate: $useField.validate,
 	});
+}
+
+function updateValue(value: any) {
+	$useField.setValue(value);
 }
 
 

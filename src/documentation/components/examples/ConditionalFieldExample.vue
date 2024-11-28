@@ -1,13 +1,13 @@
 <template>
 	<VStepperForm
-		v-model="answers"
+		v-model="formAnswers"
 		:pages="pages"
 		@submit="submitForm"
 	/>
 
 	<AnswersDialog
 		v-model="dialog"
-		:answers="answers"
+		:answers="formAnswers"
 	/>
 </template>
 
@@ -17,7 +17,7 @@ import AnswersDialog from '../AnswersDialog.vue';
 
 
 const dialog = ref(false);
-const answers = ref({
+const formAnswers = ref({
 	bar: null,
 	conditionalParent: null,
 	foo: null,
@@ -46,16 +46,16 @@ const pages = [
 				label: 'Foo',
 				name: 'foo',
 				type: 'text' as const,
-				when() {
-					return answers.value.conditionalParent === 'foo';
+				when(answers: any) {
+					return answers.conditionalParent === 'foo';
 				},
 			},
 			{
 				label: 'Bar',
 				name: 'bar',
 				type: 'text' as const,
-				when() {
-					return answers.value.conditionalParent === 'bar';
+				when(answers: any) {
+					return answers.conditionalParent === 'bar';
 				},
 			},
 		],
@@ -68,7 +68,7 @@ function submitForm(): void {
 
 const templateCode = `<template>
   <VStepperForm
-    v-model="answers"
+    v-model="formAnswers"
     :pages="pages"
     @submit="submitForm"
   />
@@ -79,7 +79,7 @@ const scriptCode = `\<script setup\>
 import { ref } from 'vue';
 
 
-const answers = ref({
+const formAnswers = ref({
   bar: null,
   conditionalParent: null,
   foo: null,
@@ -108,16 +108,16 @@ const pages = [
         label: 'Foo',
         name: 'foo',
         type: 'text' as const,
-        when() {
-          return answers.value.conditionalParent === 'foo';
+        when(answers) {
+          return answers.conditionalParent === 'foo';
         },
       },
       {
         label: 'Bar',
         name: 'bar',
         type: 'text' as const,
-        when() {
-          return answers.value.conditionalParent === 'bar';
+        when(answers) {
+          return answers.conditionalParent === 'bar';
         },
       },
     ],

@@ -110,8 +110,8 @@ describe('Stepper Form Slots', () => {
 							onBlur: slotProps.blur,
 							onChange: slotProps.change,
 							onInput: slotProps.input,
-							'onUpdate:modelValue': (value: any) => {
-								answers.value.firstSlot = value;
+							'onUpdate:modelValue': (value) => {
+								slotProps.onUpdate(value);
 							},
 							...slotProps.field,
 						},
@@ -127,8 +127,8 @@ describe('Stepper Form Slots', () => {
 							onBlur: slotProps.blur,
 							onChange: slotProps.change,
 							onInput: slotProps.input,
-							'onUpdate:modelValue': (value: any) => {
-								answers.value.secondSlot = value;
+							'onUpdate:modelValue': (value) => {
+								slotProps.onUpdate(value);
 							},
 							...slotProps.field,
 						},
@@ -144,8 +144,8 @@ describe('Stepper Form Slots', () => {
 							onBlur: slotProps.blur,
 							onChange: slotProps.change,
 							onInput: slotProps.input,
-							'onUpdate:modelValue': (value: any) => {
-								answers.value.thirdSlot = value;
+							'onUpdate:modelValue': (value) => {
+								slotProps.onUpdate(value);
 							},
 							...slotProps.field,
 						},

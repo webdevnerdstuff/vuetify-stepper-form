@@ -144,7 +144,6 @@ const defaultFields = {
 		name: 'combobox',
 		placeholder: 'Select an item',
 		type: 'combobox' as const,
-		variant: 'outlined',
 	},
 	color: {
 		label: 'Color',

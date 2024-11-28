@@ -9,11 +9,11 @@
 			#[`field.slotField`]="props"
 		>
 			<v-text-field
-				v-model="allFieldsExample.answers.slotField"
 				v-bind="props.field"
 				@blur="props.blur()"
 				@change="props.change()"
 				@input="props.input()"
+				@update:modelValue="props.onUpdate($event)"
 			>
 				<template #label>
 					<component
@@ -65,6 +65,9 @@ const keys = [
 	'conditionalField',
 	'conditionalPage',
 ];
+
+
+
 
 // ? Change the key to test different examples //
 const answerAndPagesKey = keys[0];
@@ -283,33 +286,7 @@ const customSlots = [
 // & ------------------------- All Fields Example //
 const allFieldsExample = reactive({
 	answers: {
-		autocomplete: undefined,
-		// autocomplete: 'foo',
-		buttonField: [],
-		checkboxMultiple: undefined,
-		// checkboxMultiple: ['option1', 'option3'],
-		checkboxSingle: null,
-		// checkboxSingle: 'yes',
-		color: '#ff0000',
-		// combobox: null,
-		// combobox: 'Foo',
-		// combobox: 'foo',
-		combobox: null,
-		// combobox: { title: 'Foo', value: 'foo' },
-
-		customBar: null,
-		desc: 'Hello World',
-		email: null,
-		file: null,
-		name: null,
-		// radio: 'option1',
-		radio: null,
-		// radioMultiple: ['option1', 'option3'],
-		// selectField: null,
-		selectField: 'foo',
 		slotField: null,
-		switchQuestion: true,
-		// switchQuestion: 'yes',
 	},
 	formSettings: {
 		fieldColumns: {
@@ -319,7 +296,7 @@ const allFieldsExample = reactive({
 			xl: 6,
 		},
 		// headerTooltips: true,
-		jumpAhead: true,
+		// jumpAhead: true,
 		summaryColumns: { sm: 6 },
 		// tooltipLocation: 'bottom',
 		// tooltipTransition: 'fab-transition',
@@ -346,11 +323,11 @@ const allFieldsExample = reactive({
 				{ ...autocompleteProps },
 				{ ...comboboxProps },
 				{ ...colorFieldProps },
-
 			],
 			title: 'Less Common Fields',
 		},
 		{
+			editable: false,
 			fields: [
 				{ ...checkboxMultipleProps },
 				{ ...checkboxSingleProps },
@@ -557,14 +534,14 @@ const conditionalPageExample = reactive({
 	}),
 });
 
-// & v Conditional Field Example //
-const conditionalExample = reactive({
+// & ------------------------- Conditional Field Example //
+const conditionalFieldExample = reactive({
 	answers: {
-		aConditional: null,
-		bConditional: null,
-		cConditional: null,
-		conditionalParent: null,
-		fooQuestion: null,
+		aConditional: undefined,
+		bConditional: undefined,
+		cConditional: undefined,
+		conditionalParent: undefined,
+		fooQuestion: undefined,
 	},
 	formSettings: {
 		title: 'Conditional Field Example',
@@ -629,6 +606,9 @@ const conditionalExample = reactive({
 					whenParentName: 'conditionalParent',
 				},
 			],
+			when(answers: any) {
+				return answers?.conditionalParent === 'c';
+			},
 		},
 	],
 	validation: yupObject({
@@ -657,26 +637,29 @@ function isRequired(field: string) {
 }
 
 const formAnswers = reactive({
-	allFields: { ...allFieldsExample.answers, ...DATA.answers },
-	conditionalField: { ...conditionalExample.answers, ...DATA.answers },
-	conditionalPage: { ...conditionalPageExample.answers, ...DATA.answers },
+	allFields: {
+		...allFieldsExample.answers,
+		// ...DATA.answers,
+	},
+	conditionalField: conditionalFieldExample.answers,
+	conditionalPage: conditionalPageExample.answers,
 });
 
 const formPages = {
 	allFields: allFieldsExample.pages,
-	conditionalField: conditionalExample.pages,
+	conditionalField: conditionalFieldExample.pages,
 	conditionalPage: conditionalPageExample.pages,
 };
 
 const formSchemas = {
 	allFields: allFieldsExample.validation,
-	conditionalField: conditionalExample.validation,
+	conditionalField: conditionalFieldExample.validation,
 	conditionalPage: conditionalPageExample.validation,
 };
 
 const formFormSettings = {
 	allFields: allFieldsExample.formSettings,
-	conditionalField: conditionalExample.formSettings,
+	conditionalField: conditionalFieldExample.formSettings,
 	conditionalPage: conditionalPageExample.formSettings,
 };
 

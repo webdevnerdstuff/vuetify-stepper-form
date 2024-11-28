@@ -24,5 +24,5 @@ export default defineConfig({
 		viewportWidth: 1920,
 	},
 
-	numTestsKeptInMemory: 0,
+	// numTestsKeptInMemory: 0,
 });
