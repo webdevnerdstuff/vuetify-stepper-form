@@ -187,6 +187,7 @@ export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowIt
 	keepValuesOnUnmount?: boolean,
 	navButtonSize?: VBtn['size'];
 	navButtonVariant?: VBtn['variant'];
+	submitLoading?: boolean,
 	summaryColumns?: ResponsiveColumns;
 	title?: string;
 	tooltipLocation?: VTooltip['location'];

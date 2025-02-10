@@ -134,6 +134,7 @@
 										:color="settings.color"
 										data-cy="vsf-submit-button"
 										:disabled="fieldsHaveErrors"
+										:loading="submitLoading"
 										:size="navButtonSize"
 										type="submit"
 										:variant="navButtonVariant"
