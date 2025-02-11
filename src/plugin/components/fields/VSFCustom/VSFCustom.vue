@@ -95,7 +95,7 @@ const useFieldBoundSettings = computed(() => {
 });
 
 const bindSettings = computed(() => ({
-	...field,
+	...field.value,
 	color: field.value.color || settings.value.color,
 	density: field.value.density || settings.value.density,
 }));

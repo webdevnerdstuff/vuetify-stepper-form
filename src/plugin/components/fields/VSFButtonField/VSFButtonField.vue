@@ -183,7 +183,7 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
-	...field,
+	...field.value,
 	border: field.value?.border ? `${field.value?.color} ${field.value?.border}` : undefined,
 	color: field.value.color || settings.value?.color,
 	density: field.value?.density ?? settings.value?.density as VBtn['density'],

@@ -37,6 +37,7 @@
 								<v-stepper-item
 									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
+									:disabled="submitLoading"
 									:edit-icon="page.isSummary ? '$complete' : settings.editIcon"
 									:editable="headerItemEnabled(page)"
 									elevation="0"
@@ -133,7 +134,7 @@
 										v-else
 										:color="settings.color"
 										data-cy="vsf-submit-button"
-										:disabled="fieldsHaveErrors"
+										:disabled="fieldsHaveErrors || submitLoading"
 										:loading="submitLoading"
 										:size="navButtonSize"
 										type="submit"
@@ -164,7 +165,6 @@
 <script setup lang="ts">
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
-import { watchDeep } from '@vueuse/core';
 import { useForm } from 'vee-validate';
 import { useDisplay } from 'vuetify';
 import type {
@@ -316,6 +316,10 @@ const prevButtonDisabled = computed(() => {
 		return true;
 	}
 
+	if (props.submitLoading) {
+		return true;
+	}
+
 	// if (currentPage <= firstNonEditableIndex) {
 	// 	return true;
 	// }
@@ -446,10 +450,17 @@ const $useForm = useForm({
 });
 
 // ? Make sure to update the modelValue when the form values change //
-watchDeep($useForm.values, () => {
-	modelValue.value = $useForm.values;
+watch(() => $useForm.values, (newVal) => {
+	modelValue.value = JSON.parse(JSON.stringify(newVal));
+
 	callbacks();
-});
+}, { deep: true });
+
+watch(modelValue, (newVal) => {
+	Object.entries(newVal).forEach(([key, value]) => {
+		$useForm.setFieldValue(key, value);
+	});
+}, { deep: true });
 
 
 // ------------------------ Run Validation //

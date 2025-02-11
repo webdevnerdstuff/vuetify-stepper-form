@@ -164,7 +164,7 @@ async function onActions(action: ValidateAction): Promise<void> {
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
-	...field,
+	...field.value,
 	color: field.value.color || settings.value.color,
 	density: field.value.density || settings.value.density,
 	falseValue: field.value.falseValue || undefined,

@@ -88,7 +88,7 @@ async function onActions(validate: ValidateFieldResult, action: ValidateAction):
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
-	...field,
+	...field.value,
 	color: field.value.color || settings.value.color,
 	density: field.value.density || settings.value.density,
 	falseValue: field.value.falseValue || false,

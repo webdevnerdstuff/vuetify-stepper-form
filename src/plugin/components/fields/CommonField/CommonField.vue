@@ -93,7 +93,7 @@ const hasErrors = computed(() => {
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
-	...field,
+	...field.value,
 	color: field.value.color || settings.value.color,
 	density: field.value.density || settings.value.density,
 	hideDetails: field.value.hideDetails || settings.value.hideDetails,
