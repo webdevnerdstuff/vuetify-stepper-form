@@ -34,18 +34,18 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<CommonFieldProps>();
 
-const { field } = props;
+const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
-	return field.required || false;
+	return field.value.required || false;
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
+const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
 
 const { errorMessage, setValue, validate, value } = useField(
-	field.name,
+	field.value.name,
 	undefined,
 	{
 		initialValue: modelValue.value,
@@ -69,24 +69,24 @@ async function onActions(action: ValidateAction): Promise<void> {
 	await useOnActions({
 		action,
 		emit,
-		field,
+		field: field.value,
 		settingsValidateOn: settings.value.validateOn,
 		validate,
 	});
 }
 
-const fieldItems = computed(() => field?.items ? field.items as unknown : undefined);
+const fieldItems = computed(() => field.value?.items ? field.value.items as unknown : undefined);
 const fieldType = computed(() => {
-	if (field.type === 'color' || field.type === 'date') {
+	if (field.value.type === 'color' || field.value.type === 'date') {
 		return 'text';
 	}
 
-	return field.type;
+	return field.value.type;
 });
 const hasErrors = computed(() => {
-	let err = field?.error;
+	let err = field.value?.error;
 
-	err = field?.errorMessages ? field.errorMessages.length > 0 : err;
+	err = field.value?.errorMessages ? field.value.errorMessages.length > 0 : err;
 
 	return err;
 });
@@ -94,11 +94,11 @@ const hasErrors = computed(() => {
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings.value.color,
-	density: field.density || settings.value.density,
-	hideDetails: field.hideDetails || settings.value.hideDetails,
+	color: field.value.color || settings.value.color,
+	density: field.value.density || settings.value.density,
+	hideDetails: field.value.hideDetails || settings.value.hideDetails,
 	type: fieldType.value,
-	variant: field.variant || settings.value.variant,
+	variant: field.value.variant || settings.value.variant,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));

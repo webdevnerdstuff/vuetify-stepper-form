@@ -90,19 +90,19 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFRadioProps>();
 
-const { field } = props;
+const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldDensity = computed<VRadio['density']>(() => (field?.density ?? settings.value?.density) as VRadio['density']);
+const fieldDensity = computed<VRadio['density']>(() => (field.value?.density ?? settings.value?.density) as VRadio['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
-	return field.required || false;
+	return field.value.required || false;
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
+const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
 
 const { errorMessage, setValue, validate, value } = useField(
-	field.name,
+	field.value.name,
 	undefined,
 	{
 		initialValue: modelValue.value,
@@ -122,7 +122,7 @@ onUnmounted(() => {
 
 
 // ------------------------- Validate On Actions //
-const isValidating = ref<boolean>(field?.disabled as boolean);
+const isValidating = ref<boolean>(field.value?.disabled as boolean);
 
 async function onActions(action: ValidateAction, val?: string | number): Promise<void> {
 	if (!isValidating.value) {
@@ -130,7 +130,7 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 
 		let updatedValue: string | string[];
 
-		if (field?.multiple) {
+		if (field.value?.multiple) {
 			const localModelValue = Array.isArray(value.value) ? value.value.slice() : [];
 			const valStr = String(val);
 
@@ -151,9 +151,9 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 		modelValue.value = updatedValue;
 
 		await useOnActions({
-			action: field?.autoPage ? 'click' : action,
+			action: field.value?.autoPage ? 'click' : action,
 			emit,
-			field,
+			field: field.value,
 			settingsValidateOn: settings.value.validateOn,
 			validate,
 		}).then(() => {
@@ -164,9 +164,9 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 
 
 const hasErrors = computed(() => {
-	let err = field?.error;
+	let err = field.value?.error;
 
-	err = field?.errorMessages ? field.errorMessages.length > 0 : err;
+	err = field.value?.errorMessages ? field.value.errorMessages.length > 0 : err;
 
 	return err;
 });
@@ -174,11 +174,11 @@ const hasErrors = computed(() => {
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings.value.color,
-	density: field.density || settings.value.density,
-	falseValue: field.falseValue || false,
-	hideDetails: field.hideDetails || settings.value.hideDetails,
-	trueValue: field.trueValue || true,
+	color: field.value.color || settings.value.color,
+	density: field.value.density || settings.value.density,
+	falseValue: field.value.falseValue || false,
+	hideDetails: field.value.hideDetails || settings.value.hideDetails,
+	trueValue: field.value.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));
@@ -187,14 +187,14 @@ const boundSettings = computed(() => useBindingSettings(bindSettings.value as Pa
 // Styles //
 const fieldContainerStyle = computed<CSSProperties>(() => {
 	const styles = {
-		'width': field?.minWidth ?? field?.width ?? undefined,
+		'width': field.value?.minWidth ?? field.value?.width ?? undefined,
 	};
 
 	return styles as CSSProperties;
 });
 
 const inputControlContainerStyle = computed<CSSProperties>(() => {
-	const useInlineSpacing = field.labelPositionLeft;
+	const useInlineSpacing = field.value.labelPositionLeft;
 
 	const styles = {
 		'flex-direction': useInlineSpacing ? 'row' : 'column',
@@ -206,15 +206,15 @@ const inputControlContainerStyle = computed<CSSProperties>(() => {
 
 // Inline Radios //
 const radioContainerStyle = computed<CSSProperties>(() => ({
-	'display': field.inline ? 'flex' : undefined,
+	'display': field.value.inline ? 'flex' : undefined,
 }));
 
 const radioStyle = computed<CSSProperties>(() => {
-	const useInlineSpacing = field.inline && field.inlineSpacing;
+	const useInlineSpacing = field.value.inline && field.value.inlineSpacing;
 	const marginRight = '10px';
 
 	const styles = {
-		'margin-right': useInlineSpacing ? field.inlineSpacing : marginRight,
+		'margin-right': useInlineSpacing ? field.value.inlineSpacing : marginRight,
 	};
 
 	return styles as CSSProperties;

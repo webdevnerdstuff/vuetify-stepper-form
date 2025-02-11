@@ -207,9 +207,8 @@ const injectedOptions = inject<PluginOptions>(pluginOptionsInjectionKey)!;
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
-const { direction, jumpAhead, title, width } = toRefs(props);
-const pages = reactive<Page[]>(props.pages);
-const originalPages = JSON.parse(JSON.stringify(pages));
+const { direction, jumpAhead, pages, title, width } = toRefs(props);
+const originalPages = JSON.parse(JSON.stringify(pages.value));
 
 const settings: Ref<Settings> = ref<Settings>(useBuildSettings(stepperProps));
 
@@ -233,7 +232,7 @@ provide<Ref<Settings>>('settings', settings);
 
 const allFieldsArray: Ref<Field[]> = ref<Field[]>([]);
 
-Object.values(pages).forEach((p: Page) => {
+Object.values(pages.value).forEach((p: Page) => {
 	if (p.fields) {
 		Object.values(p.fields).forEach((field: Field) => {
 			allFieldsArray.value.push(field);
@@ -610,7 +609,7 @@ function callbacks() {
 // ------------------------ Conditional "when" callbacks //
 const computedPages = computed<Page[]>(() => {
 	// const localPages = JSON.parse(JSON.stringify(pages));
-	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
 		const localPage = page;
 		localPage.visible = true;
 
@@ -623,11 +622,11 @@ const computedPages = computed<Page[]>(() => {
 		}
 	});
 
-	return pages.filter((p: Page) => p.visible);
+	return pages.value.filter((p: Page) => p.visible);
 });
 
 function whenCallback(): void {
-	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
 			Object.values(page.fields).forEach((field: Field, fieldIdx) => {
 

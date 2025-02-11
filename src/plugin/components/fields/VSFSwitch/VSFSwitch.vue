@@ -49,14 +49,14 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFSwitchProps>();
 
-const { field } = props;
+const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldDensity = computed<VSwitch['density']>(() => (field?.density ?? settings.value?.density) as VSwitch['density']);
+const fieldDensity = computed<VSwitch['density']>(() => (field.value?.density ?? settings.value?.density) as VSwitch['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
-	return field.required || false;
+	return field.value.required || false;
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
+const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
 onUnmounted(() => {
@@ -67,16 +67,16 @@ onUnmounted(() => {
 
 
 // ------------------------- Validate On Actions //
-const isValidating = ref<boolean>(field?.disabled as boolean);
+const isValidating = ref<boolean>(field.value?.disabled as boolean);
 
 async function onActions(validate: ValidateFieldResult, action: ValidateAction): Promise<void> {
 	if (!isValidating.value) {
 		isValidating.value = true;
 
 		await useOnActions({
-			action: field?.autoPage ? 'click' : action,
+			action: field.value?.autoPage ? 'click' : action,
 			emit,
-			field,
+			field: field.value,
 			settingsValidateOn: settings.value.validateOn,
 			validate,
 		}).then(() => {
@@ -89,11 +89,11 @@ async function onActions(validate: ValidateFieldResult, action: ValidateAction):
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
 	...field,
-	color: field.color || settings.value.color,
-	density: field.density || settings.value.density,
-	falseValue: field.falseValue || false,
-	hideDetails: field.hideDetails || settings.value.hideDetails,
-	trueValue: field.trueValue || true,
+	color: field.value.color || settings.value.color,
+	density: field.value.density || settings.value.density,
+	falseValue: field.value.falseValue || false,
+	hideDetails: field.value.hideDetails || settings.value.hideDetails,
+	trueValue: field.value.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>));
