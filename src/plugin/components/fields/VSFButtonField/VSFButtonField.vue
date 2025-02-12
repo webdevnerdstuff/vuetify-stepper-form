@@ -204,7 +204,7 @@ const boundSettings = computed(() => useBindingSettings(bindSettings.value as Pa
 // -------------------------------------------------- Properties //
 const getIcon = (option: Option, prop: string): string => {
 	const optionValue = option[prop] as string;
-	const fieldValue = field?.[prop];
+	const fieldValue = field.value?.[prop];
 
 	return optionValue ?? fieldValue;
 };
