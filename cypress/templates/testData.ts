@@ -337,7 +337,7 @@ const finalAnswer = {
 	number: '100',
 	selectAnimal: 'rabbit',
 	selectsMultipleAnimals: ['rabbit', 'duck'],
-	description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec pur',
+	description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 	// hidden: "I'm a hidden field answer",
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
@@ -367,9 +367,9 @@ const validationSchema = yupObject({
 		.url('Must be a valid URL'),
 	number: yupNumber().required(isRequired('Number'))
 		.min(Number(finalAnswer.number), 'Number must be at least ${min}'),
-	description: yupString().required(isRequired('Description')),
 	selectAnimal: yupString().required(isRequired('Select Animal')),
 	selectsMultipleAnimals: yupArray().required(isRequired('Select Multiple Animals')),
+	description: yupString().required(isRequired('Description')),
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Less Common Fields Page //
 	autocompleteAnimal: yupString().required(isRequired('Autocomplete Animal')),
