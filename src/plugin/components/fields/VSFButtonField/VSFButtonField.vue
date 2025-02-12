@@ -99,21 +99,21 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<unknown>();
 const props = defineProps<VSFButtonFieldProps>();
 
-const { field } = props;
+const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
-	return field.required || false;
+	return field.value.required || false;
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings.value?.validateOn);
+const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value?.validateOn);
 const originalValue = modelValue.value;
 
 
 const { errorMessage, handleChange, setValue, validate, value } = useField(
-	field.name,
+	field.value.name,
 	undefined,
 	{
-		initialValue: field?.multiple ? [] : null,
+		initialValue: field.value?.multiple ? [] : null,
 		validateOnBlur: fieldValidateOn.value === 'blur',
 		validateOnChange: fieldValidateOn.value === 'change',
 		validateOnInput: fieldValidateOn.value === 'input',
@@ -138,10 +138,10 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 		return;
 	}
 
-	if (!field?.disabled && value.value) {
+	if (!field.value?.disabled && value.value) {
 		let updatedValue: string | string[];
 
-		if (field?.multiple) {
+		if (field.value?.multiple) {
 			const localModelValue = Array.isArray(value.value) ? value.value.slice() : [];
 			const valStr = String(val);
 
@@ -169,7 +169,7 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 	await useOnActions({
 		action,
 		emit,
-		field,
+		field: field.value,
 		settingsValidateOn: settings.value?.validateOn,
 		validate,
 	}).then(() => {
@@ -183,11 +183,11 @@ async function onActions(action: ValidateAction, val?: string | number): Promise
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
-	...field,
-	border: field?.border ? `${field?.color} ${field?.border}` : undefined,
-	color: field.color || settings.value?.color,
-	density: field?.density ?? settings.value?.density as VBtn['density'],
-	hideDetails: field.hideDetails || settings.value?.hideDetails,
+	...field.value,
+	border: field.value?.border ? `${field.value?.color} ${field.value?.border}` : undefined,
+	color: field.value.color || settings.value?.color,
+	density: field.value?.density ?? settings.value?.density as VBtn['density'],
+	hideDetails: field.value.hideDetails || settings.value?.hideDetails,
 	multiple: undefined,
 }));
 
@@ -204,7 +204,7 @@ const boundSettings = computed(() => useBindingSettings(bindSettings.value as Pa
 // -------------------------------------------------- Properties //
 const getIcon = (option: Option, prop: string): string => {
 	const optionValue = option[prop] as string;
-	const fieldValue = field?.[prop];
+	const fieldValue = field.value?.[prop];
 
 	return optionValue ?? fieldValue;
 };
@@ -215,7 +215,7 @@ function getId(option: { id?: string; }, key: string | number) {
 		return option.id;
 	}
 
-	return field?.id ? `${field?.id}-${key}` : undefined;
+	return field.value?.id ? `${field.value?.id}-${key}` : undefined;
 }
 
 
@@ -230,20 +230,20 @@ const densityValues = {
 	oversized: '72px',
 };
 
-const fieldDensity = computed<VBtn['density']>(() => (field?.density ?? settings.value?.density) as VBtn['density']);
+const fieldDensity = computed<VBtn['density']>(() => (field.value?.density ?? settings.value?.density) as VBtn['density']);
 
 function getDensityValue(): string {
 	return fieldDensity.value ? densityValues[fieldDensity.value] : densityValues['default'];
 }
 
 function getMinWidth(option: Option): string | number | undefined {
-	const minWidth = option?.minWidth ?? field?.minWidth;
+	const minWidth = option?.minWidth ?? field.value?.minWidth;
 
 	if (minWidth != null) {
 		return minWidth as string;
 	}
 
-	if (option?.icon || field?.icon) {
+	if (option?.icon || field.value?.icon) {
 		return getDensityValue();
 	}
 
@@ -251,13 +251,13 @@ function getMinWidth(option: Option): string | number | undefined {
 }
 
 function getMaxWidth(option: Option): string | number | undefined {
-	const maxWidth = option?.maxWidth ?? field?.maxWidth;
+	const maxWidth = option?.maxWidth ?? field.value?.maxWidth;
 
 	if (maxWidth != null) {
 		return maxWidth as string;
 	}
 
-	if (option?.icon || field?.icon) {
+	if (option?.icon || field.value?.icon) {
 		return getDensityValue();
 	}
 
@@ -265,13 +265,13 @@ function getMaxWidth(option: Option): string | number | undefined {
 }
 
 function getMinHeight(option: Option): string | number | undefined {
-	const minHeight = option?.minHeight ?? field?.minHeight;
+	const minHeight = option?.minHeight ?? field.value?.minHeight;
 
 	if (minHeight != null) {
 		return minHeight as string;
 	}
 
-	if (option?.icon || field?.icon) {
+	if (option?.icon || field.value?.icon) {
 		return getDensityValue();
 	}
 
@@ -279,7 +279,7 @@ function getMinHeight(option: Option): string | number | undefined {
 }
 
 function getMaxHeight(option: Option): string | number | undefined {
-	const maxHeight = option?.maxHeight ?? field?.maxHeight;
+	const maxHeight = option?.maxHeight ?? field.value?.maxHeight;
 
 	if (maxHeight != null) {
 		return maxHeight as string;
@@ -289,7 +289,7 @@ function getMaxHeight(option: Option): string | number | undefined {
 }
 
 function getWidth(option: Option): string | number | undefined {
-	const width = option?.width ?? field?.width;
+	const width = option?.width ?? field.value?.width;
 
 	if (width != null) {
 		return width as string;
@@ -303,7 +303,7 @@ function getWidth(option: Option): string | number | undefined {
 }
 
 function getHeight(option: Option): string | number | undefined {
-	const height = option?.height ?? field?.height;
+	const height = option?.height ?? field.value?.height;
 
 	if (height != null) {
 		return height as string;
@@ -321,7 +321,7 @@ const isActive = (val: string | number): boolean | undefined => {
 };
 
 // ------------------------- Variants //
-const fieldVariant = ref<VSFButtonFieldProps['field']['variant']>(field?.variant);
+const fieldVariant = ref<VSFButtonFieldProps['field']['variant']>(field.value?.variant);
 
 function getVariant(val: string | number): VSFButtonFieldProps['field']['variant'] {
 	if (isActive(val)) {
@@ -338,11 +338,11 @@ function activeMessages(errorMsg: string | string[]): boolean {
 		return true;
 	}
 
-	if (field.hint && (field.persistentHint || isFocused.value)) {
+	if (field.value.hint && (field.value.persistentHint || isFocused.value)) {
 		return true;
 	}
 
-	if (field.messages) {
+	if (field.value.messages) {
 		return true;
 	}
 
@@ -354,18 +354,18 @@ function fieldMessages(errorMsg?: string | string[]): string | string[] {
 		return errorMsg as string[];
 	}
 
-	if (field.hint && (field.persistentHint || isFocused.value)) {
-		return field.hint;
+	if (field.value.hint && (field.value.persistentHint || isFocused.value)) {
+		return field.value.hint;
 	}
 
-	if (field.messages) {
-		return field.messages;
+	if (field.value.messages) {
+		return field.value.messages;
 	}
 
 	return '';
 }
 
-const hasMessages = computed(() => field.messages && field.messages.length > 0);
+const hasMessages = computed(() => field.value.messages && field.value.messages.length > 0);
 
 const hasDetails = computed(() => {
 	return !bindSettings.value.hideDetails || (
@@ -375,7 +375,7 @@ const hasDetails = computed(() => {
 
 
 // -------------------------------------------------- Styles //
-const gap = shallowRef(field.gap ?? 2);
+const gap = shallowRef(field.value.gap ?? 2);
 
 const itemGroupStyle = computed<CSSProperties>(() => {
 	if (containsSizeUnit(gap.value)) {
@@ -394,21 +394,21 @@ const buttontextcolor = ref('rgb(var(--v-theme-on-surface))');
 // -------------------------------------------------- Classes //
 const itemGroupClass = computed(() => {
 	return {
-		[`align-${field?.align}`]: field?.align != null && field?.block,
-		[`justify-${field?.align}`]: field?.align != null && !field?.block,
+		[`align-${field.value?.align}`]: field.value?.align != null && field.value?.block,
+		[`justify-${field.value?.align}`]: field.value?.align != null && !field.value?.block,
 		'd-flex': true,
-		'flex-column': field?.block,
+		'flex-column': field.value?.block,
 		[`ga-${gap.value}`]: !containsSizeUnit(gap.value),
 	};
 });
 
 const buttonFieldContainerClass = computed(() => {
 	return {
-		'd-flex': field?.align,
-		'flex-column': field?.align,
+		'd-flex': field.value?.align,
+		'flex-column': field.value?.align,
 		'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
 		'vsf-button-field__container': true,
-		[`align-${field?.align}`]: field?.align,
+		[`align-${field.value?.align}`]: field.value?.align,
 	};
 });
 
@@ -427,7 +427,7 @@ const buttonClass = computed(() => {
 const buttonClassAdditional = (option: Option) => {
 	return {
 		[`${option?.class}`]: true,
-		[`${field.selectedClass}`]: isActive(option.value) && field.selectedClass != null,
+		[`${field.value.selectedClass}`]: isActive(option.value) && field.value.selectedClass != null,
 	};
 };
 

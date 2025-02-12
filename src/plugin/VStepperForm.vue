@@ -37,6 +37,7 @@
 								<v-stepper-item
 									:class='`vsf-activator-${componentId}-${i + 1}`'
 									:color="settings.color"
+									:disabled="submitLoading"
 									:edit-icon="page.isSummary ? '$complete' : settings.editIcon"
 									:editable="headerItemEnabled(page)"
 									elevation="0"
@@ -133,7 +134,8 @@
 										v-else
 										:color="settings.color"
 										data-cy="vsf-submit-button"
-										:disabled="fieldsHaveErrors"
+										:disabled="fieldsHaveErrors || submitLoading"
+										:loading="submitLoading"
 										:size="navButtonSize"
 										type="submit"
 										:variant="navButtonVariant"
@@ -163,7 +165,6 @@
 <script setup lang="ts">
 // import {	VStepper } from 'vuetify/components';
 // import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
-import { watchDeep } from '@vueuse/core';
 import { useForm } from 'vee-validate';
 import { useDisplay } from 'vuetify';
 import type {
@@ -206,9 +207,8 @@ const injectedOptions = inject<PluginOptions>(pluginOptionsInjectionKey)!;
 // -------------------------------------------------- Props //
 const props = withDefaults(defineProps<Props>(), AllProps);
 let stepperProps: Settings = reactive<Settings>(useDeepMerge(attrs, injectedOptions, props));
-const { direction, jumpAhead, title, width } = toRefs(props);
-const pages = reactive<Page[]>(props.pages);
-const originalPages = JSON.parse(JSON.stringify(pages));
+const { direction, jumpAhead, pages, title, width } = toRefs(props);
+const originalPages = JSON.parse(JSON.stringify(pages.value));
 
 const settings: Ref<Settings> = ref<Settings>(useBuildSettings(stepperProps));
 
@@ -232,7 +232,7 @@ provide<Ref<Settings>>('settings', settings);
 
 const allFieldsArray: Ref<Field[]> = ref<Field[]>([]);
 
-Object.values(pages).forEach((p: Page) => {
+Object.values(pages.value).forEach((p: Page) => {
 	if (p.fields) {
 		Object.values(p.fields).forEach((field: Field) => {
 			allFieldsArray.value.push(field);
@@ -313,6 +313,10 @@ const prevButtonDisabled = computed(() => {
 	}
 
 	if (currentPageIdx.value - 1 === lastNonEditableIndex) {
+		return true;
+	}
+
+	if (props.submitLoading) {
 		return true;
 	}
 
@@ -446,10 +450,28 @@ const $useForm = useForm({
 });
 
 // ? Make sure to update the modelValue when the form values change //
-watchDeep($useForm.values, () => {
-	modelValue.value = $useForm.values;
+const internalUpdate = ref(false);
+let useFormValueTimer: ReturnType<typeof setTimeout>;
+
+watch(() => $useForm.values, (newVal) => {
+	internalUpdate.value = true;
+	modelValue.value = JSON.parse(JSON.stringify(newVal));
+
 	callbacks();
-});
+
+	clearTimeout(useFormValueTimer);
+	useFormValueTimer = setTimeout(() => {
+		internalUpdate.value = false;
+	}, 0);
+}, { deep: true });
+
+watch(modelValue, (newVal) => {
+	if (!internalUpdate.value) {
+		Object.entries(newVal).forEach(([key, value]) => {
+			$useForm.setFieldValue(key, value);
+		});
+	}
+}, { deep: true });
 
 
 // ------------------------ Run Validation //
@@ -609,7 +631,7 @@ function callbacks() {
 // ------------------------ Conditional "when" callbacks //
 const computedPages = computed<Page[]>(() => {
 	// const localPages = JSON.parse(JSON.stringify(pages));
-	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
 		const localPage = page;
 		localPage.visible = true;
 
@@ -622,11 +644,11 @@ const computedPages = computed<Page[]>(() => {
 		}
 	});
 
-	return pages.filter((p: Page) => p.visible);
+	return pages.value.filter((p: Page) => p.visible);
 });
 
 function whenCallback(): void {
-	Object.values(pages).forEach((page: Page, pageIdx: number) => {
+	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
 		if (page.fields) {
 			Object.values(page.fields).forEach((field: Field, fieldIdx) => {
 

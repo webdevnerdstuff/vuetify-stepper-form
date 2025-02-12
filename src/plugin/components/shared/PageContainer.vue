@@ -137,7 +137,8 @@ defineOptions({
 });
 const emit = defineEmits(['validate']);
 const slots = defineSlots();
-const { fieldColumns, page } = defineProps<PageContainerProps>();
+const props = defineProps<PageContainerProps>();
+const { fieldColumns, page } = toRefs(props);
 
 
 const textFields = [
@@ -177,7 +178,7 @@ function getComponent(fieldType: string): Component | null {
 
 const modelValue = defineModel<any>();
 
-const pageColumns = computed(() => page?.pageFieldColumns ?? {});
+const pageColumns = computed(() => page.value?.pageFieldColumns ?? {});
 
 
 // -------------------------------------------------- Columns //
@@ -188,7 +189,7 @@ const columnsMerged = ref<ResponsiveColumns>({
 		sm: undefined,
 		xl: undefined,
 	},
-	...fieldColumns,
+	...fieldColumns.value,
 	...pageColumns.value,
 });
 

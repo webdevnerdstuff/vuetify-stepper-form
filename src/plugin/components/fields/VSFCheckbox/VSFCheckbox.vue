@@ -8,10 +8,10 @@
 		:disabled="isValidating"
 		:error="errorMessage ? errorMessage?.length > 0 : false"
 		:error-messages="errorMessage"
-		@blur="onActions('blur')"
-		@change="onActions('change')"
+		@blur="fieldValidateOn === 'blur' ? onActions('blur') : undefined"
+		@change="fieldValidateOn === 'change' ? onActions('change') : undefined"
 		@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click') : undefined"
-		@input="onActions('input')"
+		@input="fieldValidateOn === 'input' ? onActions('input') : undefined"
 	>
 		<template #label>
 			<FieldLabel
@@ -109,19 +109,19 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFCheckboxProps>();
 
-const { field } = props;
+const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
-const fieldDensity = computed<VCheckbox['density']>(() => (field?.density ?? settings.value?.density) as VCheckbox['density']);
+const fieldDensity = computed<VCheckbox['density']>(() => (field.value?.density ?? settings.value?.density) as VCheckbox['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
-	return field.required || false;
+	return field.value.required || false;
 });
-const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
+const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
 
 
 const { errorMessage, setValue, validate, value } = useField(
-	field.name,
+	field.value.name,
 	undefined,
 	{
 		initialValue: modelValue.value,
@@ -141,7 +141,7 @@ onUnmounted(() => {
 
 
 // ------------------------- Validate On Actions //
-const isValidating = ref<boolean>(field?.disabled as boolean);
+const isValidating = ref<boolean>(field.value?.disabled as boolean);
 
 async function onActions(action: ValidateAction): Promise<void> {
 	if (!isValidating.value) {
@@ -150,9 +150,9 @@ async function onActions(action: ValidateAction): Promise<void> {
 		modelValue.value = value.value;
 
 		await useOnActions({
-			action: field?.autoPage ? 'click' : action,
+			action: field.value?.autoPage ? 'click' : action,
 			emit,
-			field,
+			field: field.value,
 			settingsValidateOn: settings.value.validateOn,
 			validate,
 		}).then(() => {
@@ -164,12 +164,12 @@ async function onActions(action: ValidateAction): Promise<void> {
 
 // -------------------------------------------------- Bound Settings //
 const bindSettings = computed(() => ({
-	...field,
-	color: field.color || settings.value.color,
-	density: field.density || settings.value.density,
-	falseValue: field.falseValue || undefined,
-	hideDetails: field.hideDetails || settings.value.hideDetails,
-	trueValue: field.trueValue || true,
+	...field.value,
+	color: field.value.color || settings.value.color,
+	density: field.value.density || settings.value.density,
+	falseValue: field.value.falseValue || undefined,
+	hideDetails: field.value.hideDetails || settings.value.hideDetails,
+	trueValue: field.value.trueValue || true,
 }));
 
 const boundSettings = computed(() => useBindingSettings(bindSettings.value as Partial<Settings>, [
@@ -189,11 +189,11 @@ function activeMessages(errorMessage: string | string[]): boolean {
 		return true;
 	}
 
-	if (field.hint && (field.persistentHint || isFocused.value)) {
+	if (field.value.hint && (field.value.persistentHint || isFocused.value)) {
 		return true;
 	}
 
-	if (field.messages) {
+	if (field.value.messages) {
 		return true;
 	}
 
@@ -205,18 +205,18 @@ function fieldMessages(errorMessage: string | string[]) {
 		return errorMessage;
 	}
 
-	if (field.hint && (field.persistentHint || isFocused.value)) {
-		return field.hint;
+	if (field.value.hint && (field.value.persistentHint || isFocused.value)) {
+		return field.value.hint;
 	}
 
-	if (field.messages) {
-		return field.messages;
+	if (field.value.messages) {
+		return field.value.messages;
 	}
 
 	return '';
 }
 
-const hasMessages = computed(() => field.messages && field.messages.length > 0);
+const hasMessages = computed(() => field.value.messages && field.value.messages.length > 0);
 
 const hasDetails = computed(() => {
 	return !bindSettings.value.hideDetails || (
@@ -227,7 +227,7 @@ const hasDetails = computed(() => {
 
 // -------------------------------------------------- Styles //
 const inputControlContainerStyle = computed<CSSProperties>(() => {
-	const useInlineSpacing = field.labelPositionLeft;
+	const useInlineSpacing = field.value.labelPositionLeft;
 
 	const styles = {
 		'flex-direction': useInlineSpacing ? 'row' : 'column',
@@ -239,15 +239,15 @@ const inputControlContainerStyle = computed<CSSProperties>(() => {
 
 // -------------------------------------------------- Inline Checkboxes //
 const checkboxContainerStyle = computed<CSSProperties>(() => ({
-	'display': field.inline ? 'flex' : undefined,
+	'display': field.value.inline ? 'flex' : undefined,
 }));
 
 const checkboxStyle = computed<CSSProperties>(() => {
-	const useInlineSpacing = field.inline && field.inlineSpacing;
+	const useInlineSpacing = field.value.inline && field.value.inlineSpacing;
 	const marginRight = '10px';
 
 	const styles = {
-		'margin-right': useInlineSpacing ? field.inlineSpacing : marginRight,
+		'margin-right': useInlineSpacing ? field.value.inlineSpacing : marginRight,
 	};
 
 	return styles as CSSProperties;
@@ -255,7 +255,7 @@ const checkboxStyle = computed<CSSProperties>(() => {
 
 const controlGroupClasses = computed(() => ({
 	'v-input--error': errorMessage ? errorMessage?.length > 0 : false,
-	'v-selection-control-group': field.inline,
+	'v-selection-control-group': field.value.inline,
 }));
 </script>
 

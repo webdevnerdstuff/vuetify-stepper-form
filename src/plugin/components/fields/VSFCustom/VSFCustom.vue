@@ -42,15 +42,15 @@ const emit = defineEmits(['validate']);
 const modelValue = defineModel<any>();
 const props = defineProps<VSFCustomProps>();
 
-const { field } = props;
+const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
 const FieldLabelComponent = toRaw(FieldLabel);
-const fieldValidateOn = computed(() => field?.validateOn ?? settings.value.validateOn);
+const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 
 
 const $useField = useField(
-	field.name,
+	field.value.name,
 	undefined,
 	{
 		initialValue: modelValue.value,
@@ -67,7 +67,7 @@ async function onActions(action: ValidateAction): Promise<void> {
 	await useOnActions({
 		action,
 		emit,
-		field,
+		field: field.value,
 		settingsValidateOn: settings.value.validateOn,
 		validate: $useField.validate,
 	});
@@ -95,16 +95,16 @@ const useFieldBoundSettings = computed(() => {
 });
 
 const bindSettings = computed(() => ({
-	...field,
-	color: field.color || settings.value.color,
-	density: field.density || settings.value.density,
+	...field.value,
+	color: field.value.color || settings.value.color,
+	density: field.value.density || settings.value.density,
 }));
 
 const boundSettings = computed(() => {
 	return {
 		...useBindingSettings(bindSettings.value as Partial<Settings>),
-		options: field.options,
-		required: field.required,
+		options: field.value.options,
+		required: field.value.required,
 	};
 });
 </script>
