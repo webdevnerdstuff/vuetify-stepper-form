@@ -450,16 +450,27 @@ const $useForm = useForm({
 });
 
 // ? Make sure to update the modelValue when the form values change //
+const internalUpdate = ref(false);
+let useFormValueTimer: ReturnType<typeof setTimeout>;
+
 watch(() => $useForm.values, (newVal) => {
+	internalUpdate.value = true;
 	modelValue.value = JSON.parse(JSON.stringify(newVal));
 
 	callbacks();
+
+	clearTimeout(useFormValueTimer);
+	useFormValueTimer = setTimeout(() => {
+		internalUpdate.value = false;
+	}, 0);
 }, { deep: true });
 
 watch(modelValue, (newVal) => {
-	Object.entries(newVal).forEach(([key, value]) => {
-		$useForm.setFieldValue(key, value);
-	});
+	if (!internalUpdate.value) {
+		Object.entries(newVal).forEach(([key, value]) => {
+			$useForm.setFieldValue(key, value);
+		});
+	}
 }, { deep: true });
 
 
