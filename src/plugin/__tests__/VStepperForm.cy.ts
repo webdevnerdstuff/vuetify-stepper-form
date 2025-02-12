@@ -34,11 +34,11 @@ const pages = [
 		fields: [
 			defaultFields.autocomplete,
 			defaultFields.autocompleteMultiple,
-			defaultFields.combobox,
 			{
 				...defaultFields.color,
 				readonlyInput: true,
 			},
+			defaultFields.combobox,
 			// defaultFields.date,
 		],
 	},
@@ -402,9 +402,9 @@ describe('Stepper Form', () => {
 						.find('input')
 						.then((el) => {
 							expect(el).to.have.value('#804040');
+							cy.get('@appWrap').click();
 						});
 
-					cy.get('@appWrap').click();
 				}
 				// & -------------------------------------------------- Date field //
 				else if (field.name === 'date') {
