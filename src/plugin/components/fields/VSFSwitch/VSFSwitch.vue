@@ -19,10 +19,10 @@
 			:disabled="isValidating"
 			:error="props.errorMessage ? props.errorMessage?.length > 0 : false"
 			:error-messages="props.errorMessage"
-			@blur="onActions((props.validate as ValidateFieldResult), 'blur')"
-			@change="onActions((props.validate as ValidateFieldResult), 'change')"
+			@blur="fieldValidateOn === 'blur' ? onActions((props.validate as ValidateFieldResult), 'blur') : undefined"
+			@change="fieldValidateOn === 'change' ? onActions((props.validate as ValidateFieldResult), 'change') : undefined"
 			@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions(props.validate, 'click') : undefined"
-			@input="onActions((props.validate as ValidateFieldResult), 'input')"
+			@input="fieldValidateOn === 'input' ? onActions((props.validate as ValidateFieldResult), 'input') : undefined"
 		>
 			<template #label>
 				<FieldLabel

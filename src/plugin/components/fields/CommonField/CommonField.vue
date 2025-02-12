@@ -7,9 +7,9 @@
 		:error="hasErrors"
 		:error-messages="errorMessage || field.errorMessages"
 		:items="fieldItems"
-		@blur="onActions('blur')"
-		@change="onActions('change')"
-		@input="onActions('input')"
+		@blur="fieldValidateOn === 'blur' ? onActions('blur') : undefined"
+		@change="fieldValidateOn === 'change' ? onActions('change') : undefined"
+		@input="fieldValidateOn === 'input' ? onActions('input') : undefined"
 	>
 		<template #label>
 			<FieldLabel
@@ -42,7 +42,6 @@ const fieldRequired = computed<FieldLabelProps['required']>(() => {
 });
 const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
-
 
 const { errorMessage, setValue, validate, value } = useField(
 	field.value.name,

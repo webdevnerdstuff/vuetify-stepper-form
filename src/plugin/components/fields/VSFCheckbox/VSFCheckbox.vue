@@ -8,10 +8,10 @@
 		:disabled="isValidating"
 		:error="errorMessage ? errorMessage?.length > 0 : false"
 		:error-messages="errorMessage"
-		@blur="onActions('blur')"
-		@change="onActions('change')"
+		@blur="fieldValidateOn === 'blur' ? onActions('blur') : undefined"
+		@change="fieldValidateOn === 'change' ? onActions('change') : undefined"
 		@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click') : undefined"
-		@input="onActions('input')"
+		@input="fieldValidateOn === 'input' ? onActions('input') : undefined"
 	>
 		<template #label>
 			<FieldLabel

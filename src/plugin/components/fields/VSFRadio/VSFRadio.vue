@@ -62,10 +62,10 @@
 							:style="radioStyle"
 							:true-value="option.value || field.trueValue"
 							:value="option.value"
-							@blur="onActions('blur', option.value)"
-							@change="onActions('change', option.value)"
+							@blur="fieldValidateOn === 'blur' ? onActions('blur', option.value) : undefined"
+							@change="fieldValidateOn === 'change' ? onActions('change', option.value) : undefined"
 							@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click', option.value) : undefined"
-							@input="onActions('input', option.value)"
+							@input="fieldValidateOn === 'input' ? onActions('input', option.value) : undefined"
 						>
 						</v-radio>
 					</div>
