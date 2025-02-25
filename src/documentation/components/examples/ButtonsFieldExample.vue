@@ -276,8 +276,8 @@ const pages = computed(() => [
 	{
 		fields: [
 			{
-				align: buttonAlignModel,
-				block: buttonBlock,
+				align: buttonAlignModel.value,
+				block: buttonBlock.value,
 				label: 'I like buttons',
 				name: 'iLikeButtons',
 				options: [
@@ -309,8 +309,8 @@ const pages = computed(() => [
 				type: 'buttons' as const,
 			},
 			{
-				align: buttonAlignModel,
-				block: buttonBlock,
+				align: buttonAlignModel.value,
+				block: buttonBlock.value,
 				label: 'I like...',
 				multiple: true,
 				name: 'animalsILike',
