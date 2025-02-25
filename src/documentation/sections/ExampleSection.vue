@@ -13,7 +13,6 @@
 			</h2>
 		</v-col>
 
-
 		<ExampleContainer
 			:code="getTemplateCode('SimpleExampleRef')"
 			:codeBlockSettings="codeBlockSettings"
@@ -116,6 +115,17 @@
 				:open="refElementsOpen.ConditionalFieldExampleRef"
 			/>
 		</ExampleContainer>
+
+		<ExampleContainer
+			:code="getTemplateCode('DynamicAnswersQuestionsExampleRef')"
+			:codeBlockSettings="codeBlockSettings"
+			@closePicker="closePicker('DynamicAnswersQuestionsExampleRef');"
+		>
+			<Example.DynamicAnswersQuestionsExample
+				ref="DynamicAnswersQuestionsExampleRef"
+				:open="refElementsOpen.DynamicAnswersQuestionsExampleRef"
+			/>
+		</ExampleContainer>
 	</v-row>
 </template>
 
@@ -136,6 +146,7 @@ const ConditionalFieldExampleRef = ref(null);
 const ConditionalPageExampleRef = ref(null);
 const SummaryPageExampleRef = ref(null);
 const TooltipExampleRef = ref(null);
+const DynamicAnswersQuestionsExampleRef = ref(null);
 
 const ButtonsFieldExampleRef = ref(null);
 const ButtonsFieldExampleCode = ref();
@@ -145,6 +156,7 @@ const refElements = ref({
 	ColumnsExampleRef,
 	ConditionalFieldExampleRef,
 	ConditionalPageExampleRef,
+	DynamicAnswersQuestionsExampleRef,
 	FieldSlotExampleRef,
 	SimpleExampleRef,
 	SummaryPageExampleRef,
@@ -157,6 +169,7 @@ const refElementsOpen = ref({
 	ColumnsExampleRef: null,
 	ConditionalFieldExampleRef: null,
 	ConditionalPageExampleRef: null,
+	DynamicAnswersQuestionsExampleRef: null,
 	FieldSlotExampleRef: null,
 	SimpleExampleRef: null,
 	SummaryPageExampleRef: null,
