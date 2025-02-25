@@ -166,6 +166,12 @@ export const useMenuStore = defineStore('menu', () => {
 					key: 'examples-conditional-when',
 					title: 'Conditional When',
 				},
+				{
+					href: '#examples-dynamic-answers-and-questions',
+					icon: 'mdi:mdi-magic-staff',
+					key: 'examples-dynamic-answers-and-questions',
+					title: 'Dynamic Answers and Questions',
+				},
 			],
 			title: 'Examples',
 		},
