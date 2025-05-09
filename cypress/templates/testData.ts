@@ -309,7 +309,7 @@ const answers = {
 	// ? ------------------------- Less Common Fields //
 	autocompleteAnimal: null,
 	autoCompleteMultipleAnimals: null,
-	color: null,
+	// color: null,
 	// date: null,
 	// file: null,
 
@@ -344,7 +344,7 @@ const finalAnswer = {
 	autocompleteAnimal: 'rabbit',
 	autoCompleteMultipleAnimals: ['rabbit', 'duck'],
 	combobox: [{ title: "Rabbit", value: "rabbit" }, { title: "Duck", value: "duck" }],
-	color: '#874747',
+	// color: '#874747',
 	// date: 'Wed May 25 1977 00:00:00 GMT-0700 (Pacific Daylight Time)',
 	// date: new Date('05/25/1977'),
 
@@ -376,7 +376,7 @@ const validationSchema = yupObject({
 	autoCompleteMultipleAnimals: yupArray().required(isRequired('Autocomplete Multiple Animal')),
 	combobox: yupArray().required(isRequired('Combobox'))
 		.min(2, 'Must select at least ${min} options'),
-	color: yupString().required(isRequired('Color')),
+	// color: yupString().required(isRequired('Color')),
 	// date: yupString().required(isRequired('Date')),
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Radio/Checkbox/Switch Fields Page //
