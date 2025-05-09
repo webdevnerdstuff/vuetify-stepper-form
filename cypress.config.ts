@@ -20,6 +20,7 @@ export default defineConfig({
 			viteConfig: customViteConfig,
 		},
 		specPattern: './src/**/*.cy.{js,jsx,ts,tsx}',
+		supportFile: 'cypress/support/component.ts',
 		viewportHeight: 800,
 		viewportWidth: 1920,
 	},
