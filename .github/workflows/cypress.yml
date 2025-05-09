@@ -52,9 +52,5 @@ jobs:
       - name: Clear Vite cache
         run: rm -rf node_modules/.vite
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          start: pnpm cy:run
-          component: true
-          browser: chrome
+      - name: Run Cypress component tests
+        run: pnpm cy:run:component
