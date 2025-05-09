@@ -52,9 +52,28 @@ jobs:
       - name: Clear Vite cache
         run: rm -rf node_modules/.vite
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
+      - name: Start dev server
+        run: pnpm dev &
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:5173
+
+      - name: Run E2E tests
+        run: pnpm cy:run:e2e
+
+      - name: Run Component tests
+        run: pnpm cy:run:component
+
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          start: pnpm cy:run
-          component: true
-          browser: chrome
+          name: cypress-videos
+          path: cypress/videos
+
+      - name: Upload Cypress screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
