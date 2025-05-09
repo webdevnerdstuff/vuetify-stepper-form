@@ -23,6 +23,7 @@
 		"test:dev": "vitest",
 		"test:all": "vitest --run",
 		"test:build": "vitest --run --bail 1",
+		"preview": "vite preview --port 4173",
 		"cy:run": "npx cypress run --e2e && npx cypress run --component --headless",
 		"cy:run:e2e": "npx cypress run --headless --browser electron",
 		"cy:run:component": "npx cypress run --headless --component electron",

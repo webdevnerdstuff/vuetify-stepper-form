@@ -52,11 +52,11 @@ jobs:
       - name: Clear Vite cache
         run: rm -rf node_modules/.vite
 
-      - name: Start dev server
-        run: pnpm dev &
+      - name: Start preview server
+        run: pnpm preview &
 
       - name: Wait for server
-        run: npx wait-on http://localhost:5173
+        run: npx wait-on http://localhost:4173
 
       - name: Run E2E tests
         run: pnpm cy:run:e2e
