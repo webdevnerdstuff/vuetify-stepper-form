@@ -34,10 +34,10 @@ const pages = [
 		fields: [
 			defaultFields.autocomplete,
 			defaultFields.autocompleteMultiple,
-			{
-				...defaultFields.color,
-				readonlyInput: true,
-			},
+			// {
+			// 	...defaultFields.color,
+			// 	readonlyInput: true,
+			// },
 			defaultFields.combobox,
 			// defaultFields.date,
 		],
