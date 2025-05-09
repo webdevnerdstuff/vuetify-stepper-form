@@ -258,7 +258,7 @@ describe('Stepper Form', () => {
 
 					cy.get('@theAnimalSelect')
 						.find('.v-field')
-						.invoke('attr', 'aria-owns')
+						.invoke('attr', 'aria-controls')
 						.then((fieldId) => {
 							cy.get('@theAnimalSelect').click();
 
@@ -276,7 +276,7 @@ describe('Stepper Form', () => {
 
 					cy.get('@theSelect')
 						.find('.v-field')
-						.invoke('attr', 'aria-owns')
+						.invoke('attr', 'aria-controls')
 						.then((fieldId) => {
 							cy.get('@theSelect').click();
 
@@ -316,7 +316,7 @@ describe('Stepper Form', () => {
 						.click()
 						.trigger('blur')
 						.find('.v-field')
-						.invoke('attr', 'aria-owns')
+						.invoke('attr', 'aria-controls')
 						.then((fieldId) => {
 							cy.get('@theStringAutoSelect').click();
 
@@ -336,7 +336,7 @@ describe('Stepper Form', () => {
 						cy.get('@theArrayAutoSelect')
 							.type(animal)
 							.find('.v-field')
-							.invoke('attr', 'aria-owns')
+							.invoke('attr', 'aria-controls')
 							.then((fieldId) => {
 								cy.get('@theArrayAutoSelect').click();
 
@@ -362,7 +362,7 @@ describe('Stepper Form', () => {
 
 						cy.get('@theCombobox')
 							.find('.v-field')
-							.invoke('attr', 'aria-owns')
+							.invoke('attr', 'aria-controls')
 							.then((fieldId) => {
 								cy.get('@theCombobox').click();
 
@@ -401,10 +401,9 @@ describe('Stepper Form', () => {
 					cy.get('@theColor')
 						.find('input')
 						.then((el) => {
-							expect(el).to.have.value('#804040');
+							expect(el).to.have.value('#874747');
 							cy.get('@appWrap').click();
 						});
-
 				}
 				// & -------------------------------------------------- Date field //
 				else if (field.name === 'date') {
