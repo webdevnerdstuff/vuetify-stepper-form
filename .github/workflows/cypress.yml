@@ -52,5 +52,8 @@ jobs:
       - name: Clear Vite cache
         run: rm -rf node_modules/.vite
 
+      - name: Clear pnpm cache
+        run: pnpm store prune
+
       - name: Run Cypress component tests
         run: pnpm cy:run:component
