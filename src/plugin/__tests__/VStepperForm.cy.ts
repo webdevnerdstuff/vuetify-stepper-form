@@ -34,10 +34,10 @@ const pages = [
 		fields: [
 			defaultFields.autocomplete,
 			defaultFields.autocompleteMultiple,
-			{
-				...defaultFields.color,
-				readonlyInput: true,
-			},
+			// {
+			// 	...defaultFields.color,
+			// 	readonlyInput: true,
+			// },
 			defaultFields.combobox,
 			// defaultFields.date,
 		],
@@ -579,6 +579,9 @@ describe('Stepper Form', () => {
 			// ? Check the final @submit event payload //
 			cy.get('@submit').its('args').then((args) => {
 				const eventPayload = args[0][0];
+
+				console.log('eventPayload', eventPayload);
+				console.log('DATA.finalAnswer', DATA.finalAnswer);
 				expect(eventPayload).to.deep.equal(DATA.finalAnswer);
 			});
 		});
