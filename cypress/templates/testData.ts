@@ -344,7 +344,7 @@ const finalAnswer = {
 	autocompleteAnimal: 'rabbit',
 	autoCompleteMultipleAnimals: ['rabbit', 'duck'],
 	combobox: [{ title: "Rabbit", value: "rabbit" }, { title: "Duck", value: "duck" }],
-	color: '#804040',
+	color: '#874747',
 	// date: 'Wed May 25 1977 00:00:00 GMT-0700 (Pacific Daylight Time)',
 	// date: new Date('05/25/1977'),
 
