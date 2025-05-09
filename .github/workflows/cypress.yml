@@ -49,6 +49,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Clear Vite cache
+        run: rm -rf node_modules/.vite
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
