@@ -154,6 +154,11 @@ import {
 } from 'yup';
 import AnswersDialog from '../AnswersDialog.vue';
 
+interface Props {
+	open?: HTMLPreElement | null;
+}
+
+defineProps<Props>();
 
 const emit = defineEmits(['codeUpdated']);
 

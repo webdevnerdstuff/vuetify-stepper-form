@@ -49,6 +49,11 @@
 import { ref } from 'vue';
 import AnswersDialog from '../AnswersDialog.vue';
 
+interface Props {
+	open?: HTMLPreElement | null;
+}
+
+defineProps<Props>();
 
 const dialog = ref(false);
 

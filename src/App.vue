@@ -15,7 +15,7 @@
 				class="px-7"
 				style="max-width: 1368px;"
 			>
-				<DocsPage :codeBlockOptions="codeBlockSettings" />
+				<DocsPage />
 			</v-container>
 		</v-main>
 	</v-app>

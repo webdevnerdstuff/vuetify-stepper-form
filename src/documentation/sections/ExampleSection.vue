@@ -15,7 +15,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('SimpleExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('SimpleExampleRef');"
 		>
 			<Example.SimpleExample
@@ -26,7 +25,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('ColumnsExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ColumnsExampleRef');"
 		>
 			<Example.ColumnsExample
@@ -37,7 +35,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('FieldSlotExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('FieldSlotExampleRef');"
 		>
 			<Example.FieldSlotExample
@@ -49,7 +46,6 @@
 		<ExampleContainer
 			id="validation-example"
 			:code="getTemplateCode('ValidationExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ValidationExampleRef');"
 		>
 			<Example.ValidationExample
@@ -60,7 +56,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('ButtonsFieldExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			:codeUpdatedAt="ButtonsFieldExampleCode?.updatedAt"
 			:updatedCode="ButtonsFieldExampleCode?.updatedCode"
 			@closePicker="closePicker('ButtonsFieldExampleRef');"
@@ -74,7 +69,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('SummaryPageExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('SummaryPageExampleRef');"
 		>
 			<Example.SummaryPageExample
@@ -85,7 +79,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('TooltipExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('TooltipExampleRef');"
 		>
 			<Example.TooltipExample
@@ -96,7 +89,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('ConditionalPageExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ConditionalPageExampleRef');"
 		>
 			<Example.ConditionalPageExample
@@ -107,7 +99,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('ConditionalFieldExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('ConditionalFieldExampleRef');"
 		>
 			<Example.ConditionalFieldExample
@@ -118,7 +109,6 @@
 
 		<ExampleContainer
 			:code="getTemplateCode('DynamicAnswersQuestionsExampleRef')"
-			:codeBlockSettings="codeBlockSettings"
 			@closePicker="closePicker('DynamicAnswersQuestionsExampleRef');"
 		>
 			<Example.DynamicAnswersQuestionsExample
@@ -134,8 +124,6 @@ import type { ExampleCode } from '../components/ExampleContainer.vue';
 import ExampleContainer from '../components/ExampleContainer.vue';
 import * as Example from '../components/examples';
 
-
-const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
 const classes = inject<Docs.GlobalClasses>('classes')!;
 
 const SimpleExampleRef = ref(null);

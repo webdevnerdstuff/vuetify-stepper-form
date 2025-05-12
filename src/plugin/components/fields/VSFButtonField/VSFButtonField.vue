@@ -210,7 +210,7 @@ const getIcon = (option: Option, prop: string): string => {
 };
 
 
-function getId(option: { id?: string; }, key: string | number) {
+function getId(option: { id?: string | number; }, key: string | number) {
 	if (option.id != null) {
 		return option.id;
 	}
@@ -317,7 +317,17 @@ const isActive = (val: string | number): boolean | undefined => {
 		return undefined;
 	}
 
-	return value.value === val || (value.value as string[]).includes(val as string);
+	// If value.value is a number, compare directly.
+	if (typeof value.value === 'number') {
+		return value.value === val;
+	}
+
+	// If value.value is a string or an array of strings, handle both cases.
+	if (typeof value.value === 'string' || Array.isArray(value.value)) {
+		return (value.value as string[]).includes(val as string);
+	}
+
+	return undefined;
 };
 
 // ------------------------- Variants //

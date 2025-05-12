@@ -14,6 +14,13 @@ import {
 	string as yupString,
 } from 'yup';
 
+
+interface Props {
+	open?: HTMLPreElement | null;
+}
+
+defineProps<Props>();
+
 const answers = ref({
 	bar: null,
 	foo: null,
