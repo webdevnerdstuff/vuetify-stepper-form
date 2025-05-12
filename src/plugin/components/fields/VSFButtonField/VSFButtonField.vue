@@ -210,7 +210,7 @@ const getIcon = (option: Option, prop: string): string => {
 };
 
 
-function getId(option: { id?: string; }, key: string | number) {
+function getId(option: { id?: string | number; }, key: string | number) {
 	if (option.id != null) {
 		return option.id;
 	}
