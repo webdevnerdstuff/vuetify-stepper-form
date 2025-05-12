@@ -20,6 +20,11 @@
 <script setup lang="ts">
 import AnswersDialog from '../AnswersDialog.vue';
 
+interface Props {
+	open?: HTMLPreElement | null;
+}
+
+defineProps<Props>();
 
 const links = inject<Docs.Links>('links')!;
 const dialog = ref(false);

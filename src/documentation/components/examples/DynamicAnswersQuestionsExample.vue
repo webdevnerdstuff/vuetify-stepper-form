@@ -17,6 +17,12 @@ import type { MaybeRef } from 'vue';
 import AnswersDialog from '../AnswersDialog.vue';
 
 
+interface Props {
+	open?: HTMLPreElement | null;
+}
+
+defineProps<Props>();
+
 const dialog = ref(false);
 const answers = ref<{
 	foobar: string | null;

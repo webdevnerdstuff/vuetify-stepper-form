@@ -113,6 +113,7 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false });
 const emit = defineEmits(['closePicker']);
 
 export interface ExampleCode {
