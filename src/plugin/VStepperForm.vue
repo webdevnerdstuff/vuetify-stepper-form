@@ -144,7 +144,6 @@
 								</template>
 
 								<template #prev>
-									<!-- :disabled="((stepperActionsDisabled === 'prev' || settings.disabled || canReviewPreviousButtonDisabled) as boolean)" -->
 									<v-btn
 										data-cy="vsf-previous-button"
 										:disabled="prevButtonDisabled"
@@ -630,7 +629,6 @@ function callbacks() {
 
 // ------------------------ Conditional "when" callbacks //
 const computedPages = computed<Page[]>(() => {
-	// const localPages = JSON.parse(JSON.stringify(pages));
 	Object.values(pages.value).forEach((page: Page, pageIdx: number) => {
 		const localPage = page;
 		localPage.visible = true;
@@ -638,8 +636,8 @@ const computedPages = computed<Page[]>(() => {
 		if (localPage.when) {
 			const enabledPage: boolean = (localPage.when as (value: any) => boolean)($useForm.values);
 
-			if (pages[pageIdx]) {
-				pages[pageIdx].visible = enabledPage;
+			if (pages.value[pageIdx]) {
+				pages.value[pageIdx].visible = enabledPage;
 			}
 		}
 	});
