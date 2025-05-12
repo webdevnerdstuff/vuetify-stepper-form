@@ -81,31 +81,6 @@ export type GlobalChips = boolean;
 export type GlobalMultiple = boolean;
 
 
-export interface VStepperProps extends Partial<Pick<VStepper,
-	'altLabels' |
-	'bgColor' |
-	'border' |
-	'disabled' |
-	'editIcon' |
-	'editable' |
-	'elevation' |
-	'flat' |
-	'height' |
-	'hideActions' |
-	'maxHeight' |
-	'maxWidth' |
-	'minHeight' |
-	'minWidth' |
-	'nextText' |
-	'prevText' |
-	'rounded' |
-	'selectedClass' |
-	'tag' |
-	'theme' |
-	'tile' |
-	'width'
->> { }
-
 interface VStepperWindowItemProps {
 	transition?: VStepperWindowItem['transition'];
 }
@@ -167,7 +142,30 @@ export interface Page {
 
 
 // -------------------------------------------------- Props //
-export interface Props extends /* @vue-ignore */ VStepperProps, VStepperWindowItemProps {
+export interface Props extends VStepperWindowItemProps {
+	// Extended Props from VStepper //
+	altLabels?: VStepper['altLabels'];
+	bgColor?: VStepper['bgColor'];
+	border?: VStepper['border'];
+	disabled?: VStepper['disabled'];
+	editIcon?: VStepper['editIcon'];
+	elevation?: VStepper['elevation'];
+	flat?: VStepper['flat'];
+	height?: VStepper['height'];
+	hideActions?: VStepper['hideActions'];
+	maxHeight?: VStepper['maxHeight'];
+	maxWidth?: VStepper['maxWidth'];
+	minHeight?: VStepper['minHeight'];
+	minWidth?: VStepper['minWidth'];
+	nextText?: VStepper['nextText'];
+	prevText?: VStepper['prevText'];
+	rounded?: VStepper['rounded'];
+	selectedClass?: VStepper['selectedClass'];
+	tag?: VStepper['tag'];
+	theme?: VStepper['theme'];
+	tile?: VStepper['tile'];
+
+
 	// Required //
 	pages: Page[];
 	validationSchema?: Schema<any> | ZodSchema;
