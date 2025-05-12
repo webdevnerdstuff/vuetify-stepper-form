@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 export interface FieldLabelProps {
 	label: string | undefined;
-	required: boolean | undefined;
+	required?: boolean | undefined;
 }
 
 const { label, required = false } = defineProps<FieldLabelProps>();
