@@ -105,7 +105,7 @@ export interface Field {
 	errorMessages?: string | string[];
 	hidden?: boolean;
 	hideDetails?: GlobalHideDetails;
-	id?: string;
+	id?: string | number;
 	inline?: boolean; 															// ? Checkboxes //
 	inlineSpacing?: string; 												// ? Checkboxes //
 	items?: readonly any[] | undefined;
