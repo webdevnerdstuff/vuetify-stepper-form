@@ -8,10 +8,8 @@
 		:disabled="isValidating"
 		:error="errorMessage ? errorMessage?.length > 0 : false"
 		:error-messages="errorMessage"
-		@blur="fieldValidateOn === 'blur' ? onActions('blur') : undefined"
-		@change="fieldValidateOn === 'change' ? onActions('change') : undefined"
-		@click="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click') : undefined"
 		@input="fieldValidateOn === 'input' ? onActions('input') : undefined"
+		@update:model-value="fieldValidateOn === 'blur' || fieldValidateOn === 'change' ? onActions('click') : undefined"
 	>
 		<template #label>
 			<FieldLabel
@@ -45,7 +43,7 @@
 			</v-label>
 
 			<div
-				:id="field?.id"
+				:id="fieldId"
 				:class="controlGroupClasses"
 				:style="checkboxContainerStyle"
 			>
@@ -112,13 +110,13 @@ const props = defineProps<VSFCheckboxProps>();
 const { field } = toRefs(props);
 const settings = inject<Ref<Settings>>('settings')!;
 
+const fieldId = computed<string>(() => (field.value?.id ?? useId()) as string);
 const fieldDensity = computed<VCheckbox['density']>(() => (field.value?.density ?? settings.value?.density) as VCheckbox['density']);
 const fieldRequired = computed<FieldLabelProps['required']>(() => {
 	return field.value.required || false;
 });
 const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
 const originalValue = modelValue.value;
-
 
 const { errorMessage, setValue, validate, value } = useField(
 	field.value.name,
