@@ -14,6 +14,7 @@ import type {
 	VTooltip,
 } from 'vuetify/components';
 import type { ValidationRule } from 'vuetify/composables/validation';
+import type { SelectItemKey } from 'vuetify/lib/util/helpers';
 import type { Schema } from 'yup';
 import type { ZodSchema } from 'zod';
 import VStepperForm from '../VStepperForm.vue';
@@ -108,6 +109,8 @@ export interface Field {
 	id?: string | number;
 	inline?: boolean; 															// ? Checkboxes //
 	inlineSpacing?: string; 												// ? Checkboxes //
+	itemTitle?: SelectItemKey<any>; 								// ? Selects //
+	itemValue?: SelectItemKey<any>; 														// ? Selects //
 	items?: readonly any[] | undefined;
 	label?: string;
 	labelPositionLeft?: boolean; 										// ? Checkboxes //
