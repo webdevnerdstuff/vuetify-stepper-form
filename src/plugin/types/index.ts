@@ -98,6 +98,7 @@ export interface Field {
 	autoPage?: Props['autoPage'];
 	autoPageDelay?: Props['autoPageDelay'];
 	class?: string;
+	clearable?: boolean;
 	color?: Props['color'];
 	columns?: Props['fieldColumns'];
 	density?: GlobalDensity;
