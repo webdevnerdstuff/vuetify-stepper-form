@@ -200,7 +200,7 @@ const attrs = useAttrs();
 const componentId = useId();
 const slots = useSlots();
 const emit = defineEmits([...componentEmits]);
-const injectedOptions = inject<PluginOptions>(pluginOptionsInjectionKey)!;
+const injectedOptions = inject<PluginOptions>(pluginOptionsInjectionKey, AllProps);
 
 
 // -------------------------------------------------- Props //
