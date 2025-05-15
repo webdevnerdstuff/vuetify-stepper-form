@@ -531,6 +531,25 @@ function removePageError(pageIndex: number): void {
 	currentPageHasErrors.value = false;
 }
 
+// Reset the next page fields //
+const resetPageFields = (pageIndex: number) => {
+	const page = computedPages.value[pageIndex + 1];
+
+	if (!page) {
+		return;
+	}
+
+	if (!page?.fields?.length) {
+		return;
+	}
+
+	for (const field of page.fields) {
+		if (field.name) {
+			$useForm.resetField(field.name, { force: true });
+		}
+	}
+};
+
 // ------------------------ Check the if the page has errors //
 function checkForPageErrors(errors: ValidateResult['errors'], source: string, next = () => { }): void {
 	const page = computedPages.value[currentPageIdx.value];
@@ -553,6 +572,7 @@ function checkForPageErrors(errors: ValidateResult['errors'], source: string, ne
 	removePageError(pageIndex);
 
 	if (next && !lastPage.value && source !== 'submit') {
+		resetPageFields(pageIndex);
 		next();
 	}
 }

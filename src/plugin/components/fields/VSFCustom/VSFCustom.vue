@@ -47,6 +47,7 @@ const settings = inject<Ref<Settings>>('settings')!;
 
 const FieldLabelComponent = toRaw(FieldLabel);
 const fieldValidateOn = computed(() => field.value?.validateOn ?? settings.value.validateOn);
+const originalValue = modelValue.value;
 
 
 const $useField = useField(
@@ -60,6 +61,13 @@ const $useField = useField(
 		validateOnModelUpdate: fieldValidateOn.value != null,
 	},
 );
+
+onUnmounted(() => {
+	if (!settings.value.keepValuesOnUnmount) {
+		modelValue.value = originalValue;
+		$useField.setValue(originalValue);
+	}
+});
 
 
 // ------------------------- Validate On Actions //
