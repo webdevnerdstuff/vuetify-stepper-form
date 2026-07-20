@@ -15,6 +15,11 @@ jobs:
         with:
           version: 9
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.18.0
+
       - name: Install dependencies
         run: pnpm install
 
@@ -36,6 +41,11 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.18.0
 
       - name: Checkout
         uses: actions/checkout@v4
