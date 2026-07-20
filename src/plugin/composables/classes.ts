@@ -55,11 +55,11 @@ export const useColumnClasses: UseColumnClasses = (options) => {
 	const xl = fieldColumns?.xl ?? columnsMerged.xl;
 
 	return {
-		'v-col-12': true,
+		'v-col--cols-12': true,
 		'v-cols': true,
-		[`v-col-sm-${sm}`]: !!sm,
-		[`v-col-md-${md}`]: !!md,
-		[`v-col-lg-${lg}`]: !!lg,
-		[`v-col-xl-${xl}`]: !!xl,
+		[`v-col--cols-sm-${sm}`]: !!sm,
+		[`v-col--cols-md-${md}`]: !!md,
+		[`v-col--cols-lg-${lg}`]: !!lg,
+		[`v-col--cols-xl-${xl}`]: !!xl,
 	};
 };

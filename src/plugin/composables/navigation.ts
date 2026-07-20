@@ -5,7 +5,8 @@ import {
 
 
 const useHandleJumpAhead: UseHandleJumpAhead = (options) => {
-	const { currentPageEditable,
+	const {
+		currentPageEditable,
 		firstNonEditableIndex,
 		lastNonEditableIndex,
 		lastPageIdx,
@@ -14,7 +15,8 @@ const useHandleJumpAhead: UseHandleJumpAhead = (options) => {
 		pageIdx,
 		pageNotEditable,
 		previousPageEditable,
-		previousPageNotEditable } = options;
+		previousPageNotEditable,
+	} = options;
 
 	const currentPageIdx = unref(options.currentPageIdx);
 
@@ -148,7 +150,8 @@ const useHandleJumpAhead: UseHandleJumpAhead = (options) => {
 };
 
 const useHandleNonJumpAhead: UseHandleNonJumpAhead = (options) => {
-	const { currentPageEditable,
+	const {
+		currentPageEditable,
 		firstNonEditableIndex,
 		lastNonEditableIndex,
 		lastPageIdx,
@@ -156,7 +159,8 @@ const useHandleNonJumpAhead: UseHandleNonJumpAhead = (options) => {
 		nextPageNotEditable,
 		pageEditable,
 		pageIdx,
-		pageNotEditable } = options;
+		pageNotEditable,
+	} = options;
 
 	const currentPageIdx = unref(options.currentPageIdx);
 

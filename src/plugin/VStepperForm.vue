@@ -163,7 +163,7 @@
 
 <script setup lang="ts">
 // import {	VStepper } from 'vuetify/components';
-// import { VStepperVertical } from 'vuetify/labs/VStepperVertical';
+// import { VStepperVertical } from 'vuetify/components';
 import { useForm } from 'vee-validate';
 import { useDisplay } from 'vuetify';
 import type {

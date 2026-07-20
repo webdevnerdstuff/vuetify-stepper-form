@@ -29,9 +29,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate';
-import type {
-	VSFCustomProps,
-} from './index';
+import type {VSFCustomProps} from './index';
 import { useBindingSettings } from '../../../composables/bindings';
 import { useOnActions } from '../../../composables/validation';
 import FieldLabel from '../../shared/FieldLabel.vue';
