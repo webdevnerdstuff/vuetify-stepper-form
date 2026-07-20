@@ -83,12 +83,12 @@ describe('Classes Composable', () => {
 			});
 
 			expect(classes).to.deep.equal({
-				'v-col-12': true,
+				'v-col--cols-12': true,
 				'v-cols': true,
-				'v-col-sm-10': true,
-				'v-col-md-6': true,
-				'v-col-lg-6': true,
-				'v-col-xl-9': true
+				'v-col--cols-sm-10': true,
+				'v-col--cols-md-6': true,
+				'v-col--cols-lg-6': true,
+				'v-col--cols-xl-9': true
 			});
 		});
 	});

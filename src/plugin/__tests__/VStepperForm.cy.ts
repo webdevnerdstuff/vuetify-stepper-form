@@ -141,10 +141,12 @@ describe('Stepper Form', () => {
 			// ~ -------------------------------------------------- Fill In Field //
 			function fillInField(fieldName: string, ans: string | number): void {
 				cy.get(fieldName)
+					.find('input, textarea')
 					.click()
 					.trigger('focus');
 
 				cy.get(fieldName)
+					.find('input, textarea')
 					.type('{selectall}{backspace}')
 					.type(String(ans))
 					.trigger('blur');
@@ -311,15 +313,16 @@ describe('Stepper Form', () => {
 				else if (field.name === 'autocompleteAnimal') {
 					cy.get(fieldName).as('theStringAutoSelect');
 
+					// Type the target so the filtered list shows it directly (Vuetify 4
+					// keeps the typed search text, so filtering to the target is robust).
 					cy.get('@theStringAutoSelect')
-						.type('Duck')
-						.click()
-						.trigger('blur')
+						.find('input')
+						.type('Rabbit');
+
+					cy.get('@theStringAutoSelect')
 						.find('.v-field')
 						.invoke('attr', 'aria-controls')
 						.then((fieldId) => {
-							cy.get('@theStringAutoSelect').click();
-
 							cy.get(`#${fieldId}`)
 								.find('.v-list-item')
 								.contains('.v-list-item', 'Rabbit')
@@ -785,11 +788,11 @@ describe('Stepper Form', () => {
 		function shouldHaveColumns(fieldName: string, columns: Page['pageFieldColumns']) {
 			cy.getDataCy(`vsf-field-${fieldName}`)
 				.parent()
-				.should('have.class', 'v-col-12')
-				.and('have.class', `v-col-sm-${columns?.sm}`)
-				.and('have.class', `v-col-md-${columns?.md}`)
-				.and('have.class', `v-col-lg-${columns?.lg}`)
-				.and('have.class', `v-col-xl-${columns?.xl}`);
+				.should('have.class', 'v-col--cols-12')
+				.and('have.class', `v-col--cols-sm-${columns?.sm}`)
+				.and('have.class', `v-col--cols-md-${columns?.md}`)
+				.and('have.class', `v-col--cols-lg-${columns?.lg}`)
+				.and('have.class', `v-col--cols-xl-${columns?.xl}`);
 		}
 
 		it('should check the stepper field columns prop', () => {
