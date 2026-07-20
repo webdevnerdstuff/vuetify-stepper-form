@@ -27,24 +27,6 @@
 		</v-col>
 
 		<v-col
-			id="components-additional"
-			cols="12"
-		>
-			<h4 :class="classes.h4">
-				<a
-					:class="classes.headerA"
-					href="#components-additionalops-pages"
-				>#</a>
-				Additional Fields
-			</h4>
-		</v-col>
-
-		<v-col cols="12">
-			My <code class="ic">VColorField</code> component is also available for use via the <a
-				:href="links.vColorField">@wdns/vuetify-color-field</a> package.
-		</v-col>
-
-		<v-col
 			id="components-buttons-field"
 			cols="12"
 		>
@@ -104,7 +86,6 @@
 <script setup lang="ts">
 const codeBlockSettings = inject<Docs.CodeBlockSettings>('codeBlockSettings')!;
 const classes = inject<Docs.GlobalClasses>('classes')!;
-const links = inject<Docs.Links>('links')!;
 
 const componentList = [
 	{

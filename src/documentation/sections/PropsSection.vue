@@ -86,7 +86,7 @@
 			<p class="mb-4">
 				The <code class="ic">fields</code> array is composed of objects that define both the structure and behavior of
 				each input field within the stepper form. For Vuetify-specific components, nearly all of their props are fully
-				supported, ensuring seamless integration. This includes the <code class="ic">VColorField</code> component, which
+				supported, ensuring seamless integration. This includes the <code class="ic">VColorInput</code> component, which
 				also supports the majority of its props, allowing for flexible and customizable form inputs tailored to your
 				needs.
 			</p>
@@ -200,9 +200,9 @@ const fieldTypes = `type FieldTypes =
     'autocomplete'  // VAutocomplete
   | 'checkbox'      // VCheckbox
   | 'buttons'       // Buttons Field is a custom component with this plugin
-  | 'color'         // VColorField (from @wdns/vuetify-color-field)
+  | 'color'         // VColorInput
   | 'combobox'      // VCombobox
-  | 'date'          // VDateInput (current not supported as the component is in labs)
+  | 'date'          // VDateInput
   | 'email'         // VTextField with type="email"
   | 'field'         // Used for the field slot
   | 'file'          // VFileInput

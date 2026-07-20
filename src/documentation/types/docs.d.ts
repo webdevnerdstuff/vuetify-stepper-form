@@ -17,7 +17,6 @@ declare namespace Docs {
 		license: string;
 		npm: string;
 		pnpm: string;
-		vColorField: string;
 		vue: string;
 		vuetify: string;
 		vuetifyGithub: string;

@@ -2,11 +2,11 @@
 
 exports[`Classes Composable > useColumnClasses > should return column classes with fieldColumns being the higher priority 1`] = `
 {
-  "v-col-12": true,
-  "v-col-lg-6": true,
-  "v-col-md-6": true,
-  "v-col-sm-10": true,
-  "v-col-xl-9": true,
+  "v-col--cols-12": true,
+  "v-col--cols-lg-6": true,
+  "v-col--cols-md-6": true,
+  "v-col--cols-sm-10": true,
+  "v-col--cols-xl-9": true,
   "v-cols": true,
 }
 `;

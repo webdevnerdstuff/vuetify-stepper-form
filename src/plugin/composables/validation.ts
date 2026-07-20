@@ -1,7 +1,5 @@
 
-import type {
-	UseOnActions,
-} from '../types/index';
+import type {UseOnActions} from '../types/index';
 
 
 export const useOnActions: UseOnActions = async (options) => {

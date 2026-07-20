@@ -65,9 +65,7 @@ import type {
 	ResponsiveColumns,
 } from '../../types/index';
 import { useColumnClasses } from '../../composables/classes';
-import {
-	useGetFirstAndLastEditableFalse,
-} from '../../composables/helpers';
+import {useGetFirstAndLastEditableFalse} from '../../composables/helpers';
 
 
 export interface PageReviewContainerProps {

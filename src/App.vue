@@ -84,7 +84,7 @@ html {
 }
 
 a {
-	&:not(.v-list-item, .v-btn, .v-icon, .app-link) {
+	&:not(.v-list-item, .v-btn, .v-icon, .app-link, .text-info, .text-primary, .text-secondary, .text-success, .text-warning, .text-error) {
 		color: #bb86fc;
 
 		&:hover {
@@ -95,7 +95,7 @@ a {
 
 .v-theme--light {
 	a {
-		&:not(.v-list-item, .v-btn, .v-icon, .app-link) {
+		&:not(.v-list-item, .v-btn, .v-icon, .app-link, .text-info, .text-primary, .text-secondary, .text-success, .text-warning, .text-error) {
 			color: #6200ee;
 
 			&:hover {
@@ -148,6 +148,45 @@ a {
 
 .v-divider {
 	margin: 0;
+}
+
+// Vuetify 4 renamed the typography utilities to MD3 names (text-headline-*,
+// text-title-*, etc.), so the legacy heading classes used across the docs would
+// otherwise fall back to browser defaults. Restore the Vuetify 3 heading scale.
+.text-h3 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 3rem;
+	font-weight: 400;
+	letter-spacing: normal;
+	line-height: 3.125rem;
+	text-transform: none;
+}
+
+.text-h4 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 2.125rem;
+	font-weight: 400;
+	letter-spacing: 0.0073529412em;
+	line-height: 2.5rem;
+	text-transform: none;
+}
+
+.text-h5 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 1.5rem;
+	font-weight: 400;
+	letter-spacing: normal;
+	line-height: 2rem;
+	text-transform: none;
+}
+
+.text-h6 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 1.25rem;
+	font-weight: 500;
+	letter-spacing: 0.0125em;
+	line-height: 2rem;
+	text-transform: none;
 }
 </style>
 

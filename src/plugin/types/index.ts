@@ -13,7 +13,7 @@ import type {
 	VStepperWindowItem,
 	VTooltip,
 } from 'vuetify/components';
-import type { ValidationRule } from 'vuetify/composables/validation';
+import type { ValidationRule } from 'vuetify/lib/composables/validation';
 import type { SelectItemKey } from 'vuetify/lib/util/helpers';
 import type { Schema } from 'yup';
 import type { ZodSchema } from 'zod';
@@ -43,7 +43,7 @@ declare global {
 /* Good for:
 	* VAutocomplete
 	* VCheckbox
-	* VColorField
+	* VColorInput
 	* VCombobox
 	* VFancyRadio
 	* VFileInput
@@ -66,7 +66,7 @@ export type GlobalVariant = 'filled' | 'underlined' | 'outlined' | 'plain' | 'so
 	* VAutocomplete
 	* VCheckbox
 	* VCombobox
-	* VColorField
+	* VColorInput
 	* VFileInput
 	* VSelect
 	* VSwitch

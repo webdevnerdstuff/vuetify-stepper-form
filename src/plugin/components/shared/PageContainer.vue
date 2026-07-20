@@ -61,7 +61,7 @@
 
 					<!-- ================================================== Common Fields
 						* VAutocomplete
-						* VColorField
+						* VColorInput
 						* VCombobox
 						* VFileInput
 						* VSelect
@@ -106,16 +106,16 @@
 </template>
 
 <script setup lang="ts">
-import VColorField from '@wdns/vuetify-color-field';
 import {
 	VAutocomplete,
+	VColorInput,
 	VCombobox,
+	VDateInput,
 	VFileInput,
 	VSelect,
 	VTextField,
 	VTextarea,
 } from 'vuetify/components';
-import { VDateInput } from 'vuetify/labs/VDateInput';
 import type {
 	ComputedClasses,
 	Field,
@@ -160,7 +160,7 @@ function getComponent(fieldType: string): Component | null {
 		case 'autocomplete':
 			return markRaw(VAutocomplete);
 		case 'color':
-			return markRaw(VColorField);
+			return markRaw(VColorInput);
 		case 'combobox':
 			return markRaw(VCombobox);
 		case 'date':
