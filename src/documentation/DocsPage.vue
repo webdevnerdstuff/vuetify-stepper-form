@@ -10,7 +10,7 @@
 		</v-col>
 
 		<v-col class="mb-4">
-			<h1 class="v-heading text-h3 text-sm-h3 mb-1">
+			<h1 class="v-heading text-h3 text-sm-h3 mb-1 mt-0">
 				Vuetify Stepper Form
 			</h1>
 			<p class="mb-4 text-grey-darken-1">by WebDevNerdStuff</p>

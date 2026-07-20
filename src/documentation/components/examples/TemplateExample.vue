@@ -104,7 +104,7 @@ function submitForm(): void {
 }
 
 const templateCode = `<template>
-  <VColorField v-model="color" />
+  <VColorInput v-model="color" />
 </template>
 `;
 

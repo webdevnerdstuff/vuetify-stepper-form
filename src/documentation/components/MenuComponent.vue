@@ -40,9 +40,7 @@
 				<v-list-item
 					v-else
 					:key="item.title"
-					:class="{
-						'v-list-item--active': active === item.href,
-					}"
+					:active="active === item.href"
 					:color="drawerOptions.color ? 'white' : 'primary'"
 					:href="item.href"
 					link
