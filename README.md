@@ -27,7 +27,7 @@ The Vuetify Stepper Form plugin provides a structured way to create multi-step f
 
 ## Dependencies
  
-[Vuetify v3](https://vuetifyjs.com/)  
+[Vuetify v4](https://vuetifyjs.com/)  
 [Vue 3](https://vuejs.org/)  
 [VeeValidate](https://vee-validate.logaretm.com/v4/)
 
