@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
-		"baseUrl": "./",
 		"composite": true,
 		"declaration": true,
 		"declarationDir": "./dist",
@@ -86,7 +85,6 @@
 		"src/**/__tests__/*",
 		"playground",
 		"src/playground/configs/templates/PlaygroundPage.vue",
-		"src/plugins/**/*.ts",
 		"src/stores/**/*.ts"
 	],
 }
