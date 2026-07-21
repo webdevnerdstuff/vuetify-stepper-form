@@ -53,6 +53,7 @@
 							<span
 								class="vsf-button-field__btn-label"
 								:class="getLabelClass(option)"
+								:style="getLabelStyle(option)"
 								v-html="option.label"
 							></span>
 						</template>
@@ -398,9 +399,6 @@ const itemGroupStyle = computed<CSSProperties>(() => {
 });
 
 
-const buttontextcolor = ref('rgb(var(--v-theme-on-surface))');
-
-
 // -------------------------------------------------- Classes //
 const itemGroupClass = computed(() => {
 	return {
@@ -441,13 +439,38 @@ const buttonClassAdditional = (option: Option) => {
 	};
 };
 
+const getLabelStyle = (option: Option): CSSProperties => {
+	const optionVariant = getVariant(option.value);
+	const useBgColor = isActive(option.value) || optionVariant === 'flat' || optionVariant === 'elevated';
+
+	// When the button shows a background color, let Vuetify's `bg-<color>`
+	// contrast color drive the label text so a selected button gets the correct
+	// on-color (e.g. black on a light color). Only the neutral, un-selected
+	// state forces `on-surface` for readability.
+	if (useBgColor) {
+		return {};
+	}
+
+	return {
+		color: 'rgb(var(--v-theme-on-surface))',
+	};
+};
+
 const getLabelClass = (option: Option): object => {
 	const isActiveOption = isActive(option.value);
 	const optionVariant = getVariant(option.value);
 	const useBgColor = isActiveOption || optionVariant === 'flat' || optionVariant === 'elevated';
+	const bgColor = option?.color ?? field.value?.color;
 
 	return {
-		[`bg-${option?.color}`]: useBgColor,
+		// The field/option `class` is applied to the label itself. A
+		// text-transform utility set directly on the label wins over the value
+		// it would otherwise inherit from the button (e.g. a global `VBtn`
+		// `text-uppercase` default), so the app default is respected when no
+		// class is set but can be altered per-field/option when one is.
+		[`bg-${bgColor}`]: useBgColor && bgColor != null,
+		[`${field.value?.class}`]: field.value?.class != null,
+		[`${option?.class}`]: option?.class != null,
 	};
 };
 
@@ -469,11 +492,5 @@ function containsSizeUnit(value: string | number): boolean {
 <style lang="scss" scoped>
 .v-item-group {
 	flex-wrap: wrap;
-}
-
-.vsf-button-field {
-	&__btn-label {
-		color: v-bind(buttontextcolor);
-	}
 }
 </style>

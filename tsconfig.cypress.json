@@ -8,7 +8,8 @@
 			"./node_modules/@types"
 		],
 		"types": [
-			"cypress-real-events",
+			"cypress",
+			"node",
 		]
 	},
 	"exclude": [],
@@ -19,6 +20,7 @@
 		"cypress/support/commands.ts",
 		"cypress/support/component.*",
 		"vite.cypress.config.ts",
+		"package.json",
 		"src/**/*",
 		"src/**/*.vue",
 		"src/**/__tests__/*"
