@@ -57,6 +57,7 @@ const $useField = useField(
 		validateOnChange: fieldValidateOn.value === 'change',
 		validateOnInput: fieldValidateOn.value === 'input',
 		validateOnModelUpdate: fieldValidateOn.value != null,
+		validateOnValueUpdate: fieldValidateOn.value === 'input' || fieldValidateOn.value === 'change',
 	},
 );
 

@@ -7,9 +7,10 @@
 		:error="hasErrors"
 		:error-messages="errorMessage || field.errorMessages"
 		:items="fieldItems"
-		@blur="fieldValidateOn === 'blur' ? onActions('blur') : undefined"
 		@change="fieldValidateOn === 'change' ? onActions('change') : undefined"
 		@input="fieldValidateOn === 'input' ? onActions('input') : undefined"
+		@update:focused="onFocusUpdate"
+		@update:menu="onMenuUpdate"
 	>
 		<template #label>
 			<FieldLabel
@@ -52,6 +53,7 @@ const { errorMessage, setValue, validate, value } = useField(
 		validateOnChange: fieldValidateOn.value === 'change',
 		validateOnInput: fieldValidateOn.value === 'input',
 		validateOnModelUpdate: fieldValidateOn.value != null,
+		validateOnValueUpdate: fieldValidateOn.value === 'input' || fieldValidateOn.value === 'change',
 	},
 );
 
@@ -62,6 +64,31 @@ onUnmounted(() => {
 	}
 });
 
+
+// ------------------------- Menu-aware blur validation //
+// Overlay fields (select/autocomplete/combobox/date/color) emit `update:focused`
+// false the moment their menu opens, because focus moves into the overlay list.
+// Validating on that raw blur would flag a required field as invalid the instant
+// the user opens it. To avoid that we:
+//   - skip the blur validation while the menu is open, and
+//   - validate when the menu closes (the real "done with the field" signal).
+// Menu-less fields (text/textarea/number) never emit `update:menu`, so they fall
+// back to plain blur validation via onFocusUpdate.
+const isMenuOpen = ref(false);
+
+function onMenuUpdate(open: boolean): void {
+	isMenuOpen.value = open;
+
+	if (fieldValidateOn.value === 'blur' && !open) {
+		onActions('blur');
+	}
+}
+
+function onFocusUpdate(isFocused: boolean): void {
+	if (fieldValidateOn.value === 'blur' && !isFocused && !isMenuOpen.value) {
+		onActions('blur');
+	}
+}
 
 // ------------------------- Validate On Actions //
 async function onActions(action: ValidateAction): Promise<void> {
