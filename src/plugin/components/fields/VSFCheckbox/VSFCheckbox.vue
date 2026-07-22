@@ -123,10 +123,6 @@ const { errorMessage, setValue, validate, value } = useField(
 	undefined,
 	{
 		initialValue: modelValue.value,
-		validateOnBlur: fieldValidateOn.value === 'blur',
-		validateOnChange: fieldValidateOn.value === 'change',
-		validateOnInput: fieldValidateOn.value === 'input',
-		validateOnModelUpdate: fieldValidateOn.value != null,
 		validateOnValueUpdate: fieldValidateOn.value === 'input' || fieldValidateOn.value === 'change',
 	},
 );
