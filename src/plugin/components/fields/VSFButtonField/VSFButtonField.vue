@@ -115,10 +115,7 @@ const { errorMessage, handleChange, setValue, validate, value } = useField(
 	undefined,
 	{
 		initialValue: field.value?.multiple ? [] : null,
-		validateOnBlur: fieldValidateOn.value === 'blur',
-		validateOnChange: fieldValidateOn.value === 'change',
-		validateOnInput: fieldValidateOn.value === 'input',
-		validateOnModelUpdate: fieldValidateOn.value != null,
+		validateOnValueUpdate: fieldValidateOn.value === 'input' || fieldValidateOn.value === 'change',
 	},
 );
 
