@@ -1,6 +1,4 @@
-import { watchDebounced } from '@vueuse/core';
 import type {
-	UseAutoPage,
 	UseBuildSettings,
 	UseColumnErrorCheck,
 	UseDeepMerge,
@@ -81,23 +79,6 @@ export const useBuildSettings: UseBuildSettings = (stepperProps: Settings) => {
 		validateOnMount: stepperProps.validateOnMount,
 		variant: stepperProps.variant,
 	};
-};
-
-
-/**
-* Automatically pages to the next field.
-*/
-export const useAutoPage: UseAutoPage = (options) => {
-	const { emit, field, modelValue, settings } = options;
-	watchDebounced(modelValue, () => {
-		if (field?.autoPage == false) {
-			return;
-		}
-
-		if (field?.autoPage || settings?.autoPage) {
-			emit('next', field);
-		}
-	}, { debounce: (field?.autoPageDelay ?? settings?.autoPageDelay) });
 };
 
 
