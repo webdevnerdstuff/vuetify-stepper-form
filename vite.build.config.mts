@@ -42,6 +42,8 @@ export default defineConfig({
 			},
 			external: [
 				...Object.keys(pkg.dependencies || {}),
+				...Object.keys(pkg.peerDependencies || {}),
+				/^vue($|\/.+)/,
 				/^vuetify($|\/.+)/,
 			],
 			output: {

@@ -1,6 +1,6 @@
 {
 	"name": "@wdns/vuetify-stepper-form",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "The Vuetify Stepper Form plugin provides a structured way to create multi-step forms using Vue 3, TypeScript, and Vuetify. It features a stepper layout that allows users to navigate between steps with form validation. The plugin is customizable and streamlines building dynamic, interactive forms that guide users through sequential steps.",
 	"private": false,
 	"publishConfig": {
@@ -73,8 +73,7 @@
 		"webdevnerdstuff",
 		"wdns"
 	],
-	"dependencies": {
-		"@vueuse/core": "^13.1.0",
+	"peerDependencies": {
 		"vue": "^3.5.13",
 		"vuetify": "^4.1.5"
 	},
@@ -144,7 +143,9 @@
 		"vite-plugin-vue-devtools": "^7.6.4",
 		"vite-plugin-vuetify": "^2.1.3",
 		"vitest": "^2.1.5",
+		"vue": "^3.5.13",
 		"vue-tsc": "^2.1.8",
+		"vuetify": "^4.1.5",
 		"webfontloader": "^1.6.28",
 		"yup": "^1.6.1",
 		"zod": "^3.24.2"
