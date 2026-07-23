@@ -4,6 +4,7 @@ import type {
 	GenericObject,
 } from 'vee-validate';
 import type { App, MaybeRef } from 'vue';
+import type { ValidationRule } from 'vuetify';
 import type {
 	VBtn,
 	// VIcon,
@@ -13,14 +14,24 @@ import type {
 	VStepperWindowItem,
 	VTooltip,
 } from 'vuetify/components';
-import type { ValidationRule } from 'vuetify/lib/composables/validation';
-import type { SelectItemKey } from 'vuetify/lib/util/helpers';
 import type { Schema } from 'yup';
 import type { ZodSchema } from 'zod';
 import VStepperForm from '../VStepperForm.vue';
 
 
 export * from '../index';
+
+// Vuetify declares `SelectItemKey` but does not export it from any public
+// entry point, so it is mirrored here rather than reached for through a deep
+// `vuetify/lib/*` import (those are not in Vuetify's `exports` map). //
+export type SelectItemKey<T = Record<string, any>> =
+	| boolean
+	| null
+	| undefined
+	| string
+	| readonly (string | number)[]
+	| ((item: T, fallback?: any) => any);
+
 
 // -------------------------------------------------- Globals //
 declare global {
