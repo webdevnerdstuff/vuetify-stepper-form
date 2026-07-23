@@ -268,19 +268,6 @@ export interface UseDeepMerge {
 	): Record<string, any>;
 }
 
-export interface UseAutoPage {
-	(
-		options: {
-			emit: {
-				(e: 'next', field: Field): void;
-			},
-			field: Field;
-			modelValue: any;
-			settings: Settings;
-		}
-	): void;
-}
-
 export interface UseColumnErrorCheck {
 	(
 		options: {
