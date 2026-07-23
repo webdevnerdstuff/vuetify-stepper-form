@@ -1,3 +1,7 @@
+import {
+	object as yupObject,
+	string as yupString,
+} from 'yup';
 import type { Field, Page } from '../../plugin/types';
 import * as DATA from '@cypress/templates/testData';
 import VStepperForm from '../VStepperForm.vue';
@@ -634,6 +638,58 @@ describe('Stepper Form', () => {
 				.and('be.visible');
 
 			cy.getDataCy('vsf-field-city')
+				.should('exist')
+				.and('be.visible');
+		});
+
+		// ? The validation schema covers the whole form, so fields on later pages
+		// ? are always invalid while the user is still on an earlier page. Auto
+		// ? paging must only care about the errors on the current page. //
+		it('should auto page when a later page still has unfilled required fields', () => {
+			const schema = yupObject({
+				address: yupString().required('Address is required'),
+				animal: yupString().required('Animal is required'),
+			});
+
+			cy.mount(VStepperForm as any, {
+				props: {
+					modelValue: { address: null, animal: null },
+					pages: [
+						{
+							fields: [
+								{
+									autoPage: true,
+									label: 'Animal',
+									name: 'animal',
+									options: [
+										{ label: 'Rabbit', value: 'rabbit' },
+										{ label: 'Duck', value: 'duck' },
+									],
+									required: true,
+									type: 'buttons',
+								},
+							],
+							title: 'Page 1',
+						},
+						{
+							fields: [defaultFields.address],
+							title: 'Page 2',
+						},
+					],
+					validationSchema: schema,
+				},
+				global,
+			});
+
+			cy.getDataCy('vsf-field-address')
+				.should('not.exist');
+
+			cy.getDataCy('vsf-field-animal')
+				.first()
+				.click();
+
+			// Moved onto the next page //
+			cy.getDataCy('vsf-field-address')
 				.should('exist')
 				.and('be.visible');
 		});
