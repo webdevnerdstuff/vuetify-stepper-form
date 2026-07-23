@@ -596,7 +596,6 @@ function setPageToError(pageIndex: number, page?: Page, source = 'submit'): void
 let debounceTimer: ReturnType<typeof setTimeout>;
 
 function onFieldValidate(field: Field, next: () => void): void {
-	const errors = $useForm.errorBag as ValidateResult['errors'];
 	const shouldAutoPage = (field.autoPage || settings.value.autoPage ? next : null) as () => void;
 
 	// If autoPage //
@@ -606,20 +605,17 @@ function onFieldValidate(field: Field, next: () => void): void {
 			// First validate the page before proceeding to the next page //
 			$useForm.validate()
 				.then((res: ValidateResult) => {
-					if (res.valid) {
-						// debounce next //
-						clearTimeout(debounceTimer);
-						debounceTimer = setTimeout(() => {
-							checkForPageErrors(errors, 'field', shouldAutoPage);
-						}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
+					// `validate()` covers the whole form, so fields on later pages
+					// are still invalid while the user is on an earlier one. Only
+					// the current page's errors may block auto paging, which is
+					// what `checkForPageErrors` filters on (same as the next button).
+					const errors = res.errors as unknown as ValidateResult['errors'];
 
-						return;
-					}
-
-					const page = computedPages.value[currentPageIdx.value];
-					const pageIndex = computedPages.value.findIndex((p) => p === page);
-
-					setPageToError(pageIndex, page, 'validating');
+					// debounce next //
+					clearTimeout(debounceTimer);
+					debounceTimer = setTimeout(() => {
+						checkForPageErrors(errors, 'field', shouldAutoPage);
+					}, (field?.autoPageDelay ?? settings.value?.autoPageDelay));
 				})
 				.catch((error: Error) => {
 					console.error('Error', error);
